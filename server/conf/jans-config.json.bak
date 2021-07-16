@@ -75,20 +75,7 @@
         "RSA1_5",
         "RSA-OAEP",
         "A128KW",
-        "A256KW",
-		"RSA-OEAP-256",
-		"ECDH-ES",
-		"ECDH-ES+A128KW",
-		"ECDH-ES+A192KW",
-		"ECDH-ES+A256KW",
-		"A192KW",
-		"A128GCMKW",
-		"A192GCMKW",
-		"A256GCMKW",
-		"PBES2-HS256+A128KW",
-		"PBES2-HS384+A192KW",
-		"PBES2-HS512+A256KW",
-        "DIR"
+        "A256KW"
     ],
     "userInfoEncryptionEncValuesSupported":[
         "A128CBC+HS256",
@@ -116,20 +103,7 @@
         "RSA1_5",
         "RSA-OAEP",
         "A128KW",
-        "A256KW",
-		"RSA-OEAP-256",
-		"ECDH-ES",
-		"ECDH-ES+A128KW",
-		"ECDH-ES+A192KW",
-		"ECDH-ES+A256KW",
-		"A192KW",
-		"A128GCMKW",
-		"A192GCMKW",
-		"A256GCMKW",
-		"PBES2-HS256+A128KW",
-		"PBES2-HS384+A192KW",
-		"PBES2-HS512+A256KW",
-        "DIR"
+        "A256KW"
     ],
     "idTokenEncryptionEncValuesSupported":[
         "A128CBC+HS256",
@@ -154,23 +128,10 @@
         "PS512"
     ],
     "requestObjectEncryptionAlgValuesSupported":[
-		"RSA1_5",
+        "RSA1_5",
         "RSA-OAEP",
         "A128KW",
-        "A256KW",
-		"RSA-OEAP-256",
-		"ECDH-ES",
-		"ECDH-ES+A128KW",
-		"ECDH-ES+A192KW",
-		"ECDH-ES+A256KW",
-		"A192KW",
-		"A128GCMKW",
-		"A192GCMKW",
-		"A256GCMKW",
-		"PBES2-HS256+A128KW",
-		"PBES2-HS384+A192KW",
-		"PBES2-HS512+A256KW",
-        "DIR"
+        "A256KW"
     ],
     "requestObjectEncryptionEncValuesSupported":[
         "A128CBC+HS256",

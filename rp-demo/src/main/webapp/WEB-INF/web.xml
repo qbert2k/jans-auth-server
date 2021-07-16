@@ -35,8 +35,14 @@
     <filter-name>loginFilter</filter-name>
     <filter-class>io.jans.as.rp.demo.LoginFilter</filter-class>
     <init-param>
-      <param-name>authorizationServerHost</param-name>
+		<param-name>authorizationServerHost</param-name>
+		<param-value>http://localhost/jans-auth</param-value>
+<!--
+      <param-value>http://localhost/jans-auth-server</param-value>
+-->
+<!--       
       <param-value>https://ce-dev2.gluu.org</param-value>
+ -->      
     </init-param>
     <init-param>
       <param-name>clientId</param-name>
@@ -52,8 +58,11 @@
     </init-param>
     <init-param>
       <param-name>redirectUri</param-name> <!-- redirectUri must start from https:// protocol which is required for clients with application_type=web-->
+      <param-value>http://localhost/jans-auth-rp-demo</param-value>
+<!--       
       <param-value>https://ce-dev2.gluu.org/rp-demo</param-value>
-    </init-param>
+ -->      
+    </init-param>    
   </filter>
   <filter-mapping>
     <filter-name>loginFilter</filter-name>

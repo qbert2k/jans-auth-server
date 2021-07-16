@@ -55,7 +55,7 @@ public class LoginFilter implements Filter {
         clientId = filterConfig.getInitParameter("clientId");
         clientSecret = filterConfig.getInitParameter("clientSecret");
 
-        Preconditions.checkState(redirectUri.startsWith("https:"), "Redirect URI must use https protocol for client application_type=web.");
+//        Preconditions.checkState(redirectUri.startsWith("https:"), "Redirect URI must use https protocol for client application_type=web.");
     }
 
     @Override

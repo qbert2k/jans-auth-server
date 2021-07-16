@@ -19,7 +19,8 @@ public enum KeyEncryptionAlgorithm {
     RSA1_5("RSA1_5", "RSA", "RSA/ECB/PKCS1Padding"),
     RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
     A128KW("A128KW"),
-    A256KW("A256KW");
+    A256KW("A256KW"),
+	ECDH_ES("ECDH-ES");
     //DIR("dir"), // Not supported
     //ECDH_ES("ECDH-ES"), // Not supported
     //ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW"), // Not supported

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.EncryptedJWT;
@@ -90,6 +92,31 @@ public class CrossEncryptionTest {
 
     final String recipientJwkJson = "{\"kty\":\"RSA\",\"d\":\"jAFM0c4oXxh5YcEujZRVY5LNUzkm0OZf8OUZ31DockQE07BwSAsi4_y6vursS4Z74EurjYlfPx7WoZZokTLyBReVvG8XQZ-AQ5smU9gXQrsiVdU2kOp17oYnOP3OKc0HtvlfTPKdz0DhoA--wAsPFCL2ei4Qly_J3IQTF9ffJJMEyzgabcV1xqrk8NEK5XfEHOdNHzzg-doRe4lCsDcEfIppCIxPHTozhYpwH0_OrssAX1OwX5Jx6-5pXc_BIBrymIkjfwlPYBC32f0iD6VTntJfIngMOdeu0t6krOaWlbfmf6RdoM5sugT-j3mYnd3w4c2eFW23Z9sPCrQvDNlTcQ\",\"e\":\"AQAB\",\"use\":\"enc\",\"kid\":\"2\",\"alg\":\"RS256\",\"n\":\"oaPsFKHgVnK0d04rjN5GgZFqCh9HwYkLMdDQDIgkM3x4sxTpctS5NJQK7iKWNxPTtULdzrY6NLqtrNWmIrJFC6f2h4q5p46Kmc8vdhm_Ph_jpYfsXWTdsHAoee6iJPMoie7rBGoscr3y2DdNlyxAO_jHLUkaaSAqDQrH_f4zVTO0XKisJu8DxKoh2U8myOow_kxx4PUxEdlH6XclpxYT5lIZijOZ8wehFad_BAJ2iZM40JDoqOgspUF1Jyq7FjOoMQabYYwDMyfs2rEALcTU1UsvLeWbl95T3mdAw64Ux3uFCZzHdXF4IDr7xH4NrEVT7SMAlwNoaRfmFbtL-WoISw\"}";
     public static final String PAYLOAD = "{\"iss\":\"https:devgluu.saminet.local\",\"sub\":\"testing\"}";
+    
+    final String ecJwkJson = "{ \"kid\": \"15267f5f-45a0-49c7-932a-f7e14b170b3c\", \"kty\": \"EC\", \"use\": \"enc\", \"alg\": \"ES512\", \"crv\": \"P-521\", \"x\": \"ibPx0F46GvfcVfDuc-9cpkF0GOoh7df_mxMtLDxz1-_ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDw\", \"y\": \"AWqzMs5GWyuQ11AJIj0G1-PcFyZCneriZqZvQyKEDUFK6tb4Z_5Nox4UfWWrISwV2sM_y45Anvsf8ifQVka511s\" }";
+
+/*    
+    "kty"	:	"RSA",
+    "d"		:	"jAFM0c4oXxh5YcEujZRVY5LNUzkm0OZf8OUZ31DockQE07BwSAsi4_y6vursS4Z74EurjYlfPx7WoZZokTLyBReVvG8XQZ-AQ5smU9gXQrsiVdU2kOp17oYnOP3OKc0HtvlfTPKdz0DhoA--wAsPFCL2ei4Qly_J3IQTF9ffJJMEyzgabcV1xqrk8NEK5XfEHOdNHzzg-doRe4lCsDcEfIppCIxPHTozhYpwH0_OrssAX1OwX5Jx6-5pXc_BIBrymIkjfwlPYBC32f0iD6VTntJfIngMOdeu0t6krOaWlbfmf6RdoM5sugT-j3mYnd3w4c2eFW23Z9sPCrQvDNlTcQ"
+   	"e"		:	"AQAB",
+   	"use"	:	"enc",
+   	"kid"	:	"2",
+   	"alg"	:	"RS256",
+   	"n"		:"oaPsFKHgVnK0d04rjN5GgZFqCh9HwYkLMdDQDIgkM3x4sxTpctS5NJQK7iKWNxPTtULdzrY6NLqtrNWmIrJFC6f2h4q5p46Kmc8vdhm_Ph_jpYfsXWTdsHAoee6iJPMoie7rBGoscr3y2DdNlyxAO_jHLUkaaSAqDQrH_f4zVTO0XKisJu8DxKoh2U8myOow_kxx4PUxEdlH6XclpxYT5lIZijOZ8wehFad_BAJ2iZM40JDoqOgspUF1Jyq7FjOoMQabYYwDMyfs2rEALcTU1UsvLeWbl95T3mdAw64Ux3uFCZzHdXF4IDr7xH4NrEVT7SMAlwNoaRfmFbtL-WoISw"    
+    
+    
+    {
+        "kid": "15267f5f-45a0-49c7-932a-f7e14b170b3c",
+        "kty": "EC",
+        "use": "enc",
+        "alg": "ES512",
+        "exp": 1580939067183,
+        "crv": "P-521",
+        "x": "ibPx0F46GvfcVfDuc-9cpkF0GOoh7df_mxMtLDxz1-_ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDw",
+        "y": "AWqzMs5GWyuQ11AJIj0G1-PcFyZCneriZqZvQyKEDUFK6tb4Z_5Nox4UfWWrISwV2sM_y45Anvsf8ifQVka511s",
+        "x5c": ["MIIB/zCCAWGgAwIBAgIhAJDdBM0CwuyPz47ob9WRw/fD8kaSWYZWm5wMqH45XGUNMAoGCCqGSM49BAMEMCExHzAdBgNVBAMMFm94QXV0aCBDQSBDZXJ0aWZpY2F0ZXMwHhcNMTkwMjA1MjE0NDIxWhcNMjAwMjA1MjE0NDI3WjAhMR8wHQYDVQQDDBZveEF1dGggQ0EgQ2VydGlmaWNhdGVzMIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAibPx0F46GvfcVfDuc+9cpkF0GOoh7df/mxMtLDxz1+/ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDwAAWqzMs5GWyuQ11AJIj0G1+PcFyZCneriZqZvQyKEDUFK6tb4Z/5Nox4UfWWrISwV2sM/y45Anvsf8ifQVka511ujJzAlMCMGA1UdJQQcMBoGCCsGAQUFBwMBBggrBgEFBQcDAgYEVR0lADAKBggqhkjOPQQDBAOBiwAwgYcCQSDt1a3czihW7roYJOAZpfirIHE03lsUktDOohEvwGobmPGS+lVUc7eVRV22VtrvZpxR5GTRMaHgsZlI4f5PPDk/AkIA4Cc7nNGsxUgLYjFdZq6RAmGRuvuIBZndg8nc8Nv/tp3T9ltiuyv81AmqKl7SSUsnqwj1b/sWF0GUo/0N37+WKZc="]
+    },
+  */  
 
     @Test
     public void encryptWithNimbus_decryptByAll() {
@@ -108,6 +135,32 @@ public class CrossEncryptionTest {
         assertTrue(testDecryptNimbusJoseJwt(jwt));
         assertTrue(testDecryptWithJose4J(jwt));
         assertTrue(testDecryptWithGluuDecrypter(jwt));
+    }
+    
+    @Test
+    public void encryptWithGluu_RSA1_5_decryptByAll() {
+        final String jwt = encryptWithGluuJweEncrypterRSA1_5();
+        System.out.println("Gluu encrypted: " + jwt);
+        
+        assertTrue(testDecryptWithGluuDecrypterRSA1_5(jwt));        
+/*        
+        assertTrue(testDecryptNimbusJoseJwt(jwt));
+        assertTrue(testDecryptWithJose4J(jwt));
+        assertTrue(testDecryptWithGluuDecrypter(jwt));
+*/
+    } 
+
+    @Test
+    public void encryptWithGluu_ECDH_ES_decryptByAll() {
+        final String jwt = encryptWithGluuJweEncrypterECDH_ES();
+        System.out.println("Gluu encrypted: " + jwt);
+        
+        assertTrue(testDecryptWithGluuDecrypterECDH_ES(jwt));        
+/*
+        assertTrue(testDecryptNimbusJoseJwt(jwt));
+        assertTrue(testDecryptWithJose4J(jwt));
+        assertTrue(testDecryptWithGluuDecrypter(jwt));
+*/        
     }
 
     @Test
@@ -258,6 +311,50 @@ public class CrossEncryptionTest {
         }
         return false;
     }
+    
+    public boolean testDecryptWithGluuDecrypterRSA1_5(String jwe) {
+
+        try {
+            JWK jwk = JWK.parse(recipientJwkJson);
+            RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+            JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
+
+            decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA1_5);
+            decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+            final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+            System.out.println("Gluu decrypt succeed: " + decryptedPayload);
+            if (isJsonEqual(decryptedPayload, PAYLOAD)) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Gluu decrypt failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean testDecryptWithGluuDecrypterECDH_ES(String jwe) {
+
+        try {
+            JWK jwk = JWK.parse(ecJwkJson);
+            ECPrivateKey ecPrivateKey = ((ECKey)jwk).toECPrivateKey();
+
+            JweDecrypterImpl decrypter = new JweDecrypterImpl(ecPrivateKey);
+
+            decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.ECDH_ES);
+            decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+            final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+            System.out.println("Gluu decrypt succeed: " + decryptedPayload);
+            if (isJsonEqual(decryptedPayload, PAYLOAD)) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Gluu decrypt failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     private String encryptWithGluuJweEncrypter() {
 
@@ -288,6 +385,62 @@ public class CrossEncryptionTest {
         }
     }
 
+    private String encryptWithGluuJweEncrypterRSA1_5() {
+        try {
+            RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(recipientJwkJson));
+
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.RSA1_5;
+            Jwe jwe = new Jwe();
+            jwe.getHeader().setType(JwtType.JWT);
+            jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+            jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+            jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+            jwe.getClaims().setSubjectIdentifier("testing");
+            jwe.getHeader().setKeyId("1");
+
+            JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, recipientPublicJWK.toPublicKey());
+            jwe = encrypter.encrypt(jwe);
+            //		System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+            //		System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+            //		System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+            //		System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+            //		System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+            return jwe.toString();
+        } catch (Exception e) {
+            System.out.println("Error encryption with Gluu JweEncrypter: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    private String encryptWithGluuJweEncrypterECDH_ES() {
+        try {
+        	ECKey recipientPublicJWK = (ECKey) (JWK.parse(ecJwkJson));
+
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.ECDH_ES;
+            Jwe jwe = new Jwe();
+            jwe.getHeader().setType(JwtType.JWT);
+            jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+            jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+            jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+            jwe.getClaims().setSubjectIdentifier("testing");
+            jwe.getHeader().setKeyId("1");
+
+            JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, recipientPublicJWK);
+            jwe = encrypter.encrypt(jwe);
+            //		System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+            //		System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+            //		System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+            //		System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+            //		System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+            return jwe.toString();
+        } catch (Exception e) {
+            System.out.println("Error encryption with Gluu JweEncrypter: " + e.getMessage());
+            return null;
+        }
+    }    
+    
     private String encryptWithNimbusJoseJwt() {
 
         try {

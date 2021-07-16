@@ -20,7 +20,9 @@ import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.AESEncrypter;
+import com.nimbusds.jose.crypto.ECDHEncrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -40,6 +42,8 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
 
     private PublicKey publicKey;
     private byte[] sharedSymmetricKey;
+    private ECKey ecKey;
+    
 
     public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, byte[] sharedSymmetricKey) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
@@ -52,12 +56,21 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
         this.publicKey = publicKey;
     }
+    
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, ECKey ecKey) {
+        super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
+        this.ecKey = ecKey;
+    }    
 
     public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException, NoSuchAlgorithmException {
         final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
         if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP) {
             return new RSAEncrypter(new RSAKey.Builder((RSAPublicKey) publicKey).build());
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {
+        }
+        else if(keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES) {
+        	return new ECDHEncrypter(new ECKey.Builder(ecKey).build());
+        }
+        else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {
             if (sharedSymmetricKey == null) {
                 throw new InvalidJweException("The shared symmetric key is null");
             }
