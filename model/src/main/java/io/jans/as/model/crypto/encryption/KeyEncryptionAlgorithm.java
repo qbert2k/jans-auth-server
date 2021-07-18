@@ -18,14 +18,25 @@ public enum KeyEncryptionAlgorithm {
 
 	RSA1_5("RSA1_5", "RSA", "RSA/ECB/PKCS1Padding"),
 	RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
+	RSA_OAEP_256("RSA-OAEP-256"),
+	
     A128KW("A128KW"),
     A256KW("A256KW"),
+	A192KW("A192KW"),	
+	A128GCMKW("A128GCMKW"),	
+	A192GCMKW("A192GCMKW"),	
+	A256GCMKW("A256GCMKW"),	
+    
 	ECDH_ES("ECDH-ES"),
-	RSA_OAEP_256("RSA-OAEP-256");	
-    //DIR("dir"), // Not supported
-    //ECDH_ES("ECDH-ES"), // Not supported
-    //ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW"), // Not supported
-    //ECDH_ES_A256KW("ECDH-ES+A256KW"); // Not supported
+	ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW"),
+	ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW"),	
+	ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW"),
+	
+	PBES2_HS256_PLUS_A128KW("PBES2-HS256+A128KW"),	
+	PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW"),	
+	PBES2_HS384_PLUS_A256KW("PBES2-HS384+A256KW"),
+	
+	DIR("DIR");	
 
     private final String name;
     private final String family;

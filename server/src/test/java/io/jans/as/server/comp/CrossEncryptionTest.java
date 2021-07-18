@@ -604,7 +604,6 @@ public class CrossEncryptionTest {
         }
     }
 
-
     @Test
     public void nestedJWT() throws Exception {
 

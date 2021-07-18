@@ -9,12 +9,17 @@ package io.jans.as.model.jwe;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JWEDecrypter;
+import com.nimbusds.jose.crypto.ECDHEncrypter;
+import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -87,29 +92,53 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256 ||
-            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES) {
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW
+            		) {
                 encriptionKey = privateKey;
             }
-            else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {
+            else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW ||        		
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW ||        		
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW            		
+            		) {
                 if (sharedSymmetricKey == null) {
                     throw new InvalidJweException("The shared symmetric key is null");
                 }
-
-                int keyLength = 16;
-                if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {
-                    keyLength = 32;
-                }
+                
+                int keyLength;            
+                
+                switch(keyEncryptionAlgorithm) {
+                case A128KW:
+                case A128GCMKW:
+                	keyLength = 16;
+                	break;
+                case A192KW:
+                case A192GCMKW:
+                	keyLength = 24;            	
+                	break;
+                case A256KW:
+                case A256GCMKW:
+                	keyLength = 32;            	
+                	break;
+                default:
+                    throw new InvalidJweException(String.format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));            	
+                }                
 
                 if (sharedSymmetricKey.length != keyLength) {
                     MessageDigest sha = MessageDigest.getInstance("SHA-256");
                     sharedSymmetricKey = sha.digest(sharedSymmetricKey);
                     sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
                 }
-                encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "AES");
+                encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, keyLength, "AES");
             } else {
                 throw new InvalidJweException("The key encryption algorithm is not supported");
             }
-
+ 
             JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
             decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
             encryptedJwt.decrypt(decrypter);
