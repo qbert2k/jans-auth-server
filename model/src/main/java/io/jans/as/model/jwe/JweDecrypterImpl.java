@@ -84,7 +84,10 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
 
             final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
             Key encriptionKey = null;
-            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES) {
+            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256 ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES) {
                 encriptionKey = privateKey;
             }
             else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {

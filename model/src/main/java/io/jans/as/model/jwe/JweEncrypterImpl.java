@@ -64,7 +64,9 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
 
     public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException, NoSuchAlgorithmException {
         final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP) {
+        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5 || 
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP || 
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256) {
             return new RSAEncrypter(new RSAKey.Builder((RSAPublicKey) publicKey).build());
         }
         else if(keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES) {
