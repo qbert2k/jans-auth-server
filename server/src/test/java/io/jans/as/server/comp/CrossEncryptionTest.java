@@ -93,48 +93,50 @@ public class CrossEncryptionTest {
     final String recipientJwkJson = "{\"kty\":\"RSA\",\"d\":\"jAFM0c4oXxh5YcEujZRVY5LNUzkm0OZf8OUZ31DockQE07BwSAsi4_y6vursS4Z74EurjYlfPx7WoZZokTLyBReVvG8XQZ-AQ5smU9gXQrsiVdU2kOp17oYnOP3OKc0HtvlfTPKdz0DhoA--wAsPFCL2ei4Qly_J3IQTF9ffJJMEyzgabcV1xqrk8NEK5XfEHOdNHzzg-doRe4lCsDcEfIppCIxPHTozhYpwH0_OrssAX1OwX5Jx6-5pXc_BIBrymIkjfwlPYBC32f0iD6VTntJfIngMOdeu0t6krOaWlbfmf6RdoM5sugT-j3mYnd3w4c2eFW23Z9sPCrQvDNlTcQ\",\"e\":\"AQAB\",\"use\":\"enc\",\"kid\":\"2\",\"alg\":\"RS256\",\"n\":\"oaPsFKHgVnK0d04rjN5GgZFqCh9HwYkLMdDQDIgkM3x4sxTpctS5NJQK7iKWNxPTtULdzrY6NLqtrNWmIrJFC6f2h4q5p46Kmc8vdhm_Ph_jpYfsXWTdsHAoee6iJPMoie7rBGoscr3y2DdNlyxAO_jHLUkaaSAqDQrH_f4zVTO0XKisJu8DxKoh2U8myOow_kxx4PUxEdlH6XclpxYT5lIZijOZ8wehFad_BAJ2iZM40JDoqOgspUF1Jyq7FjOoMQabYYwDMyfs2rEALcTU1UsvLeWbl95T3mdAw64Ux3uFCZzHdXF4IDr7xH4NrEVT7SMAlwNoaRfmFbtL-WoISw\"}";
     public static final String PAYLOAD = "{\"iss\":\"https:devgluu.saminet.local\",\"sub\":\"testing\"}";
     
-    final String ecJwkJson = "{ \"kid\": \"15267f5f-45a0-49c7-932a-f7e14b170b3c\", \"kty\": \"EC\", \"use\": \"enc\", \"alg\": \"ES512\", \"crv\": \"P-521\", \"x\": \"ibPx0F46GvfcVfDuc-9cpkF0GOoh7df_mxMtLDxz1-_ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDw\", \"y\": \"AWqzMs5GWyuQ11AJIj0G1-PcFyZCneriZqZvQyKEDUFK6tb4Z_5Nox4UfWWrISwV2sM_y45Anvsf8ifQVka511s\" }";
+    final String ecJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";
 
-/*    
-    "kty"	:	"RSA",
-    "d"		:	"jAFM0c4oXxh5YcEujZRVY5LNUzkm0OZf8OUZ31DockQE07BwSAsi4_y6vursS4Z74EurjYlfPx7WoZZokTLyBReVvG8XQZ-AQ5smU9gXQrsiVdU2kOp17oYnOP3OKc0HtvlfTPKdz0DhoA--wAsPFCL2ei4Qly_J3IQTF9ffJJMEyzgabcV1xqrk8NEK5XfEHOdNHzzg-doRe4lCsDcEfIppCIxPHTozhYpwH0_OrssAX1OwX5Jx6-5pXc_BIBrymIkjfwlPYBC32f0iD6VTntJfIngMOdeu0t6krOaWlbfmf6RdoM5sugT-j3mYnd3w4c2eFW23Z9sPCrQvDNlTcQ"
-   	"e"		:	"AQAB",
-   	"use"	:	"enc",
-   	"kid"	:	"2",
-   	"alg"	:	"RS256",
-   	"n"		:"oaPsFKHgVnK0d04rjN5GgZFqCh9HwYkLMdDQDIgkM3x4sxTpctS5NJQK7iKWNxPTtULdzrY6NLqtrNWmIrJFC6f2h4q5p46Kmc8vdhm_Ph_jpYfsXWTdsHAoee6iJPMoie7rBGoscr3y2DdNlyxAO_jHLUkaaSAqDQrH_f4zVTO0XKisJu8DxKoh2U8myOow_kxx4PUxEdlH6XclpxYT5lIZijOZ8wehFad_BAJ2iZM40JDoqOgspUF1Jyq7FjOoMQabYYwDMyfs2rEALcTU1UsvLeWbl95T3mdAw64Ux3uFCZzHdXF4IDr7xH4NrEVT7SMAlwNoaRfmFbtL-WoISw"    
     
+    /*
+		{
+			"kty":"EC",
+          	"crv":"P-256",
+          	"x":"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
+          	"y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
+          	"d":"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE",
+          	"use":"enc",
+          	"kid":"3"
+		},
+     */
     
-    {
-        "kid": "15267f5f-45a0-49c7-932a-f7e14b170b3c",
-        "kty": "EC",
-        "use": "enc",
-        "alg": "ES512",
-        "exp": 1580939067183,
-        "crv": "P-521",
-        "x": "ibPx0F46GvfcVfDuc-9cpkF0GOoh7df_mxMtLDxz1-_ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDw",
-        "y": "AWqzMs5GWyuQ11AJIj0G1-PcFyZCneriZqZvQyKEDUFK6tb4Z_5Nox4UfWWrISwV2sM_y45Anvsf8ifQVka511s",
-        "x5c": ["MIIB/zCCAWGgAwIBAgIhAJDdBM0CwuyPz47ob9WRw/fD8kaSWYZWm5wMqH45XGUNMAoGCCqGSM49BAMEMCExHzAdBgNVBAMMFm94QXV0aCBDQSBDZXJ0aWZpY2F0ZXMwHhcNMTkwMjA1MjE0NDIxWhcNMjAwMjA1MjE0NDI3WjAhMR8wHQYDVQQDDBZveEF1dGggQ0EgQ2VydGlmaWNhdGVzMIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQAibPx0F46GvfcVfDuc+9cpkF0GOoh7df/mxMtLDxz1+/ES5VrIQai1HhRhBYgJeJ6AUWRrJWUgyozvnBe08ygWDwAAWqzMs5GWyuQ11AJIj0G1+PcFyZCneriZqZvQyKEDUFK6tb4Z/5Nox4UfWWrISwV2sM/y45Anvsf8ifQVka511ujJzAlMCMGA1UdJQQcMBoGCCsGAQUFBwMBBggrBgEFBQcDAgYEVR0lADAKBggqhkjOPQQDBAOBiwAwgYcCQSDt1a3czihW7roYJOAZpfirIHE03lsUktDOohEvwGobmPGS+lVUc7eVRV22VtrvZpxR5GTRMaHgsZlI4f5PPDk/AkIA4Cc7nNGsxUgLYjFdZq6RAmGRuvuIBZndg8nc8Nv/tp3T9ltiuyv81AmqKl7SSUsnqwj1b/sWF0GUo/0N37+WKZc="]
-    },
-  */  
-
+	/*
+	 	{
+	 		"kty"	:	"RSA",
+	    	"d"		:	"jAFM0c4oXxh5YcEujZRVY5LNUzkm0OZf8OUZ31DockQE07BwSAsi4_y6vursS4Z74EurjYlfPx7WoZZokTLyBReVvG8XQZ-AQ5smU9gXQrsiVdU2kOp17oYnOP3OKc0HtvlfTPKdz0DhoA--wAsPFCL2ei4Qly_J3IQTF9ffJJMEyzgabcV1xqrk8NEK5XfEHOdNHzzg-doRe4lCsDcEfIppCIxPHTozhYpwH0_OrssAX1OwX5Jx6-5pXc_BIBrymIkjfwlPYBC32f0iD6VTntJfIngMOdeu0t6krOaWlbfmf6RdoM5sugT-j3mYnd3w4c2eFW23Z9sPCrQvDNlTcQ"
+	   		"e"		:	"AQAB",
+	   		"use"	:	"enc",
+	   		"kid"	:	"2",
+	   		"alg"	:	"RS256",
+	   		"n"		:"oaPsFKHgVnK0d04rjN5GgZFqCh9HwYkLMdDQDIgkM3x4sxTpctS5NJQK7iKWNxPTtULdzrY6NLqtrNWmIrJFC6f2h4q5p46Kmc8vdhm_Ph_jpYfsXWTdsHAoee6iJPMoie7rBGoscr3y2DdNlyxAO_jHLUkaaSAqDQrH_f4zVTO0XKisJu8DxKoh2U8myOow_kxx4PUxEdlH6XclpxYT5lIZijOZ8wehFad_BAJ2iZM40JDoqOgspUF1Jyq7FjOoMQabYYwDMyfs2rEALcTU1UsvLeWbl95T3mdAw64Ux3uFCZzHdXF4IDr7xH4NrEVT7SMAlwNoaRfmFbtL-WoISw"
+		}    
+	 */  
+	
     @Test
     public void encryptWithNimbus_decryptByAll() {
         final String jwt = encryptWithNimbusJoseJwt();
 
         assertTrue(testDecryptNimbusJoseJwt(jwt));
         assertTrue(testDecryptWithJose4J(jwt));
-        assertTrue(testDecryptWithGluuDecrypter(jwt));
+        assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(jwt));
     }
 
     @Test
-    public void encryptWithGluu_decryptByAll() {
-        final String jwt = encryptWithGluuJweEncrypter();
+    public void encryptWithGluu_RSA_OAEP_decryptByAll() {
+        final String jwt = encryptWithGluuJweEncrypter_RSA_OAEP();
         System.out.println("Gluu encrypted: " + jwt);
 
         assertTrue(testDecryptNimbusJoseJwt(jwt));
         assertTrue(testDecryptWithJose4J(jwt));
-        assertTrue(testDecryptWithGluuDecrypter(jwt));
+        assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(jwt));
     }
     
     @Test
@@ -142,12 +144,7 @@ public class CrossEncryptionTest {
         final String jwt = encryptWithGluuJweEncrypterRSA1_5();
         System.out.println("Gluu encrypted: " + jwt);
         
-        assertTrue(testDecryptWithGluuDecrypterRSA1_5(jwt));        
-/*        
-        assertTrue(testDecryptNimbusJoseJwt(jwt));
-        assertTrue(testDecryptWithJose4J(jwt));
-        assertTrue(testDecryptWithGluuDecrypter(jwt));
-*/
+        assertTrue(testDecryptWithGluuDecrypter_RSA1_5(jwt));        
     } 
 
     @Test
@@ -155,12 +152,7 @@ public class CrossEncryptionTest {
         final String jwt = encryptWithGluuJweEncrypterECDH_ES();
         System.out.println("Gluu encrypted: " + jwt);
         
-        assertTrue(testDecryptWithGluuDecrypterECDH_ES(jwt));        
-/*
-        assertTrue(testDecryptNimbusJoseJwt(jwt));
-        assertTrue(testDecryptWithJose4J(jwt));
-        assertTrue(testDecryptWithGluuDecrypter(jwt));
-*/        
+        assertTrue(testDecryptWithGluuDecrypter_ECDH_ES(jwt));        
     }
 
     @Test
@@ -174,7 +166,7 @@ public class CrossEncryptionTest {
     public void testNimbusJoseJwt_second() {
 
         //jwe produced by Gluu JweEncrypter
-        assertTrue(testDecryptNimbusJoseJwt(encryptWithGluuJweEncrypter()));
+        assertTrue(testDecryptNimbusJoseJwt(encryptWithGluuJweEncrypter_RSA_OAEP()));
     }
 
     @Test
@@ -195,7 +187,7 @@ public class CrossEncryptionTest {
     public void testNimbusJose4J_second() {
 
         //jwe produced by Gluu JweEncrypter
-        assertTrue(testDecryptWithJose4J(encryptWithGluuJweEncrypter()));
+        assertTrue(testDecryptWithJose4J(encryptWithGluuJweEncrypter_RSA_OAEP()));
     }
 
     @Test
@@ -212,21 +204,21 @@ public class CrossEncryptionTest {
         System.out.println(encryptedJweProducedByGluu);
 
         //jwe produced by gluu 3.1.2 in development environment
-        assertTrue(testDecryptWithGluuDecrypter(encryptedJweProducedByGluu));
+        assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(encryptedJweProducedByGluu));
     }
 
     @Test
     public void testGluuJweDecrypter_second() {
 
         //jwe produced by Gluu JweEncrypter
-        assertTrue(testDecryptWithGluuDecrypter(encryptWithGluuJweEncrypter()));
+        assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(encryptWithGluuJweEncrypter_RSA_OAEP()));
     }
 
     @Test
     public void testGluuJweDecrypter_third() {
 
         //jwe produced by Nimbus Jose+JWT
-        assertTrue(testDecryptWithGluuDecrypter(encryptWithNimbusJoseJwt()));
+        assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(encryptWithNimbusJoseJwt()));
     }
 
     private boolean testDecryptNimbusJoseJwt(String jwe) {
@@ -290,7 +282,7 @@ public class CrossEncryptionTest {
         return false;
     }
 
-    public boolean testDecryptWithGluuDecrypter(String jwe) {
+    public boolean testDecryptWithGluuDecrypter_RSA_OAEP(String jwe) {
 
         try {
             JWK jwk = JWK.parse(recipientJwkJson);
@@ -312,7 +304,7 @@ public class CrossEncryptionTest {
         return false;
     }
     
-    public boolean testDecryptWithGluuDecrypterRSA1_5(String jwe) {
+    public boolean testDecryptWithGluuDecrypter_RSA1_5(String jwe) {
 
         try {
             JWK jwk = JWK.parse(recipientJwkJson);
@@ -334,7 +326,7 @@ public class CrossEncryptionTest {
         return false;
     }
     
-    public boolean testDecryptWithGluuDecrypterECDH_ES(String jwe) {
+    public boolean testDecryptWithGluuDecrypter_ECDH_ES(String jwe) {
 
         try {
             JWK jwk = JWK.parse(ecJwkJson);
@@ -356,7 +348,7 @@ public class CrossEncryptionTest {
         return false;
     }
 
-    private String encryptWithGluuJweEncrypter() {
+    private String encryptWithGluuJweEncrypter_RSA_OAEP() {
 
         try {
             RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(recipientJwkJson));
