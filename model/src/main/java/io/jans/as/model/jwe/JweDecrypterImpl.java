@@ -15,11 +15,7 @@ import java.util.Arrays;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.crypto.ECDHEncrypter;
-import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
-import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.SignedJWT;
 
