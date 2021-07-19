@@ -48,6 +48,8 @@ import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.PasswordBasedDecrypter;
+import com.nimbusds.jose.crypto.PasswordBasedEncrypter;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
@@ -103,6 +105,31 @@ public class CrossEncryptionTest {
     final String aes192JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A192KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAt\" }";    
     final String aes256JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A256KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq0\" }";    
 
+    final String pbes2_hs256_a128kwJwkJson = "{ \"kty\":\"oct\", \"alg\":\"PBES2-HS256+A128KW\", \"k\":\"++ Some Password Word +++\" }";
+    
+    final String pbes2_hs256_a128kwJwkJson_1 = "{ \"kty\":\"oct\", \"alg\":\"PBES2-HS256+A128KW\", \"p2s\":\"2WCTcJZ1Rvd_CJuJripQ1w\", \"p2c\":8192, \"enc\":\"A128CBC-HS256\",  \"cty\":\"jwk+json\", \"k\":\"++ Some Password Word +++\" }";
+    
+/*
+ "k":"++ Some Password Word +++"      
+ */
+    
+/*    
+    final String aes192JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A192KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAt\" }";    
+    final String aes256JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A256KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq0\" }";
+*/        
+    /*
+		   PBES2-HS256+A128KW | PBES2 with HMAC    | "p2s", | Optional       |
+		                      | SHA-256 and        | "p2c"  |                |
+		                      | "A128KW" wrapping  |        |                |
+		                      
+		                      
+      "alg":"PBES2-HS256+A128KW",
+      "p2s":"2WCTcJZ1Rvd_CJuJripQ1w",
+      "p2c":4096,
+      "enc":"A128CBC-HS256",
+      "cty":"jwk+json"
+     */
+    
     /*
          {
          	"kty":"oct",
@@ -266,7 +293,7 @@ public class CrossEncryptionTest {
         
         assertTrue(testDecryptWithGluuDecrypter_A192KW(jwt));
     }
-
+    
     @Test
     public void encryptWithGluu_A256KW_decryptByAll() {
         final String jwt = encryptWithGluuJweEncrypter_A256KW();
@@ -274,12 +301,6 @@ public class CrossEncryptionTest {
         
         assertTrue(testDecryptWithGluuDecrypter_A256KW(jwt));
     }
-    
-/*
-	A128GCMKW("A128GCMKW"),	
-	A192GCMKW("A192GCMKW"),	
-	A256GCMKW("A256GCMKW"),	     
- */
     
     @Test
     public void encryptWithGluu_A128GCMKW_decryptByAll() {
@@ -311,7 +332,88 @@ public class CrossEncryptionTest {
         System.out.println("Gluu encrypted (A256GCMKW_A256CBC_PLUS_HS512): " + jwt);
         
         assertTrue(testDecryptWithGluuDecrypter_A256GCMKW_A256CBC_PLUS_HS512(jwt));
-    }       
+    }
+
+    @Test
+    public void encryptWithGluu_PBES2_HS256_PLUS_A128KW_decryptByAll() {
+    	
+		try {
+			final String password = "secret";
+			final String plaintext = "Hello world!";
+
+			JWEObject jweObject = new JWEObject(new JWEHeader.Builder(JWEAlgorithm.PBES2_HS256_A128KW, EncryptionMethod.A128GCM).build(), new Payload(plaintext));
+
+			System.out.println("jweObjectStr = " + jweObject.toString());
+			
+			net.minidev.json.JSONObject jsonObj = jweObject.getHeader().toJSONObject();
+			
+			String jsonObjStr = jsonObj.toJSONString();
+			
+			System.out.println("jweObject.getParsedString() = " + jweObject.getParsedString());			
+			System.out.println("jsonObjStr = " + jsonObjStr);
+			
+			//	String jweObjectStr = jweObject.serialize();
+
+			PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(password, 16, 8192);
+			encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+			
+			jweObject.encrypt(encrypter);
+			
+			jweObject = JWEObject.parse(jweObject.serialize());
+
+			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(password);
+			decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+			jweObject.decrypt(decrypter);    	
+	    	
+		} catch (JOSEException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();			
+		} catch (ParseException e) {
+            System.out.println(e.getMessage());			
+		}
+    	
+        final String jwt = encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW();
+        System.out.println("Gluu encrypted (PBES2_HS256_PLUS_A128KW): " + jwt);
+        
+        assertTrue(testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(jwt));
+    }
+    
+    /*
+    else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||        		
+    		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||        		
+    		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW       
+*/
+
+/*    
+	@Test
+	public void encryptWithGluu_PBES2_HS256_PLUS_A128KW_decryptByAll() {
+	    final String jwt = encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW();
+	    System.out.println("Gluu encrypted (PBES2_HS256_PLUS_A128KW): " + jwt);
+	    
+	    assertTrue(testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(jwt));
+	}
+*/
+
+/*    
+@Test
+public void encryptWithGluu_A256KW_decryptByAll() {
+    final String jwt = encryptWithGluuJweEncrypter_A256KW();
+    System.out.println("Gluu encrypted (A256KW): " + jwt);
+    
+    assertTrue(testDecryptWithGluuDecrypter_A256KW(jwt));
+}
+*/        
+
+/*
+A128GCMKW("A128GCMKW"),	
+A192GCMKW("A192GCMKW"),	
+A256GCMKW("A256GCMKW"),	     
+*/
+    
+    
+    
+//    PBES2-HS256+A128KW    
+//    PBES2_HS256_PLUS_A128KW
     
     @Test
     public void testNimbusJoseJwt_first() {
@@ -642,7 +744,7 @@ public class CrossEncryptionTest {
     public boolean testDecryptWithGluuDecrypter_A192GCMKW(String jwe) {
     	
         try {
-            JWK jwk = JWK.parse(aes128JwkJson);
+            JWK jwk = JWK.parse(aes192JwkJson);
             OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;            
 
             JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
@@ -664,7 +766,7 @@ public class CrossEncryptionTest {
     public boolean testDecryptWithGluuDecrypter_A256GCMKW(String jwe) {
     	
         try {
-            JWK jwk = JWK.parse(aes128JwkJson);
+            JWK jwk = JWK.parse(aes256JwkJson);
             OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;            
 
             JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
@@ -687,7 +789,9 @@ public class CrossEncryptionTest {
     	
         try {
             JWK jwk = JWK.parse(aes128JwkJson);
-            OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;            
+            OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;  
+            
+			byte [] aes128KWKeyArray = aes128KWKey.toByteArray();            
 
             JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
 
@@ -700,6 +804,28 @@ public class CrossEncryptionTest {
             }
         } catch (Exception e) {
             System.out.println("Gluu decrypt A256GCMKW failed: " + e.getMessage());
+            e.printStackTrace();
+        }
+    	return false;
+    }
+    
+    public boolean testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(String jwe) {
+    	
+        try {
+            JWK jwk = JWK.parse(pbes2_hs256_a128kwJwkJson);
+            OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;            
+
+            JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+            decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
+            decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+            final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+            System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW succeed: " + decryptedPayload);
+            if (isJsonEqual(decryptedPayload, PAYLOAD)) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW failed: " + e.getMessage());
             e.printStackTrace();
         }
     	return false;
@@ -1001,6 +1127,7 @@ public class CrossEncryptionTest {
     	
     	try {
 			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes128JwkJson));
+			byte [] aes128KeyArray = aes128Key.toByteArray();				
 			
             BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
             KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.A128GCMKW;
@@ -1032,7 +1159,8 @@ public class CrossEncryptionTest {
     private String encryptWithGluuJweEncrypter_A192GCMKW() {
     	
     	try {
-			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes128JwkJson));
+			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes192JwkJson));
+			byte [] aes128KeyArray = aes128Key.toByteArray();				
 			
             BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
             KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.A192GCMKW;
@@ -1064,7 +1192,8 @@ public class CrossEncryptionTest {
     private String encryptWithGluuJweEncrypter_A256GCMKW() {
     	
     	try {
-			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes128JwkJson));
+			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes256JwkJson));
+			byte [] aes128KeyArray = aes128Key.toByteArray();			
 			
             BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
             KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.A256GCMKW;
@@ -1124,6 +1253,49 @@ public class CrossEncryptionTest {
             return null;
         }
     }
+    
+    private String encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW() {
+    	
+    	try {
+			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson));
+			byte [] aes128KeyArray = aes128Key.toByteArray();
+
+			OctetSequenceKey aes128Key_1 =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson_1));
+			byte [] aes128KeyArray_1 = aes128Key_1.toByteArray();
+			
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW;
+            
+            Jwe jwe = new Jwe();
+            jwe.getHeader().setType(JwtType.JWT);
+            jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+            jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+            jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+            jwe.getClaims().setSubjectIdentifier("testing");
+            jwe.getHeader().setKeyId("1");
+			
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, aes128Key.toByteArray());
+            jwe = encrypter.encrypt(jwe);
+            
+            System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+            System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+            System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+            System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+            System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+            return jwe.toString();            
+			
+		}  catch (Exception e) {
+            System.out.println("Error encryption with GluuJweEncrypter_A256GCMKW_A256CBC_PLUS_HS512: " + e.getMessage());
+            return null;
+        }
+    }
+    
+/*    
+    final String jwt = encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW();
+    System.out.println("Gluu encrypted (PBES2_HS256_PLUS_A128KW): " + jwt);
+    
+    assertTrue(testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(jwt));
+*/
     
     @Test
     public void nestedJWT() throws Exception {

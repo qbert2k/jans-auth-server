@@ -9,12 +9,14 @@ package io.jans.as.model.jwe;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JWEDecrypter;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.crypto.PasswordBasedDecrypter;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.SignedJWT;
@@ -91,8 +93,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW ||
-            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW
-            		) {
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW) {
                 encriptionKey = privateKey;
             }
             else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW ||
@@ -100,7 +101,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW ||        		
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW ||        		
-            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW            		
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW
             		) {
                 if (sharedSymmetricKey == null) {
                     throw new InvalidJweException("The shared symmetric key is null");
@@ -111,14 +112,17 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                 switch(keyEncryptionAlgorithm) {
                 case A128KW:
                 case A128GCMKW:
+                case PBES2_HS256_PLUS_A128KW:
                 	keyLength = 16;
                 	break;
                 case A192KW:
                 case A192GCMKW:
+                case PBES2_HS384_PLUS_A192KW:                	
                 	keyLength = 24;            	
                 	break;
                 case A256KW:
                 case A256GCMKW:
+                case PBES2_HS384_PLUS_A256KW:                	
                 	keyLength = 32;            	
                 	break;
                 default:
@@ -131,26 +135,56 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
                 }
                 encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, keyLength, "AES");
-            } else {
+            }
+            else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||            		
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
+            	encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "PBES2-HS256+A128KW"); 
+            }
+            else {
                 throw new InvalidJweException("The key encryption algorithm is not supported");
             }
  
-            JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
-            decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
-            encryptedJwt.decrypt(decrypter);
+            if(keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||            		
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
+            	
+            	JWEObject jweObject = JWEObject.parse(encryptedJwe);
 
-            final SignedJWT signedJWT = encryptedJwt.getPayload().toSignedJWT();
-            if (signedJWT != null) {
-                final Jwt jwt = Jwt.parse(signedJWT.serialize());
-                jwe.setSignedJWTPayload(jwt);
-                jwe.setClaims(jwt != null ? jwt.getClaims() : null);
-            } else {
-                final String base64encodedPayload = encryptedJwt.getPayload().toString();
-                jwe.setClaims(new JwtClaims(base64encodedPayload));
+    			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(sharedSymmetricKey);
+    			decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+    			jweObject.decrypt(decrypter);
+    			
+                final SignedJWT signedJWT = jweObject.getPayload().toSignedJWT();
+                if (signedJWT != null) {
+                    final Jwt jwt = Jwt.parse(signedJWT.serialize());
+                    jwe.setSignedJWTPayload(jwt);
+                    jwe.setClaims(jwt != null ? jwt.getClaims() : null);
+                } else {
+                    final String base64encodedPayload = jweObject.getPayload().toString();
+                    jwe.setClaims(new JwtClaims(base64encodedPayload));
+                }
+
+                return jwe;
             }
+            else {
+                JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
+                decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
+                encryptedJwt.decrypt(decrypter);
 
-            return jwe;
-        } catch (Exception e) {
+                final SignedJWT signedJWT = encryptedJwt.getPayload().toSignedJWT();
+                if (signedJWT != null) {
+                    final Jwt jwt = Jwt.parse(signedJWT.serialize());
+                    jwe.setSignedJWTPayload(jwt);
+                    jwe.setClaims(jwt != null ? jwt.getClaims() : null);
+                } else {
+                    final String base64encodedPayload = encryptedJwt.getPayload().toString();
+                    jwe.setClaims(new JwtClaims(base64encodedPayload));
+                }
+
+                return jwe;
+            }
+       } catch (Exception e) {
             throw new InvalidJweException(e);
         }
     }

@@ -21,6 +21,7 @@ import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.ECDHEncrypter;
+import com.nimbusds.jose.crypto.PasswordBasedEncrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -40,10 +41,9 @@ import io.jans.as.model.util.Base64Util;
  */
 public class JweEncrypterImpl extends AbstractJweEncrypter {
 
-    private PublicKey publicKey;
     private byte[] sharedSymmetricKey;
+    private PublicKey publicKey;
     private ECKey ecKey;
-    
 
     public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, byte[] sharedSymmetricKey) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
@@ -80,7 +80,8 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW ||
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW ||        		
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW ||        		
-        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW        		
+        		) {
             if (sharedSymmetricKey == null) {
                 throw new InvalidJweException("The shared symmetric key is null");
             }
@@ -90,14 +91,17 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
             switch(keyEncryptionAlgorithm) {
             case A128KW:
             case A128GCMKW:
+            case PBES2_HS256_PLUS_A128KW:
             	keyLength = 16;
             	break;
             case A192KW:
             case A192GCMKW:
+            case PBES2_HS384_PLUS_A192KW:            	
             	keyLength = 24;            	
             	break;
             case A256KW:
             case A256GCMKW:
+            case PBES2_HS384_PLUS_A256KW:            	
             	keyLength = 32;            	
             	break;
             default:
@@ -110,7 +114,14 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
             }
             return new AESEncrypter(sharedSymmetricKey);
-        } else {
+        } 
+        else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||        		
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||        		
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW        		
+        		) {
+        	return new PasswordBasedEncrypter(String.valueOf(sharedSymmetricKey), 16, 8192);
+        }
+        else {
             throw new InvalidJweException("The key encryption algorithm is not supported");
         }
     }
