@@ -359,6 +359,10 @@ public class CrossEncryptionTest {
 			
 			jweObject.encrypt(encrypter);
 			
+			jsonObjStr = jweObject.serialize();			
+			
+			System.out.println("jsonObjStr = " + jsonObjStr);			
+			
 			jweObject = JWEObject.parse(jweObject.serialize());
 
 			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(password);
@@ -1257,7 +1261,7 @@ A256GCMKW("A256GCMKW"),
     private String encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW() {
     	
     	try {
-			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson));
+			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes128JwkJson));
 			byte [] aes128KeyArray = aes128Key.toByteArray();
 
 			OctetSequenceKey aes128Key_1 =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson_1));

@@ -117,8 +117,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         } 
         else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||        		
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||        		
-        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW        		
-        		) {
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
         	return new PasswordBasedEncrypter(String.valueOf(sharedSymmetricKey), 16, 8192);
         }
         else {
