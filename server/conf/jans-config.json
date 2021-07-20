@@ -93,7 +93,11 @@
     "userInfoEncryptionEncValuesSupported":[
         "A128CBC+HS256",
         "A256CBC+HS512",
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
         "A128GCM",
+        "A192GCM",
         "A256GCM"
     ],
     "idTokenSigningAlgValuesSupported":[
@@ -134,8 +138,12 @@
     "idTokenEncryptionEncValuesSupported":[
         "A128CBC+HS256",
         "A256CBC+HS512",
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
         "A128GCM",
-        "A256GCM"
+        "A192GCM",
+        "A256GCM"    
     ],
     "requestObjectSigningAlgValuesSupported":[
         "none",
@@ -175,8 +183,12 @@
     "requestObjectEncryptionEncValuesSupported":[
         "A128CBC+HS256",
         "A256CBC+HS512",
+        "A128CBC-HS256",
+        "A192CBC-HS384",
+        "A256CBC-HS512",
         "A128GCM",
-        "A256GCM"
+        "A192GCM",
+        "A256GCM"    
     ],
     "tokenEndpointAuthMethodsSupported":[
         "client_secret_basic",
