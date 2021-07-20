@@ -108,7 +108,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
             	break;
             case A256KW:
             case A256GCMKW:
-            case PBES2_HS384_PLUS_A256KW:            	
+            case PBES2_HS512_PLUS_A256KW:            	
             	keyLength = 32;            	
             	break;
             default:
@@ -124,7 +124,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         } 
         else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||        		
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||        		
-        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
+        		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
         	return new PasswordBasedEncrypter(sharedSymmetricPassword, 16, 8192);
         }
         else {

@@ -128,7 +128,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                 	break;
                 case A256KW:
                 case A256GCMKW:
-                case PBES2_HS384_PLUS_A256KW:                	
+                case PBES2_HS512_PLUS_A256KW:                	
                 	keyLength = 32;            	
                 	break;
                 default:
@@ -144,7 +144,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             }
             else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||            		
-            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
 //            	encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "PBES2-HS256+A128KW"); 
             }
             else {
@@ -153,7 +153,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
  
             if(keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||            		
-            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
+            		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
             	
             	JWEObject jweObject = JWEObject.parse(encryptedJwe);
 
