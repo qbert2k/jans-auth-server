@@ -36,7 +36,7 @@ public enum KeyEncryptionAlgorithm {
 	PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW"),	
 	PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW"),
 	
-	DIR("DIR");	
+	DIR("dir");	
 
     private final String name;
     private final String family;
