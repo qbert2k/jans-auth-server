@@ -42,6 +42,8 @@ import io.jans.as.model.util.Base64Util;
 public class JweEncrypterImpl extends AbstractJweEncrypter {
 
     private byte[] sharedSymmetricKey;
+    private String sharedSymmetricPassword;
+    
     private PublicKey publicKey;
     private ECKey ecKey;
 
@@ -50,6 +52,11 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         if (sharedSymmetricKey != null) {
             this.sharedSymmetricKey = sharedSymmetricKey.clone();
         }
+    }
+    
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, String sharedSymmetricPassword) {
+        super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
+        this.sharedSymmetricPassword = sharedSymmetricPassword;
     }
 
     public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, PublicKey publicKey) {
@@ -118,7 +125,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||        		
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||        		
         		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
-        	return new PasswordBasedEncrypter(String.valueOf(sharedSymmetricKey), 16, 8192);
+        	return new PasswordBasedEncrypter(sharedSymmetricPassword, 16, 8192);
         }
         else {
             throw new InvalidJweException("The key encryption algorithm is not supported");
@@ -140,6 +147,9 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
             if (jwe.getSignedJWTPayload() != null) {
                 jwe.getHeader().setContentType(JwtType.JWT);
             }
+            
+            System.out.println("jwe.getHeader().toJsonObject() = " + JWEHeader.parse(jwe.getHeader().toJsonObject().toString()));
+            
             JWEObject jweObject = new JWEObject(JWEHeader.parse(jwe.getHeader().toJsonObject().toString()), createPayload(jwe));
 
             jweObject.encrypt(encrypter);

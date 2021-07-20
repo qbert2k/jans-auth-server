@@ -105,7 +105,7 @@ public class CrossEncryptionTest {
     final String aes192JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A192KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAt\" }";    
     final String aes256JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A256KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq0\" }";    
 
-    final String pbes2_hs256_a128kwJwkJson = "{ \"kty\":\"oct\", \"alg\":\"PBES2-HS256+A128KW\", \"k\":\"++ Some Password Word +++\" }";
+    final String pbes2_hs256_a128kwJwkJson = "{ \"kty\":\"oct\", \"alg\":\"PBES2-HS256+A128KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhg\" }";
     
     final String pbes2_hs256_a128kwJwkJson_1 = "{ \"kty\":\"oct\", \"alg\":\"PBES2-HS256+A128KW\", \"p2s\":\"2WCTcJZ1Rvd_CJuJripQ1w\", \"p2c\":8192, \"enc\":\"A128CBC-HS256\",  \"cty\":\"jwk+json\", \"k\":\"++ Some Password Word +++\" }";
     
@@ -340,6 +340,10 @@ public class CrossEncryptionTest {
 		try {
 			final String password = "secret";
 			final String plaintext = "Hello world!";
+			
+			Payload payload = new Payload(plaintext);
+			
+			byte [] payloadBytes = payload.toBytes();
 
 			JWEObject jweObject = new JWEObject(new JWEHeader.Builder(JWEAlgorithm.PBES2_HS256_A128KW, EncryptionMethod.A128GCM).build(), new Payload(plaintext));
 
@@ -354,7 +358,7 @@ public class CrossEncryptionTest {
 			
 			//	String jweObjectStr = jweObject.serialize();
 
-			PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(password, 16, 8192);
+			PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(password.getBytes(), 16, 8192);
 			encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 			
 			jweObject.encrypt(encrypter);
@@ -365,9 +369,11 @@ public class CrossEncryptionTest {
 			
 			jweObject = JWEObject.parse(jweObject.serialize());
 
-			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(password);
+			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(password.getBytes());
 			decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 			jweObject.decrypt(decrypter);    	
+			
+			jweObject = jweObject;
 	    	
 		} catch (JOSEException e) {
             System.out.println(e.getMessage());
@@ -819,7 +825,7 @@ A256GCMKW("A256GCMKW"),
             JWK jwk = JWK.parse(pbes2_hs256_a128kwJwkJson);
             OctetSequenceKey aes128KWKey = (OctetSequenceKey)jwk;            
 
-            JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+            JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
 
             decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
             decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1261,7 +1267,7 @@ A256GCMKW("A256GCMKW"),
     private String encryptWithGluuJweEncrypter_PBES2_HS256_PLUS_A128KW() {
     	
     	try {
-			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(aes128JwkJson));
+			OctetSequenceKey aes128Key =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson));
 			byte [] aes128KeyArray = aes128Key.toByteArray();
 
 			OctetSequenceKey aes128Key_1 =  (OctetSequenceKey) (JWK.parse(pbes2_hs256_a128kwJwkJson_1));
@@ -1278,7 +1284,7 @@ A256GCMKW("A256GCMKW"),
             jwe.getClaims().setSubjectIdentifier("testing");
             jwe.getHeader().setKeyId("1");
 			
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, aes128Key.toByteArray());
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, "password");
             jwe = encrypter.encrypt(jwe);
             
             System.out.println("EncodedHeader: " + jwe.getEncodedHeader());

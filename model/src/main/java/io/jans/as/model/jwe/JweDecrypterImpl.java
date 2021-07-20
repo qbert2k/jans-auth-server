@@ -40,14 +40,20 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
 
     private static final DefaultJWEDecrypterFactory DECRYPTER_FACTORY = new DefaultJWEDecrypterFactory();
 
+    private byte[] sharedSymmetricKey;
+    private String sharedSymmetricPassword;
+    
     private PrivateKey privateKey;
     private RSAPrivateKey rsaPrivateKey;
-    private byte[] sharedSymmetricKey;
 
     public JweDecrypterImpl(byte[] sharedSymmetricKey) {
         if (sharedSymmetricKey != null) {
             this.sharedSymmetricKey = sharedSymmetricKey.clone();
         }
+    }
+    
+    public JweDecrypterImpl( String sharedSymmetricPassword) {
+    	this.sharedSymmetricPassword = sharedSymmetricPassword;
     }
 
     public JweDecrypterImpl(RSAPrivateKey rsaPrivateKey) {
@@ -139,7 +145,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW ||
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW ||            		
             		keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A256KW) {
-            	encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "PBES2-HS256+A128KW"); 
+//            	encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "PBES2-HS256+A128KW"); 
             }
             else {
                 throw new InvalidJweException("The key encryption algorithm is not supported");
@@ -151,7 +157,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             	
             	JWEObject jweObject = JWEObject.parse(encryptedJwe);
 
-    			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(sharedSymmetricKey);
+    			PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(sharedSymmetricPassword);
     			decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
     			jweObject.decrypt(decrypter);
     			
@@ -186,6 +192,6 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             }
        } catch (Exception e) {
             throw new InvalidJweException(e);
-        }
+       }
     }
 }
