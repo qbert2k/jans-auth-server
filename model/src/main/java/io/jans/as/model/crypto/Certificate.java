@@ -12,6 +12,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONArray;
@@ -77,6 +78,20 @@ public class Certificate {
 
         return ecdsaPublicKey;
     }
+    
+    public BCEdDSAPublicKey getEddsaPublicKey() {
+    	BCEdDSAPublicKey eddsaPublicKey = null;
+
+        if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
+        	BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) x509Certificate.getPublicKey();
+            byte[] encoding = publicKey.getEncoded();
+            publicKey.getPointEncoding();
+
+//        	eddsaPublicKey = new BCEdDSAPublicKey(signatureAlgorithm, encoding);
+        }
+
+        return eddsaPublicKey;
+    }    
 
     public JSONArray toJSONArray() throws JSONException {
         String cert = toString();

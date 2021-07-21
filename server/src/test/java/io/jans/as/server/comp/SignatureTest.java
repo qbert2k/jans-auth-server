@@ -9,12 +9,20 @@ package io.jans.as.server.comp;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.Signature;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECParameterSpec;
@@ -42,6 +50,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jws.ECDSASigner;
 import io.jans.as.model.jws.RSASigner;
 //import io.jans.as.server.BaseTest;
+import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
@@ -238,7 +247,7 @@ public class SignatureTest {
 		showTitle("TEST: generateED25519Keys");
 		
 //      ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
-//		ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("" SignatureAlgorithm. signatureAlgorithm.getCurve().getAlias());        
+//		ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("" SignatureAlgorithm. signatureAlgorithm.getCurve().getAlias());
 
 		KeyPairGenerator keyGen_1 = KeyPairGenerator.getInstance("EDDSA", "BC");
 		KeyPairGenerator keyGen_2 = KeyPairGenerator.getInstance("Ed25519", "BC");
@@ -269,9 +278,77 @@ public class SignatureTest {
 //		keyGen_4 = keyGen_4;
 		
 		{
+			String signingInput = "Hello World!";
+			
+		    KeyPair keyPair;
+		    
+	        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", "BC");
+	        
+	        keyGen.initialize(new EdDSAParameterSpec("Ed25519"), new SecureRandom());
+
+	        keyPair = keyGen.generateKeyPair();
+	        
+	        BCEdDSAPrivateKey privateKeySpec = (BCEdDSAPrivateKey) keyPair.getPrivate();
+	        BCEdDSAPublicKey publicKeySpec = (BCEdDSAPublicKey) keyPair.getPublic();
+	        
+	        byte [] privateKeySpecData = privateKeySpec.getEncoded();
+	        byte [] publicKeySpecData = publicKeySpec.getEncoded();
+	        
+	        Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(publicKeySpecData, 0);
+	        
+	        BCEdDSAPublicKey publicKeySpec_1 = new BCEdDSAPublicKey(params);	        
+	        
+/*	        
+	        org.bouncycastle.crypto.params.Ed25519PublicKeyParameters params; 
+	        
+	        public Ed25519PublicKeyParameters(byte[] buf)
+*/	        
+	        
+//	        byte [] publicKeySpecData = publicKeySpec.getPointEncoding();	        
+	        
+//	        org.bouncycastle.jcajce.provider.asymmetric.edec
+//	        org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+//	        org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+	        
+//	        keyPair  = keyPair;
+	        
+            Signature signer = Signature.getInstance("Ed25519", "BC");
+            signer.initSign(privateKeySpec);
+            signer.update(signingInput.getBytes());
+            
+            byte [] signature = signer.sign();
+            Base64URL signatureBase64 = Base64URL.encode(signature);
+
+            Signature virify = Signature.getInstance("Ed25519", "BC");
+            virify.initVerify(publicKeySpec);
+            
+            virify.update(signingInput.getBytes());
+            
+            assertTrue(virify.verify(signatureBase64.decode()));            
+		}
+		
+		{
 			
 		}
 		
+		{
+			String signingInput = "Hello World!";
+			
+			Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
+			
+			OctetKeyPair k = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(tk.getPublicKey())).
+					d(Base64URL.encode(tk.getPrivateKey())).
+					build();
+			Ed25519Signer signer = new Ed25519Signer(k);
+			Ed25519Verifier verifier = new Ed25519Verifier(k.toPublicJWK());
+				
+			JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.EdDSA).build();				
+			
+			Base64URL s = signer.sign(h, signingInput.getBytes());
+			assertTrue(verifier.verify(h, signingInput.getBytes(), s));
+		}
+	
+/*		
 		final int keyCount = 4;
 		final int messageCount = 4; // must be <= 256
 
@@ -332,7 +409,8 @@ public class SignatureTest {
 						);
 				}
 			}
-		}		
+		}
+*/		
 		
 //		keyGen.initialize(ecSpec, new SecureRandom());
 //	    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),

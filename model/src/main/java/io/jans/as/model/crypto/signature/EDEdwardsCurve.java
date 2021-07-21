@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum EDEdwardsCurve {
 
-    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),
-    ED_448("Ed448", "Ed448", "1.3.132.0.10");
+    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7");
+//    ED_448("Ed448", "Ed448", "1.3.132.0.10");
 	
 /*	
     ES256K			- "P-256K", "secp256k1", "1.3.132.0.10"
