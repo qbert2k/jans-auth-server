@@ -14,6 +14,9 @@ import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +29,7 @@ import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECParameterSpec;
+//import org.bouncycastle.jcajce.spec.RawEncodedKeySpec;
 import org.testng.annotations.Test;
 
 import com.google.crypto.tink.subtle.Ed25519Sign;
@@ -241,6 +245,17 @@ public class SignatureTest {
 		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 	}
 	
+/*	
+	private static EdECPoint byteArrayToEdPoint(byte[] arr)
+	{
+	    byte msb = arr[arr.length - 1];
+	    boolean xOdd = (msb & 0x80) != 0;
+	    arr[arr.length - 1] &= (byte) 0x7F;
+	    reverse(arr);
+	    BigInteger y = new BigInteger(1, arr);
+	    return new EdECPoint(xOdd, y);
+	}	
+*/	
 
 	@Test
 	public void generateED25519Keys() throws Exception {
@@ -288,15 +303,44 @@ public class SignatureTest {
 
 	        keyPair = keyGen.generateKeyPair();
 	        
-	        BCEdDSAPrivateKey privateKeySpec = (BCEdDSAPrivateKey) keyPair.getPrivate();
-	        BCEdDSAPublicKey publicKeySpec = (BCEdDSAPublicKey) keyPair.getPublic();
+	        BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyPair.getPrivate();
+	        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
 	        
-	        byte [] privateKeySpecData = privateKeySpec.getEncoded();
-	        byte [] publicKeySpecData = publicKeySpec.getEncoded();
+	        byte [] privateKeyData = privateKey.getEncoded();
+	        byte [] publicKeyData = publicKey.getEncoded();
 	        
-	        Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(publicKeySpecData, 0);
+	        Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(publicKeyData, 0);
 	        
-	        BCEdDSAPublicKey publicKeySpec_1 = new BCEdDSAPublicKey(params);	        
+//	        EdECPoint 
+	        
+	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance("Ed25519");
+//	        org.bouncycastle.jcajce.spec.RawEncodedKeySpec pkcs8EncodedKeySpec = new org.bouncycastle.jcajce.spec.RawEncodedKeySpec(publicKeySpecData);
+	        
+	        PKCS8EncodedKeySpec pkcs8EncodedKeySpec_private = new PKCS8EncodedKeySpec(privateKeyData);
+	        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyData);	        
+	        
+//	        EdECPublicKeySpec
+	        
+	        BCEdDSAPrivateKey privateKey_private = (BCEdDSAPrivateKey)keyFactory.generatePrivate(pkcs8EncodedKeySpec_private);
+	        BCEdDSAPublicKey publicKey_1 = (BCEdDSAPublicKey)keyFactory.generatePublic(publicKeySpec);	        
+	        
+	        //BCEdDSAPublicKey publicKeySpec_1 = (BCEdDSAPublicKey)keyFactory.generatePublic(pkcs8EncodedKeySpec);
+	        
+	        //BCEdDSAPublicKey publicKeySpec_1 = (BCEdDSAPublicKey)keyFactory.generatePublic(pkcs8EncodedKeySpec);
+
+	        byte [] privateKeyData_private = privateKey_private.getEncoded();
+	        byte [] publicKeyData_1 = publicKey_1.getEncoded();	        
+	        
+            assertTrue(Arrays.compare(privateKeyData, privateKeyData_private) == 0);	        
+            assertTrue(Arrays.compare(publicKeyData, publicKeyData_1) == 0);            
+	        
+/*	        
+	        byte [] publicKeySpecData_1 = publicKeySpec_1.getEncoded();
+	        
+            assertTrue(Arrays.compare(publicKeySpecData, publicKeySpecData_1) == 0);	        
+*/	        
+	        
+//	        BCEdDSAPublicKey publicKeySpec_1 = new BCEdDSAPublicKey(params);	        
 	        
 /*	        
 	        org.bouncycastle.crypto.params.Ed25519PublicKeyParameters params; 
@@ -313,14 +357,14 @@ public class SignatureTest {
 //	        keyPair  = keyPair;
 	        
             Signature signer = Signature.getInstance("Ed25519", "BC");
-            signer.initSign(privateKeySpec);
+            signer.initSign(privateKey);
             signer.update(signingInput.getBytes());
             
             byte [] signature = signer.sign();
             Base64URL signatureBase64 = Base64URL.encode(signature);
 
             Signature virify = Signature.getInstance("Ed25519", "BC");
-            virify.initVerify(publicKeySpec);
+            virify.initVerify(publicKey);
             
             virify.update(signingInput.getBytes());
             
