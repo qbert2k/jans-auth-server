@@ -7,11 +7,27 @@
 package io.jans.as.server.comp;
 
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.Security;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.testng.annotations.Test;
+
+import com.google.crypto.tink.subtle.Ed25519Sign;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.Ed25519Signer;
+import com.nimbusds.jose.crypto.Ed25519Verifier;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.OctetKeyPair;
+import com.nimbusds.jose.util.Base64URL;
 
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.Key;
@@ -215,4 +231,161 @@ public class SignatureTest {
 		ECDSASigner ecdsaSigner3 = new ECDSASigner(SignatureAlgorithm.ES512, certificate);
 		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 	}
+	
+
+	@Test
+	public void generateED25519Keys() throws Exception {
+		showTitle("TEST: generateED25519Keys");
+		
+//      ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
+//		ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("" SignatureAlgorithm. signatureAlgorithm.getCurve().getAlias());        
+
+		KeyPairGenerator keyGen_1 = KeyPairGenerator.getInstance("EDDSA", "BC");
+		KeyPairGenerator keyGen_2 = KeyPairGenerator.getInstance("Ed25519", "BC");
+		KeyPairGenerator keyGen_3 = KeyPairGenerator.getInstance("Ed448", "BC");		
+		KeyPairGenerator keyGen_4 = KeyPairGenerator.getInstance("ECDSA", "BC");
+
+/*		
+		Ed25519Sign.KeyPair kp = Ed25519Sign.KeyPair.newKeyPair();
+		
+		Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
+		OctetKeyPair k1 = new OctetKeyPair.Builder(Curve.X25519, Base64URL.encode(tk.getPublicKey())).
+			d(Base64URL.encode(tk.getPrivateKey())).
+			build();
+		OctetKeyPair k2 = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(tk.getPublicKey())).
+			d(Base64URL.encode(tk.getPrivateKey())).
+			build();		
+		
+		OctetKeyPair keyPair = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(kp.getPublicKey())).
+				d(Base64URL.encode(kp.getPrivateKey())).
+				build(); 
+*/
+/*
+		return new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(kp.getPublicKey())).
+			d(Base64URL.encode(kp.getPrivateKey())).
+			build();
+*/
+		
+//		keyGen_4 = keyGen_4;
+		
+		{
+			
+		}
+		
+		final int keyCount = 4;
+		final int messageCount = 4; // must be <= 256
+
+		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.EdDSA).
+			build();
+		byte[] m = new byte[] {
+			 1,  2,  3,  4,  5,  6,  7,  8,
+			 9, 10, 11, 12, 13, 14, 15, 16,
+			17, 18, 19, 20, 21, 22, 23, 24,
+			25, 26, 27, 28, 29, 30, 31, 32,
+			33, 34, 35, 36, 37, 38, 39, 40,
+			41, 42, 43, 44, 45, 46, 47, 48,
+			49, 50, 51, 52, 53, 54, 55, 56,
+			57, 58, 59, 60, 61, 62, 63, 64,
+			65, 66, 67, 68, 69, 70, 71, 72,
+		};
+
+		Set<Base64URL> sigSet = new HashSet<Base64URL>();
+
+		for (int i=0; i<keyCount; i++) {
+
+			Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
+			OctetKeyPair k = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(tk.getPublicKey())).
+				d(Base64URL.encode(tk.getPrivateKey())).
+				build();
+			Ed25519Signer signer = new Ed25519Signer(k);
+			Ed25519Verifier verifier = new Ed25519Verifier(k.toPublicJWK());
+
+			for (int i2=0; i2<messageCount; i2++) {
+
+				// Make message unique
+				m[5] = (byte) i2;
+
+				// Sign message then verify signature
+				Base64URL s = signer.sign(h, m);
+				assertTrue(verifier.verify(h, m, s));
+
+				// Signature should not be same as any previous
+				// If this fails, indicates a problem with key gen or signing
+				
+				assertFalse(sigSet.contains(s), "Same signature generated twice!");				
+				sigSet.add(s);
+
+				byte[] sigBytes = s.decode();
+//				assertEquals(sigBytes.length, 64);
+
+				// Try flipping each bit in the sig, should cause verification to fail
+				for (int sigBitIdx=0; sigBitIdx<64*8; sigBitIdx++) {
+
+					byte mask = (byte) (1 << (sigBitIdx % 8));
+					byte[] sigBytesModified = new byte[64];
+					System.arraycopy(sigBytes, 0, sigBytesModified, 0, 64);
+					sigBytesModified[sigBitIdx/8] ^= mask;
+					
+					assertFalse(
+							verifier.verify(h, m, Base64URL.encode(sigBytesModified)),							
+							"bit flip in signature should have caused verify fail"
+						);
+				}
+			}
+		}		
+		
+//		keyGen.initialize(ecSpec, new SecureRandom());
+//	    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),
+//	    ED_448("Ed448", "Ed448", "1.3.132.0.10");		
+		
+/*		
+		KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(SignatureAlgorithm.ES512,
+				"CN=Test CA Certificate");
+		ECDSAPrivateKey privateKey = keyFactory.getPrivateKey();
+		ECDSAPublicKey publicKey = keyFactory.getPublicKey();
+		Certificate certificate = keyFactory.getCertificate();
+
+		System.out.println("PRIVATE KEY");
+		System.out.println(privateKey);
+		System.out.println("PUBLIC KEY");
+		System.out.println(publicKey);
+		System.out.println("CERTIFICATE");
+		System.out.println(certificate);
+
+		String signingInput = "Hello World!";
+		ECDSASigner ecdsaSigner1 = new ECDSASigner(SignatureAlgorithm.ES512, privateKey);
+		String signature = ecdsaSigner1.generateSignature(signingInput);
+		ECDSASigner ecdsaSigner2 = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		ECDSASigner ecdsaSigner3 = new ECDSASigner(SignatureAlgorithm.ES512, certificate);
+		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
+*/		
+	}
+	
+	@Test
+	public void generateED448Keys() throws Exception {
+		showTitle("TEST: generateED448Keys");
+
+		KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(SignatureAlgorithm.ES512,
+				"CN=Test CA Certificate");
+		ECDSAPrivateKey privateKey = keyFactory.getPrivateKey();
+		ECDSAPublicKey publicKey = keyFactory.getPublicKey();
+		Certificate certificate = keyFactory.getCertificate();
+
+		System.out.println("PRIVATE KEY");
+		System.out.println(privateKey);
+		System.out.println("PUBLIC KEY");
+		System.out.println(publicKey);
+		System.out.println("CERTIFICATE");
+		System.out.println(certificate);
+
+		String signingInput = "Hello World!";
+		ECDSASigner ecdsaSigner1 = new ECDSASigner(SignatureAlgorithm.ES512, privateKey);
+		String signature = ecdsaSigner1.generateSignature(signingInput);
+		ECDSASigner ecdsaSigner2 = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		ECDSASigner ecdsaSigner3 = new ECDSASigner(SignatureAlgorithm.ES512, certificate);
+		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
+	}
+ 	
 }
