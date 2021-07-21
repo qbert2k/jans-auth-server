@@ -30,12 +30,12 @@ public enum SignatureAlgorithm {
     RS384("RS384", AlgorithmFamily.RSA, "SHA384WITHRSA", JWSAlgorithm.RS384),
     RS512("RS512", AlgorithmFamily.RSA, "SHA512WITHRSA", JWSAlgorithm.RS512),
     ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", ECEllipticCurve.P_256, JWSAlgorithm.ES256),
+    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", ECEllipticCurve.P_256K, JWSAlgorithm.ES256K),    
     ES384("ES384", AlgorithmFamily.EC, "SHA384WITHECDSA", ECEllipticCurve.P_384, JWSAlgorithm.ES384),
     ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", ECEllipticCurve.P_521, JWSAlgorithm.ES512),
     PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1", JWSAlgorithm.PS256),
     PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1", JWSAlgorithm.PS384),
-    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512),
-    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", ECEllipticCurve.P_256K, JWSAlgorithm.ES256K);
+    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512);
 
     private final String name;
     private final AlgorithmFamily family;

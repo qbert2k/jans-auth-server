@@ -1,30 +1,44 @@
-/*
- * Janssen Project software is available under the Apache License (2004). See http://www.apache.org/licenses/ for full text.
- *
- * Copyright (c) 2020, Janssen Project
+/**
+ * 
  */
-
 package io.jans.as.model.crypto.signature;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * @author Javier Rojas Blum
- * @version June 15, 2016
+ * @author SMan
+ *
  */
-public enum ECEllipticCurve {
+public enum EDEdwardsCurve {
 
-    P_256("P-256", "secp256r1", "1.2.840.10045.3.1.7"),
-    P_256K("P-256K", "secp256k1", "1.3.132.0.10"),
-    P_384("P-384", "secp384r1", "1.3.132.0.34"),
-    P_521("P-521", "secp521r1", "1.3.132.0.35");
+    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),
+    ED_448("Ed448", "Ed448", "1.3.132.0.10");
+	
+/*	
+    ES256K			- "P-256K", "secp256k1", "1.3.132.0.10"
+    EdDSA
+    
+	Ed25519
+	Ed448    
+    
+	"crv"             EdDSA Variant
+	Ed25519           Ed25519			1.3.6.1.4.1.11591.15.1
+	Ed448             Ed448			1.3.101.113
+
+	Ed25519 signature algorithm key pairs.
+	public static final Curve Ed25519 = new Curve("Ed25519", "Ed25519", null);
+	
+	Ed448 signature algorithm key pairs.
+	public static final Curve Ed448 = new Curve("Ed448", "Ed448", null);
+	
+*/		
 
     private final String name;
     private final String alias;
     private final String oid;
 
-    private ECEllipticCurve(String name, String alias, String oid) {
+    private EDEdwardsCurve(String name, String alias, String oid) {
         this.name = name;
         this.alias = alias;
         this.oid = oid;
@@ -49,9 +63,9 @@ public enum ECEllipticCurve {
      * @return The corresponding curve if found, otherwise <code>null</code>.
      */
     @JsonCreator
-    public static ECEllipticCurve fromString(String param) {
+    public static EDEdwardsCurve fromString(String param) {
         if (param != null) {
-            for (ECEllipticCurve ec : ECEllipticCurve.values()) {
+            for (EDEdwardsCurve ec : EDEdwardsCurve.values()) {
                 if (param.equals(ec.name) || param.equalsIgnoreCase(ec.name())) {
                     return ec;
                 }
@@ -69,5 +83,6 @@ public enum ECEllipticCurve {
     @JsonValue
     public String toString() {
         return name;
-    }
+    }	
+
 }
