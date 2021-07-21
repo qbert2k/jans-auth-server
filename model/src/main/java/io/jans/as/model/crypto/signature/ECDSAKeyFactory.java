@@ -59,8 +59,11 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
         }
 
         this.signatureAlgorithm = signatureAlgorithm;
+        
+        String curveName = signatureAlgorithm.getCurve().getName();
 
-        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
+//        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
+        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());        
 
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
         keyGen.initialize(ecSpec, new SecureRandom());

@@ -68,9 +68,9 @@ public class ECDSASigner extends AbstractJwsSigner {
         if (signingInput == null) {
             throw new SignatureException("The signing input is null");
         }
-
         try {
-            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
+            // ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
+        	ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getAlias());
             ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(ecdsaPrivateKey.getD(), ecSpec);
 
             KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
@@ -113,13 +113,17 @@ public class ECDSASigner extends AbstractJwsSigner {
         if (signingInput == null) {
             throw new SignatureException("The signing input is null");
         }
-
+/*        
         String algorithm;
         String curve;
         switch (getSignatureAlgorithm()) {
             case ES256:
                 algorithm = "SHA256WITHECDSA";
                 curve = "P-256";
+                break;
+            case ES256K:
+                algorithm = "SHA256WITHECDSA";
+                curve = "secp256k1";
                 break;
             case ES384:
                 algorithm = "SHA384WITHECDSA";
@@ -132,7 +136,8 @@ public class ECDSASigner extends AbstractJwsSigner {
             default:
                 throw new SignatureException("Unsupported signature algorithm");
         }
-
+*/
+        SignatureAlgorithm signatureAlgorithm = getSignatureAlgorithm();
         try {
             byte[] sigBytes = Base64Util.base64urldecode(signature);
             if (AlgorithmFamily.EC.equals(getSignatureAlgorithm().getFamily())) {
@@ -140,7 +145,7 @@ public class ECDSASigner extends AbstractJwsSigner {
             }
             byte[] sigInBytes = signingInput.getBytes(Util.UTF8_STRING_ENCODING);
 
-            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(curve);
+            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
             ECPoint pointQ = ecSpec.getCurve().createPoint(ecdsaPublicKey.getX(), ecdsaPublicKey.getY());
 
             ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(pointQ, ecSpec);
@@ -148,7 +153,7 @@ public class ECDSASigner extends AbstractJwsSigner {
             KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-            Signature sig = Signature.getInstance(algorithm, "BC");
+            Signature sig = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
             sig.initVerify(publicKey);
             sig.update(sigInBytes);
             return sig.verify(sigBytes);

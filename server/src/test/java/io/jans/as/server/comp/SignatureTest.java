@@ -8,6 +8,9 @@ package io.jans.as.server.comp;
 
 import static org.testng.Assert.assertTrue;
 
+import java.security.Security;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.Test;
 
 import io.jans.as.model.crypto.Certificate;
@@ -22,12 +25,26 @@ import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jws.ECDSASigner;
 import io.jans.as.model.jws.RSASigner;
-import io.jans.as.server.BaseTest;
+//import io.jans.as.server.BaseTest;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
  */
-public class SignatureTest extends BaseTest {
+//public class SignatureTest extends BaseTest {
+
+public class SignatureTest {
+	
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+	public static void showTitle(String title) {
+		title = "TEST: " + title;
+	
+		System.out.println("#######################################################");
+		System.out.println(title);
+		System.out.println("#######################################################");
+	}
 
 	@Test
 	public void generateRS256Keys() throws Exception {
@@ -122,6 +139,30 @@ public class SignatureTest extends BaseTest {
 		ECDSASigner ecdsaSigner2 = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
 		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
 		ECDSASigner ecdsaSigner3 = new ECDSASigner(SignatureAlgorithm.ES256, certificate);
+		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
+	}
+	
+	@Test
+	public void generateES256KKeys() throws Exception {
+		showTitle("TEST: generateES256KKeys");
+
+		KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(SignatureAlgorithm.ES256K,
+				"CN=Test CA Certificate");
+
+		Key<ECDSAPrivateKey, ECDSAPublicKey> key = keyFactory.getKey();
+
+		ECDSAPrivateKey privateKey = key.getPrivateKey();
+		ECDSAPublicKey publicKey = key.getPublicKey();
+		Certificate certificate = key.getCertificate();
+
+		System.out.println(key);
+
+		String signingInput = "Hello World!";
+		ECDSASigner ecdsaSigner1 = new ECDSASigner(SignatureAlgorithm.ES256K, privateKey);
+		String signature = ecdsaSigner1.generateSignature(signingInput);
+		ECDSASigner ecdsaSigner2 = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		ECDSASigner ecdsaSigner3 = new ECDSASigner(SignatureAlgorithm.ES256K, certificate);
 		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 	}
 
