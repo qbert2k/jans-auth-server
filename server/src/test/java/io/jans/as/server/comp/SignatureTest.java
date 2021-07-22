@@ -49,6 +49,9 @@ import io.jans.as.model.crypto.KeyFactory;
 import io.jans.as.model.crypto.signature.ECDSAKeyFactory;
 import io.jans.as.model.crypto.signature.ECDSAPrivateKey;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAKeyFactory;
+import io.jans.as.model.crypto.signature.EDDSAPrivateKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAKeyFactory;
 import io.jans.as.model.crypto.signature.RSAPrivateKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
@@ -263,14 +266,28 @@ public class SignatureTest {
 	public void generateED25519Keys() throws Exception {
 		showTitle("TEST: generateED25519Keys");
 		
+		KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(SignatureAlgorithm.ED25519,
+				"CN=Test CA Certificate");
+		EDDSAPrivateKey privateKey = keyFactory.getPrivateKey();
+		EDDSAPublicKey publicKey = keyFactory.getPublicKey();
+		Certificate certificate = keyFactory.getCertificate();
+
+		System.out.println("PRIVATE KEY");
+		System.out.println(privateKey);
+		System.out.println("PUBLIC KEY");
+		System.out.println(publicKey);
+		System.out.println("CERTIFICATE");
+		System.out.println(certificate);		
+		
 //      ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
 //		ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("" SignatureAlgorithm. signatureAlgorithm.getCurve().getAlias());
 
+/*		
 		KeyPairGenerator keyGen_1 = KeyPairGenerator.getInstance("EDDSA", "BC");
 		KeyPairGenerator keyGen_2 = KeyPairGenerator.getInstance("Ed25519", "BC");
 		KeyPairGenerator keyGen_3 = KeyPairGenerator.getInstance("Ed448", "BC");		
 		KeyPairGenerator keyGen_4 = KeyPairGenerator.getInstance("ECDSA", "BC");
-
+*/
 /*		
 		Ed25519Sign.KeyPair kp = Ed25519Sign.KeyPair.newKeyPair();
 		
@@ -291,7 +308,8 @@ public class SignatureTest {
 			d(Base64URL.encode(kp.getPrivateKey())).
 			build();
 */
-		
+	
+/*		
 
 		{
 			String signingInput = "Hello World!";
@@ -335,19 +353,19 @@ public class SignatureTest {
             assertTrue(Arrays.compare(privateKeyData, privateKeyData_private) == 0);	        
             assertTrue(Arrays.compare(publicKeyData, publicKeyData_1) == 0);            
 	        
-/*	        
-	        byte [] publicKeySpecData_1 = publicKeySpec_1.getEncoded();
 	        
-            assertTrue(Arrays.compare(publicKeySpecData, publicKeySpecData_1) == 0);	        
-*/	        
+//	        byte [] publicKeySpecData_1 = publicKeySpec_1.getEncoded();
+	        
+//            assertTrue(Arrays.compare(publicKeySpecData, publicKeySpecData_1) == 0);	        
+	        
 	        
 //	        BCEdDSAPublicKey publicKeySpec_1 = new BCEdDSAPublicKey(params);	        
 	        
-/*	        
-	        org.bouncycastle.crypto.params.Ed25519PublicKeyParameters params; 
 	        
-	        public Ed25519PublicKeyParameters(byte[] buf)
-*/	        
+//	        org.bouncycastle.crypto.params.Ed25519PublicKeyParameters params; 
+	        
+//	        public Ed25519PublicKeyParameters(byte[] buf)
+	        
 	        
 //	        byte [] publicKeySpecData = publicKeySpec.getPointEncoding();	        
 	        
@@ -391,7 +409,7 @@ public class SignatureTest {
 			Base64URL s = signer.sign(h, signingInput.getBytes());
 			assertTrue(verifier.verify(h, signingInput.getBytes(), s));
 		}
-		
+*/		
 //		keyGen_4 = keyGen_4;
 		{
 /*			
