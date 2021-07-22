@@ -3,61 +3,41 @@
  */
 package io.jans.as.model.jws;
 
-//import static org.testng.Assert.assertTrue;
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 
-import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.spec.ECPrivateKeySpec;
-import org.bouncycastle.jce.spec.ECPublicKeySpec;
-import org.bouncycastle.math.ec.ECPoint;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.crypto.impl.ECDSA;
-import com.nimbusds.jose.util.Base64URL;
 
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
+import io.jans.as.model.crypto.signature.EDDSAPrivateKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
-
 
 /**
  * @author SMan
  *
  */
 public class EDDSASigner extends AbstractJwsSigner {
-	
-    private BCEdDSAPrivateKey eddsaPrivateKey;
-    private BCEdDSAPublicKey eddsaPublicKey;
+
+	private EDDSAPrivateKey eddsaPrivateKey;	
+	private EDDSAPublicKey eddsaPublicKey;
 
     /**
      * 
      * @param signatureAlgorithm
      * @param eddsaPrivateKey
      */
-    public EDDSASigner(SignatureAlgorithm signatureAlgorithm, BCEdDSAPrivateKey eddsaPrivateKey) {
+    public EDDSASigner(SignatureAlgorithm signatureAlgorithm, EDDSAPrivateKey eddsaPrivateKey) {
         super(signatureAlgorithm);
         this.eddsaPrivateKey = eddsaPrivateKey;
     }
@@ -67,7 +47,7 @@ public class EDDSASigner extends AbstractJwsSigner {
      * @param signatureAlgorithm
      * @param eddsaPublicKey
      */
-    public EDDSASigner(SignatureAlgorithm signatureAlgorithm, BCEdDSAPublicKey eddsaPublicKey) {
+    public EDDSASigner(SignatureAlgorithm signatureAlgorithm, EDDSAPublicKey eddsaPublicKey) {
         super(signatureAlgorithm);
         this.eddsaPublicKey = eddsaPublicKey;
     }
@@ -82,15 +62,104 @@ public class EDDSASigner extends AbstractJwsSigner {
         this.eddsaPublicKey = certificate.getEddsaPublicKey();
     }    
 
-    /**
-     * 
-     */
 	/**
 	 *
 	 */
 	@Override
 	public String generateSignature(String signingInput) throws SignatureException {
-		
+		SignatureAlgorithm signatureAlgorithm = getSignatureAlgorithm();		
+        if (signatureAlgorithm == null) {
+            throw new SignatureException("The signature algorithm is null");
+        }
+        if(signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
+            throw new SignatureException(String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
+        }
+        if (eddsaPrivateKey == null) {
+            throw new SignatureException("The EDDSA private key is null");
+        }
+        if (signingInput == null) {
+            throw new SignatureException("The signing input is null");
+        }
+        
+        try {
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
+//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
+			
+	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
+	        
+	        BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey)keyFactory.generatePrivate(privateKeySpec);
+//	        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey)keyFactory.generatePublic(publicKeySpec);	        
+	        
+	        Signature signer = Signature.getInstance(signatureAlgorithm.getName(), "BC");
+	        signer.initSign(privateKey);
+	        signer.update(signingInput.getBytes());
+	        
+	        byte [] signature = signer.sign();
+	        String signatureBase64 = Base64Util.base64urlencode(signature);
+
+	        return signatureBase64;  
+		} catch (NoSuchAlgorithmException e) {
+            throw new SignatureException(e);
+		} catch (NoSuchProviderException e) {
+            throw new SignatureException(e);			
+		} catch (InvalidKeySpecException e) {
+            throw new SignatureException(e);			
+		} catch (InvalidKeyException e) {
+            throw new SignatureException(e);			
+		}
+        
+/*        
+        BCEdDSAPrivateKey privateKey_private = (BCEdDSAPrivateKey)keyFactory.generatePrivate(pkcs8EncodedKeySpec_private);
+        BCEdDSAPublicKey publicKey_1 = (BCEdDSAPublicKey)keyFactory.generatePublic(publicKeySpec);	             
+        
+        
+    	private EDDSAPrivateKey eddsaPrivateKey;	
+    	private EDDSAPublicKey eddsaPublicKey;        
+        
+        
+        byte [] privateKeyData = privateKey.getEncoded();
+        byte [] publicKeyData = publicKey.getEncoded();        
+        
+        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance("Ed25519");
+//        org.bouncycastle.jcajce.spec.RawEncodedKeySpec pkcs8EncodedKeySpec = new org.bouncycastle.jcajce.spec.RawEncodedKeySpec(publicKeySpecData);
+        
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec_private = new PKCS8EncodedKeySpec(privateKeyData);
+        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyData);        
+        
+        
+        try {
+            // ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
+        	ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getAlias());
+            ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(ecdsaPrivateKey.getD(), ecSpec);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
+            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
+            Signature signer = Signature.getInstance(getSignatureAlgorithm().getAlgorithm(), "BC");
+            signer.initSign(privateKey);
+            signer.update(signingInput.getBytes(Util.UTF8_STRING_ENCODING));
+
+            byte[] signature = signer.sign();
+            if (AlgorithmFamily.EC.equals(getSignatureAlgorithm().getFamily())) {
+            	int signatureLenght = ECDSA.getSignatureByteArrayLength(JWSAlgorithm.parse(getSignatureAlgorithm().getName()));
+                signature = ECDSA.transcodeSignatureToConcat(signature, signatureLenght);
+            }
+
+            return Base64Util.base64urlencode(signature);
+        } catch (InvalidKeySpecException e) {
+            throw new SignatureException(e);
+        } catch (InvalidKeyException e) {
+            throw new SignatureException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new SignatureException(e);
+        } catch (NoSuchProviderException e) {
+            throw new SignatureException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new SignatureException(e);
+        } catch (Exception e) {
+            throw new SignatureException(e);
+        }        
+*/		
 /*		
         if (getSignatureAlgorithm() == null) {
             throw new SignatureException("The signature algorithm is null");
@@ -212,7 +281,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             assertTrue(virify.verify(signatureBase64.decode()));            
 		}        
 */        
-		return null;
+//		return null;
 	}
 
 	/**
@@ -220,15 +289,49 @@ public class EDDSASigner extends AbstractJwsSigner {
 	 */
 	@Override
 	public boolean validateSignature(String signingInput, String signature) throws SignatureException {
-        if (getSignatureAlgorithm() == null) {
+		SignatureAlgorithm signatureAlgorithm = getSignatureAlgorithm();			
+        if (signatureAlgorithm == null) {
             throw new SignatureException("The signature algorithm is null");
         }
+        if(signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
+            throw new SignatureException(String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
+        }        
         if (eddsaPublicKey == null) {
             throw new SignatureException("The EDDSA public key is null");
         }
         if (signingInput == null) {
             throw new SignatureException("The signing input is null");
         }
+        
+        try {
+        	
+//            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
+			
+	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
+	        
+//	        BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey)keyFactory.generatePrivate(privateKeySpec);
+	        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey)keyFactory.generatePublic(publicKeySpec);	        
+	        
+            Signature virifier = Signature.getInstance(signatureAlgorithm.getName(), "BC");
+            virifier.initVerify(publicKey);
+            virifier.update(signingInput.getBytes());
+            
+            return virifier.verify(Base64Util.base64urldecodeToString(signature).getBytes());
+		} catch (NoSuchAlgorithmException e) {
+            throw new SignatureException(e);
+		} catch (NoSuchProviderException e) {
+            throw new SignatureException(e);			
+		} catch (InvalidKeySpecException e) {
+            throw new SignatureException(e);			
+		} catch (InvalidKeyException e) {
+            throw new SignatureException(e);			
+		} catch (IllegalArgumentException e) {
+			throw new SignatureException(e);			
+		} catch (UnsupportedEncodingException e) {
+			throw new SignatureException(e);			
+		}        
+        
 /*        
         String algorithm;
         String curve;
@@ -288,7 +391,6 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException(e);
         }
 */        
-		return false;
 	}
 
 }

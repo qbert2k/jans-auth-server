@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.util.StringUtils;
@@ -49,6 +50,8 @@ public class Certificate {
 
             publicKey = new ECDSAPublicKey(signatureAlgorithm, jceecPublicKey.getQ().getXCoord().toBigInteger(),
                     jceecPublicKey.getQ().getYCoord().toBigInteger());
+        } else if  (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
+        	
         }
 
         return publicKey;
@@ -79,15 +82,13 @@ public class Certificate {
         return ecdsaPublicKey;
     }
     
-    public BCEdDSAPublicKey getEddsaPublicKey() {
-    	BCEdDSAPublicKey eddsaPublicKey = null;
+    public EDDSAPublicKey getEddsaPublicKey() {
+    	EDDSAPublicKey eddsaPublicKey = null;
 
         if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
         	BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) x509Certificate.getPublicKey();
-            byte[] encoding = publicKey.getEncoded();
-            publicKey.getPointEncoding();
-
-//        	eddsaPublicKey = new BCEdDSAPublicKey(signatureAlgorithm, encoding);
+        	
+            eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded(), null);
         }
 
         return eddsaPublicKey;
