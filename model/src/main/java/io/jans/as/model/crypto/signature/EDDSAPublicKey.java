@@ -13,7 +13,7 @@ import io.jans.as.model.util.StringUtils;
  * @author SMan
  *
  */
-public class EDDSAPublicKey  extends PublicKey {
+public class EDDSAPublicKey extends PublicKey {
 
     private static final String EDDSA_ALGORITHM = "ED";
     private static final String USE = "sig";

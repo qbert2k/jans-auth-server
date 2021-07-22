@@ -310,7 +310,7 @@ public class SignatureTest {
 	        byte [] privateKeyData = privateKey.getEncoded();
 	        byte [] publicKeyData = publicKey.getEncoded();
 	        
-	        Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(publicKeyData, 0);
+//	        Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(publicKeyData, 0);
 	        
 //	        EdECPoint 
 	        

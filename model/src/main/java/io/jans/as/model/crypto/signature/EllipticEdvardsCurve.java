@@ -13,20 +13,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author Javier Rojas Blum
  * @version June 15, 2016
  */
-public enum ECEllipticCurve {
+public enum EllipticEdvardsCurve {
 
     P_256("P-256", "secp256r1", "1.2.840.10045.3.1.7"),
     P_256K("P-256K", "secp256k1", "1.3.132.0.10"),
     P_384("P-384", "secp384r1", "1.3.132.0.34"),
     P_521("P-521", "secp521r1", "1.3.132.0.35"),
     ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),
-	ED_448("Ed448", "Ed448", "1.3.132.0.10");    
+	ED_448("Ed448", "Ed448", "1.3.132.0.10");
 
     private final String name;
     private final String alias;
     private final String oid;
 
-    private ECEllipticCurve(String name, String alias, String oid) {
+    private EllipticEdvardsCurve(String name, String alias, String oid) {
         this.name = name;
         this.alias = alias;
         this.oid = oid;
@@ -45,15 +45,15 @@ public enum ECEllipticCurve {
     }
 
     /**
-     * Returns the corresponding {@link ECEllipticCurve} for a parameter crv of the JWK endpoint.
+     * Returns the corresponding {@link EllipticEdvardsCurve} for a parameter crv of the JWK endpoint.
      *
      * @param param The crv parameter.
      * @return The corresponding curve if found, otherwise <code>null</code>.
      */
     @JsonCreator
-    public static ECEllipticCurve fromString(String param) {
+    public static EllipticEdvardsCurve fromString(String param) {
         if (param != null) {
-            for (ECEllipticCurve ec : ECEllipticCurve.values()) {
+            for (EllipticEdvardsCurve ec : EllipticEdvardsCurve.values()) {
                 if (param.equals(ec.name) || param.equalsIgnoreCase(ec.name())) {
                     return ec;
                 }
