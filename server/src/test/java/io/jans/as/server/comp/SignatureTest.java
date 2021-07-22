@@ -18,6 +18,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
@@ -33,6 +34,7 @@ import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.testng.annotations.Test;
 
 import com.google.crypto.tink.subtle.Ed25519Sign;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.Ed25519Signer;
@@ -290,8 +292,7 @@ public class SignatureTest {
 			build();
 */
 		
-//		keyGen_4 = keyGen_4;
-		
+
 		{
 			String signingInput = "Hello World!";
 			
@@ -372,10 +373,91 @@ public class SignatureTest {
 		}
 		
 		{
+			String signingInput = "Hello World!";
 			
+			Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
+	        
+			byte [] privateKeyData = tk.getPrivateKey();
+			byte [] publicKeyData = tk.getPublicKey();			
+			
+			OctetKeyPair k = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(tk.getPublicKey())).
+					d(Base64URL.encode(tk.getPrivateKey())).
+					build();
+			Ed25519Signer signer = new Ed25519Signer(k);
+			Ed25519Verifier verifier = new Ed25519Verifier(k.toPublicJWK());
+				
+			JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.EdDSA).build();				
+			
+			Base64URL s = signer.sign(h, signingInput.getBytes());
+			assertTrue(verifier.verify(h, signingInput.getBytes(), s));
 		}
 		
+//		keyGen_4 = keyGen_4;
 		{
+/*			
+			String signingInput = "Hello World!";
+			
+			KeyPair keyPair;
+			    
+	        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", "BC");
+		        
+	        keyGen.initialize(new EdDSAParameterSpec("Ed25519"), new SecureRandom());
+
+	        keyPair = keyGen.generateKeyPair();
+		        
+	        BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyPair.getPrivate();
+	        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
+	        
+	        byte [] privateKeyArray = privateKey.getEncoded();
+	        byte [] publicKeyArray = publicKey.getEncoded();
+	        
+			OctetKeyPair octKeyPair = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(publicKey.getEncoded())).
+					d(Base64URL.encode(privateKey.getEncoded())).build();
+			
+			com.nimbusds.jose.crypto.Ed25519Signer signer = new com.nimbusds.jose.crypto.Ed25519Signer(octKeyPair);
+			
+			Base64URL base64Sign = signer.sign(new JWSHeader.Builder(JWSAlgorithm.EdDSA).build(), signingInput.getBytes());
+			
+			OctetKeyPair octKeyPairPublic = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(keyPair.getPublic().getEncoded())).build();		
+			
+			com.nimbusds.jose.crypto.Ed25519Verifier verifiyer = new com.nimbusds.jose.crypto.Ed25519Verifier(octKeyPairPublic);
+			
+			boolean verifyRes = verifiyer.verify(new JWSHeader.Builder(JWSAlgorithm.EdDSA).build(), signingInput.getBytes(), base64Sign);
+			
+            assertTrue(verifyRes);
+*/            
+            
+/*            
+            
+    		Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
+    		OctetKeyPair k = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(tk.getPublicKey())).
+    			d(Base64URL.encode(tk.getPrivateKey())).
+    			build();
+    		Ed25519Signer signer = new Ed25519Signer(k);
+    		Ed25519Verifier verifier = new Ed25519Verifier(k.toPublicJWK());
+
+    		JWSHeader h1 = new JWSHeader.Builder(JWSAlgorithm.HS256).
+    			build();
+
+    		try {
+    			signer.sign(h1, new byte[] {1,2,3});
+    			fail("should fail with alg HS256");
+
+    		} catch (JOSEException e) {
+    			// Passed
+    		}
+
+    		try {
+    			// Signature is invalid, but should throw instead of returning false
+    			verifier.verify(h1, new byte[] {1,2,3}, Base64URL.encode(new byte[64]));
+    			fail("should fail with alg HS256");
+
+    		} catch (JOSEException e) {
+    			// Passed
+    		}
+*/            
+            
+/*            
 			String signingInput = "Hello World!";
 			
 			Ed25519Sign.KeyPair tk = Ed25519Sign.KeyPair.newKeyPair();
@@ -389,7 +471,21 @@ public class SignatureTest {
 			JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.EdDSA).build();				
 			
 			Base64URL s = signer.sign(h, signingInput.getBytes());
-			assertTrue(verifier.verify(h, signingInput.getBytes(), s));
+			assertTrue(verifier.verify(h, signingInput.getBytes(), s));            
+*/			
+/*			
+	        final List<String> aliases = cryptoProvider.getKeys();
+	        for (String keyId : aliases) {
+	            if (keyId.endsWith(use.getParamName()  + "_" + algorithm.getName().toLowerCase())) {
+	                return keyId;
+	            }
+	        }
+*/	        		
+			
+//			Base
+			
+//            assertTrue(Arrays.compare(publicKeyData, publicKeyData_1) == 0);			
+			
 		}
 	
 /*		

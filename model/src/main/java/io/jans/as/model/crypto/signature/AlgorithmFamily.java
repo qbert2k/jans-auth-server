@@ -16,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum AlgorithmFamily {
     HMAC("HMAC"),
     RSA("RSA"),
-    EC("EC");
+    EC("EC"),
+    ED("ED");    
 
     private final String value;
 

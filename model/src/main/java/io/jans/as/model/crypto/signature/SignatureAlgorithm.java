@@ -35,9 +35,15 @@ public enum SignatureAlgorithm {
     ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", ECEllipticCurve.P_521, JWSAlgorithm.ES512),
     PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1", JWSAlgorithm.PS256),
     PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1", JWSAlgorithm.PS384),
-    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512);
-//    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512);
+    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512),
+    ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),    
+    ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA);    
 
+/*
+	PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512);
+	Ed25519
+	Ed448
+ */
 /*	
 	Ed25519
 	Ed448
