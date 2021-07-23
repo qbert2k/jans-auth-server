@@ -71,7 +71,7 @@ public class EDDSASigner extends AbstractJwsSigner {
         if (signatureAlgorithm == null) {
             throw new SignatureException("The signature algorithm is null");
         }
-        if(signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
+        if(!signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
             throw new SignatureException(String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
         }
         if (eddsaPrivateKey == null) {
@@ -293,7 +293,7 @@ public class EDDSASigner extends AbstractJwsSigner {
         if (signatureAlgorithm == null) {
             throw new SignatureException("The signature algorithm is null");
         }
-        if(signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
+        if(!signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
             throw new SignatureException(String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
         }        
         if (eddsaPublicKey == null) {
@@ -317,7 +317,10 @@ public class EDDSASigner extends AbstractJwsSigner {
             virifier.initVerify(publicKey);
             virifier.update(signingInput.getBytes());
             
-            return virifier.verify(Base64Util.base64urldecodeToString(signature).getBytes());
+            boolean res = virifier.verify(Base64Util.base64urldecode(signature));
+            return res;
+            
+            //return virifier.verify(Base64Util.base64urldecode(signature));
 		} catch (NoSuchAlgorithmException e) {
             throw new SignatureException(e);
 		} catch (NoSuchProviderException e) {
@@ -328,9 +331,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException(e);			
 		} catch (IllegalArgumentException e) {
 			throw new SignatureException(e);			
-		} catch (UnsupportedEncodingException e) {
-			throw new SignatureException(e);			
-		}        
+		}      
         
 /*        
         String algorithm;

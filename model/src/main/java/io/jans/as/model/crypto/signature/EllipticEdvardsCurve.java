@@ -16,10 +16,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum EllipticEdvardsCurve {
 
     P_256("P-256", "secp256r1", "1.2.840.10045.3.1.7"),
-    P_256K("P-256K", "secp256k1", "1.3.132.0.10"),
+    P_256K("P-256K", "secp256k1", "1.3.132.0.10"),	//ansip256k1
     P_384("P-384", "secp384r1", "1.3.132.0.34"),
     P_521("P-521", "secp521r1", "1.3.132.0.35"),
-    ED_25519("Ed25519", "Ed25519", "1.2.840.10045.3.1.7"),
+    ED_25519("Ed25519", "Ed25519", "1.3.6.1.4.1.11591.15.1"),
 	ED_448("Ed448", "Ed448", "1.3.132.0.10");
 
     private final String name;

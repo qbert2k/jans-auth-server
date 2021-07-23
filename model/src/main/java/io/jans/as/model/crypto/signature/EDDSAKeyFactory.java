@@ -3,6 +3,7 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -39,6 +40,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import io.jans.as.model.crypto.Certificate;
@@ -56,6 +58,21 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
     private EDDSAPrivateKey eddsaPrivateKey;
     private EDDSAPublicKey eddsaPublicKey;
     private Certificate certificate;
+    
+/*    
+    static ASN1ObjectIdentifier getAlgorithmOID(
+            String algorithmName)
+        {
+            algorithmName = Strings.toUpperCase(algorithmName);
+            
+            if (algorithms.containsKey(algorithmName))
+            {
+                return (ASN1ObjectIdentifier)algorithms.get(algorithmName);
+            }
+            
+            return new ASN1ObjectIdentifier(algorithmName);
+        }
+    */
 
     public EDDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName)
             throws InvalidParameterException, NoSuchProviderException, NoSuchAlgorithmException,
@@ -91,11 +108,25 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
 	            
 	            X500Name principal = new X500Name(dnName);
 	            
-	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("Ed25519"));
+//	             ASN1ObjectIdentifier sigOID = X509Util.getAlgorithmOID(signatureAlgorithm);	            
 	            
-	            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, publicKeyData);
+//	            ASN1ObjectIdentifier curveOid = EdECConstants.getCurveOid(curveName);
 	            
-	            X509v1CertificateBuilder certBuilder = new X509v1CertificateBuilder(principal, serialNumber, startDate.getTime(), expiryDate.getTime(), principal,
+//	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.2.1"));
+//	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.2.840.10045.3.1.7"));
+//	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.6.1.4.1.11591.15.1"));
+	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.101.112"));
+	            
+	            ASN1ObjectIdentifier oi = new ASN1ObjectIdentifier("1.3.101.112");
+	            String id = oi.getId();
+	            byte[] encoded = oi.getEncoded();
+	            
+	            ASN1Encodable encodable = null; 
+	            
+//	            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, encodable);
+	            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, publicKeyData);	            
+	            
+	            X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(principal, serialNumber, startDate.getTime(), expiryDate.getTime(), principal,
 	            		subjectPublicKeyInfo);
 				
 				X509CertificateHolder cert = certBuilder.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(keyPair.getPrivate()));
@@ -107,6 +138,8 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
 				throw new SignatureException(e);
 			} catch (CertificateException e) {
 				throw new SignatureException(e);
+			} catch (IOException e) {
+				throw new SignatureException(e);				
 			} 
             
 /*            
