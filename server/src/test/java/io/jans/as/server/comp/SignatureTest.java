@@ -59,6 +59,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jws.ECDSASigner;
 import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
+import io.jans.as.model.util.Base64Util;
 //import io.jans.as.server.BaseTest;
 import io.jans.as.model.util.Util;
 
@@ -263,9 +264,15 @@ public class SignatureTest {
 	}	
 */	
 
-//	@Test
+	@Test
 	public void generateED25519Keys() throws Exception {
 		showTitle("TEST: generateED25519Keys");
+		
+		String EDDSAPublicKeyStr = "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=";
+		String EDDSAPrivateKeyStr = "MC4CAQAwBQYDK2VwBCIEINTuctv5E1hK1bbY8fdp+K06/nwoy/HU++CXqI9EdVhC";
+		
+		byte[] EDDSAPublicKeyArray = Base64Util.base64urldecode(EDDSAPublicKeyStr);
+		byte[] EDDSAPrivateKeyArray = Base64Util.base64urldecode(EDDSAPrivateKeyStr);		
 		
 		KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(SignatureAlgorithm.ED25519,
 				"CN=Test CA Certificate");
@@ -285,10 +292,13 @@ public class SignatureTest {
 		String signingInput = "Hello World!";
 		EDDSASigner eddsaSigner1 = new EDDSASigner(SignatureAlgorithm.ED25519, privateKey);
 		String signature = eddsaSigner1.generateSignature(signingInput);
+
 		EDDSASigner ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
 		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		
 		EDDSASigner ecdsaSigner3 = new EDDSASigner(SignatureAlgorithm.ED25519, certificate);
 		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));		
+		
 		
 //      ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
 //		ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("" SignatureAlgorithm. signatureAlgorithm.getCurve().getAlias());

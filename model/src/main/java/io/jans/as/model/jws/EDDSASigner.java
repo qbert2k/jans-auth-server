@@ -3,7 +3,6 @@
  */
 package io.jans.as.model.jws;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -81,6 +80,11 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signing input is null");
         }
         
+        {
+            org.bouncycastle.crypto.signers.Ed25519phSigner signer; // = new 
+        }
+        
+        
         try {
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
 //            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
@@ -95,6 +99,14 @@ public class EDDSASigner extends AbstractJwsSigner {
 	        signer.update(signingInput.getBytes());
 	        
 	        byte [] signature = signer.sign();
+	        
+/*	        
+            if (AlgorithmFamily.EC.equals(getSignatureAlgorithm().getFamily())) {
+            	int signatureLenght = ECDSA.getSignatureByteArrayLength(JWSAlgorithm.parse(getSignatureAlgorithm().getName()));
+                signature = ECDSA.transcodeSignatureToConcat(signature, signatureLenght);
+            }
+*/            	        
+	        
 	        String signatureBase64 = Base64Util.base64urlencode(signature);
 
 	        return signatureBase64;  
@@ -307,6 +319,8 @@ public class EDDSASigner extends AbstractJwsSigner {
         	
 //            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
             X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
+        	
+//        	PKCS8EncodedKeySpec publicKeySpec = new PKCS8EncodedKeySpec(eddsaPublicKey.getPublicKeyData());        	
 			
 	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
 	        
@@ -318,6 +332,20 @@ public class EDDSASigner extends AbstractJwsSigner {
             virifier.update(signingInput.getBytes());
             
             boolean res = virifier.verify(Base64Util.base64urldecode(signature));
+            
+            virifier.initVerify(publicKey);
+            virifier.update(signingInput.getBytes());
+            
+            res = virifier.verify(Base64Util.base64urldecode(signature));
+
+            virifier.initVerify(publicKey);
+            virifier.update(signingInput.getBytes());
+            
+            res = virifier.verify(Base64Util.base64urldecode(signature));
+            
+//            res = virifier.verify(Base64Util.base64urldecode(signature));
+//            res = virifier.verify(Base64Util.base64urldecode(signature));
+            
             return res;
             
             //return virifier.verify(Base64Util.base64urldecode(signature));

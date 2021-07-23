@@ -26,11 +26,15 @@ import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v1CertificateBuilder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
@@ -92,8 +96,31 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
         BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyPair.getPrivate();
         BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
         
+        String privateAlg = privateKey.getAlgorithm();
+        String publicAlg = publicKey.getAlgorithm();
+        
         byte [] privateKeyData = privateKey.getEncoded();
         byte [] publicKeyData = publicKey.getEncoded();
+        
+//        byte [] publicKeyData_1 = publicKey.getPointEncoding();
+        
+        KeyPair keyPair_ED448;
+        
+        {
+            EdDSAParameterSpec ecSpec_ED448 = new EdDSAParameterSpec("Ed448");        
+
+            KeyPairGenerator keyGen_ED448 = KeyPairGenerator.getInstance("Ed448", "BC");
+            keyGen_ED448.initialize(ecSpec_ED448, new SecureRandom());
+
+            keyPair_ED448 = keyGen_ED448.generateKeyPair();
+            BCEdDSAPrivateKey privateKey_ED448 = (BCEdDSAPrivateKey) keyPair_ED448.getPrivate();
+            BCEdDSAPublicKey publicKey_ED448 = (BCEdDSAPublicKey) keyPair_ED448.getPublic();
+            
+            byte [] privateKeyData_ED448 = privateKey_ED448.getEncoded();
+            byte [] publicKeyData_ED448 = publicKey_ED448.getEncoded();
+            
+            keyPair_ED448 = keyPair_ED448;
+        }
         
         this.eddsaPrivateKey = new EDDSAPrivateKey(privateKeyData);
         this.eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKeyData, privateKeyData);    
@@ -116,31 +143,42 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
 //	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.2.840.10045.3.1.7"));
 //	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.6.1.4.1.11591.15.1"));
 	            AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.101.112"));
-	            
+
+/*	            
 	            ASN1ObjectIdentifier oi = new ASN1ObjectIdentifier("1.3.101.112");
 	            String id = oi.getId();
 	            byte[] encoded = oi.getEncoded();
+*/	            
 	            
 	            ASN1Encodable encodable = null; 
 	            
 //	            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, encodable);
 	            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, publicKeyData);	            
 	            
-	            X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(principal, serialNumber, startDate.getTime(), expiryDate.getTime(), principal,
+	            X509v1CertificateBuilder certBuilder = new X509v1CertificateBuilder(principal, serialNumber, startDate.getTime(), expiryDate.getTime(), principal,
 	            		subjectPublicKeyInfo);
 				
 				X509CertificateHolder cert = certBuilder.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(keyPair.getPrivate()));
+//				X509CertificateHolder cert = certBuilder.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(eddsaPrivateKey.getPrivateKeyData()));	            
 	            X509Certificate x509cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(cert);
 	            
 	            this.certificate = new Certificate(signatureAlgorithm, x509cert);
+	            
+	            JcaX509v1CertificateBuilder certGen = new JcaX509v1CertificateBuilder(principal, serialNumber, startDate.getTime(), expiryDate.getTime(), principal, publicKey);
+	            
+	            cert = certGen.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(keyPair.getPrivate()));
+	            
+	            X509Certificate x509cert_1 = new JcaX509CertificateConverter().setProvider("BC").getCertificate(cert);            
+
+//	            X509Certificate cert = new JcaX509CertificateConverter().setProvider(BC).getCertificate(certGen.build(sigGen));
+	            
+	            this.certificate = new Certificate(signatureAlgorithm, x509cert_1);       	            
 				
 			} catch (OperatorCreationException e) {
 				throw new SignatureException(e);
 			} catch (CertificateException e) {
 				throw new SignatureException(e);
-			} catch (IOException e) {
-				throw new SignatureException(e);				
-			} 
+			}
             
 /*            
             certBuilder.build(signer)
@@ -167,6 +205,19 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
         }        
     }
     
+    private X500NameBuilder createStdBuilder()
+    {
+        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+
+        builder.addRDN(BCStyle.C, "AU");
+        builder.addRDN(BCStyle.O, "The Legion of the Bouncy Castle");
+        builder.addRDN(BCStyle.L, "Melbourne");
+        builder.addRDN(BCStyle.ST, "Victoria");
+        builder.addRDN(BCStyle.E, "feedback-crypto@bouncycastle.org");
+
+        return builder;
+    }
+    
     public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName) throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
         // Create certificate
     	
@@ -182,17 +233,31 @@ public class EDDSAKeyFactory  extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey
             
             X500Name principal = new X500Name(dnName);
             
+            X500NameBuilder builder = createStdBuilder();            
+            
             AlgorithmIdentifier ai = new AlgorithmIdentifier(new ASN1ObjectIdentifier("Ed25519"));
             
             SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(ai, publicKeyData);
             
-            X509v1CertificateBuilder certBuilder = new X509v1CertificateBuilder(principal, serialNumber, startDate, expirationDate, principal,
+            X509v3CertificateBuilder certBuilder = new X509v3CertificateBuilder(principal, serialNumber, startDate, expirationDate, principal,
             		subjectPublicKeyInfo);
 			
 			X509CertificateHolder cert = certBuilder.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(keyPair.getPrivate()));
             X509Certificate x509cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(cert);
             
-            certificate = new Certificate(signatureAlgorithm, x509cert);
+            //ContentSigner sigGen = new JcaContentSignerBuilder("Ed448").setProvider(BC).build(privKey);
+            
+            JcaX509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(principal, serialNumber, startDate, expirationDate, principal, publicKey);
+            
+            cert = certGen.build(new JcaContentSignerBuilder("Ed25519").setProvider("BC").build(keyPair.getPrivate()));
+            
+            X509Certificate x509cert_1 = new JcaX509CertificateConverter().setProvider("BC").getCertificate(cert);            
+
+//            X509Certificate cert = new JcaX509CertificateConverter().setProvider(BC).getCertificate(certGen.build(sigGen));
+            
+            certificate = new Certificate(signatureAlgorithm, x509cert_1);            
+            
+//            certificate = new Certificate(signatureAlgorithm, x509cert);
 			
 		} catch (OperatorCreationException e) {
 			throw new SignatureException(e);
