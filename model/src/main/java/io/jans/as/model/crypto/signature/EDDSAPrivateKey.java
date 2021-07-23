@@ -3,17 +3,10 @@
  */
 package io.jans.as.model.crypto.signature;
 
-import static io.jans.as.model.jwk.JWKParameter.D;
-import static io.jans.as.model.jwk.JWKParameter.EXPONENT;
-import static io.jans.as.model.jwk.JWKParameter.MODULUS;
-
-import java.math.BigInteger;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.jans.as.model.crypto.PrivateKey;
-import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -24,18 +17,36 @@ public class EDDSAPrivateKey extends PrivateKey {
     
     private byte [] privateKeyData;
 
-    public EDDSAPrivateKey(byte [] privateKeyData) {
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param privateKeyData
+     */
+    public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte [] privateKeyData) {
+    	setSignatureAlgorithm(signatureAlgorithm);
         this.privateKeyData = privateKeyData;
     }
 
+    /**
+     * 
+     * @param privateKeyDataStr
+     */
     public EDDSAPrivateKey(String privateKeyDataStr) {
         this.privateKeyData =  privateKeyDataStr.getBytes();
     }
 
+    /**
+     * 
+     * @return
+     */
     public byte [] getPrivateKeyData() {
-        return privateKeyData;
+        return this.privateKeyData;
     }
 
+    /**
+     * 
+     * @param privateKeyData
+     */
     public void setPrivateKeyData(byte [] privateKeyData) {
         this.privateKeyData = privateKeyData;
     }
@@ -53,6 +64,9 @@ public class EDDSAPrivateKey extends PrivateKey {
     	return null;
     }
 
+    /**
+     * 
+     */
     @Override
     public String toString() {
         try {

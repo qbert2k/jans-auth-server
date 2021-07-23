@@ -14,49 +14,67 @@ import io.jans.as.model.util.StringUtils;
  *
  */
 public class EDDSAPublicKey extends PublicKey {
-
-    private static final String EDDSA_ALGORITHM = "ED";
-    private static final String USE = "sig";
-
-    private SignatureAlgorithm signatureAlgorithm;
     
     private byte [] publicKeyData;
     private byte [] privateKeyData;
 
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param publicKeyData
+     * @param privateKeyData
+     */
     public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] publicKeyData, byte [] privateKeyData) {
-        this.signatureAlgorithm = signatureAlgorithm;
+    	setSignatureAlgorithm(signatureAlgorithm);
         this.publicKeyData = publicKeyData;        
         this.privateKeyData = privateKeyData;
     }
 
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param publicKeyDataStr
+     * @param privateKeyDataStr
+     */
     public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, String publicKeyDataStr, String privateKeyDataStr) {
         this(signatureAlgorithm, publicKeyDataStr.getBytes(), privateKeyDataStr.getBytes());
     }
 
-    public SignatureAlgorithm getSignatureAlgorithm() {
-        return signatureAlgorithm;
-    }
-
-    public void setSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm) {
-        this.signatureAlgorithm = signatureAlgorithm;
-    }
-
+    /**
+     * 
+     * @return
+     */
     public byte [] getPublicKeyData() {
         return publicKeyData;
     }
 
+    /**
+     * 
+     * @param publicKeyData
+     */
     public void setPublicKeyData(byte [] publicKeyData) {
         this.publicKeyData = publicKeyData;
     }
 
+    /**
+     * 
+     * @return
+     */
     public byte [] getPrivateKeyData() {
         return privateKeyData;
     }
 
+    /**
+     * 
+     * @param privateKeyData
+     */
     public void setPrivateKeyData(byte [] privateKeyData) {
         this.privateKeyData = privateKeyData;
     }
 
+    /**
+     * 
+     */
     @Override
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jsonObject = new JSONObject();
@@ -69,6 +87,9 @@ public class EDDSAPublicKey extends PublicKey {
         return jsonObject;
     }
 
+    /**
+     * 
+     */
     @Override
     public String toString() {
         try {

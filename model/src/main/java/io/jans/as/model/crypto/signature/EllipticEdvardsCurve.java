@@ -20,9 +20,8 @@ public enum EllipticEdvardsCurve {
     P_384("P-384", "secp384r1", "1.3.132.0.34"),
     P_521("P-521", "secp521r1", "1.3.132.0.35"),
     ED_25519("Ed25519", "Ed25519", "1.3.101.112"),    
-//    ED_25519("Ed25519", "Ed25519", "1.3.6.1.4.1.11591.15.1"),
 	ED_448("Ed448", "Ed448", "1.3.101.113");
-
+	
     private final String name;
     private final String alias;
     private final String oid;
