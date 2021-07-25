@@ -82,7 +82,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signing input is null");
         }
         try {
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
+            PKCS8EncodedKeySpec privateKeySpec = eddsaPrivateKey.getPrivateKeySpec();
 	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
 	        BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey)keyFactory.generatePrivate(privateKeySpec);
 	        Signature signer = Signature.getInstance(signatureAlgorithm.getName(), DEF_BC);
@@ -120,7 +120,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signing input is null");
         }
         try {
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
+            X509EncodedKeySpec publicKeySpec = eddsaPublicKey.getPublicKeySpec();
 	        java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
 	        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey)keyFactory.generatePublic(publicKeySpec);	        
             Signature virifier = Signature.getInstance(signatureAlgorithm.getName(), "BC");

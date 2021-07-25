@@ -89,7 +89,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
 			byte[] publicKeyData = publicKey.getEncoded();
 
 			this.eddsaPrivateKey = new EDDSAPrivateKey(signatureAlgorithm, privateKeyData);
-			this.eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKeyData, privateKeyData);
+			this.eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKeyData);
 
 			if (StringUtils.isNotBlank(dnName)) {
 				// Create certificate

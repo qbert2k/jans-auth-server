@@ -3,6 +3,8 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import java.security.spec.PKCS8EncodedKeySpec;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +26,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      */
     public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte [] privateKeyData) {
     	setSignatureAlgorithm(signatureAlgorithm);
-        this.privateKeyData = privateKeyData;
+        this.privateKeyData = privateKeyData.clone();
     }
 
     /**
@@ -32,25 +34,20 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @param privateKeyDataStr
      */
     public EDDSAPrivateKey(String privateKeyDataStr) {
-        this.privateKeyData =  privateKeyDataStr.getBytes();
+        this.privateKeyData =  privateKeyDataStr.getBytes().clone();
     }
 
     /**
      * 
      * @return
      */
-    public byte [] getPrivateKeyData() {
-        return this.privateKeyData;
+    public PKCS8EncodedKeySpec getPrivateKeySpec() {
+    	return new PKCS8EncodedKeySpec(privateKeyData);  
     }
 
     /**
      * 
-     * @param privateKeyData
      */
-    public void setPrivateKeyData(byte [] privateKeyData) {
-        this.privateKeyData = privateKeyData;
-    }
-
     @Override
     public JSONObject toJSONObject() throws JSONException {
 /*    	
@@ -78,4 +75,13 @@ public class EDDSAPrivateKey extends PrivateKey {
         }
     }
     
+    /**
+     * 
+     */
+    @Override
+    public EDDSAPrivateKey clone() {
+    	EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.privateKeyData);
+    	newObj.setKeyId(getKeyId());
+    	return newObj;
+    }
 }

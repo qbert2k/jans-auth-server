@@ -3,6 +3,8 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import java.security.spec.X509EncodedKeySpec;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,60 +18,32 @@ import io.jans.as.model.util.StringUtils;
 public class EDDSAPublicKey extends PublicKey {
     
     private byte [] publicKeyData;
-    private byte [] privateKeyData;
 
     /**
      * 
      * @param signatureAlgorithm
      * @param publicKeyData
-     * @param privateKeyData
      */
-    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] publicKeyData, byte [] privateKeyData) {
+    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] publicKeyData) {
     	setSignatureAlgorithm(signatureAlgorithm);
-        this.publicKeyData = publicKeyData;        
-        this.privateKeyData = privateKeyData;
+        this.publicKeyData = publicKeyData.clone();        
     }
 
     /**
      * 
      * @param signatureAlgorithm
      * @param publicKeyDataStr
-     * @param privateKeyDataStr
      */
-    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, String publicKeyDataStr, String privateKeyDataStr) {
-        this(signatureAlgorithm, publicKeyDataStr.getBytes(), privateKeyDataStr.getBytes());
+    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, String publicKeyDataStr) {
+        this(signatureAlgorithm, publicKeyDataStr.getBytes().clone());
     }
 
     /**
      * 
      * @return
      */
-    public byte [] getPublicKeyData() {
-        return publicKeyData;
-    }
-
-    /**
-     * 
-     * @param publicKeyData
-     */
-    public void setPublicKeyData(byte [] publicKeyData) {
-        this.publicKeyData = publicKeyData;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public byte [] getPrivateKeyData() {
-        return privateKeyData;
-    }
-
-    /**
-     * 
-     * @param privateKeyData
-     */
-    public void setPrivateKeyData(byte [] privateKeyData) {
-        this.privateKeyData = privateKeyData;
+    public X509EncodedKeySpec getPublicKeySpec() {
+    	return new X509EncodedKeySpec(publicKeyData);
     }
 
     /**
@@ -100,5 +74,15 @@ public class EDDSAPublicKey extends PublicKey {
             return StringUtils.EMPTY_STRING;
         }
     }	
+    
+    /**
+     * 
+     */
+    @Override
+    public EDDSAPublicKey clone() {
+    	EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.publicKeyData);
+    	newObj.setKeyId(getKeyId());
+    	return newObj;
+    }
 
 }

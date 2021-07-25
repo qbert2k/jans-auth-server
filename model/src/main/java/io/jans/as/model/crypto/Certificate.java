@@ -88,7 +88,7 @@ public class Certificate {
         if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
         	BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) x509Certificate.getPublicKey();
         	
-            eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded(), null);
+            eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());
         }
 
         return eddsaPublicKey;

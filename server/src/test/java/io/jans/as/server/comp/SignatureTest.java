@@ -7,6 +7,7 @@
 package io.jans.as.server.comp;
 
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -38,6 +39,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jws.ECDSASigner;
 import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
+import io.jans.as.model.util.Base64Util;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
@@ -256,6 +258,9 @@ public class SignatureTest {
 
 		EDDSASigner ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
 		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		
+		ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);		
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));		
 
 		EDDSASigner ecdsaSigner3 = new EDDSASigner(SignatureAlgorithm.ED25519, certificate);
 		assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
@@ -265,6 +270,31 @@ public class SignatureTest {
 
 		assertTrue(Ed25519.SECRET_KEY_SIZE == privateKeyLen);
 		assertTrue(Ed25519.PUBLIC_KEY_SIZE == publicKeyLen);
+		
+		keyFactory = new EDDSAKeyFactory(SignatureAlgorithm.ED25519, "CN=Test CA Certificate");
+		EDDSAPublicKey publicKeyWrong = keyFactory.getPublicKey();
+		
+		byte[] signatureArray = Base64Util.base64urldecode(signature);
+		signatureArray[0] = (byte)(~signatureArray[0]);
+		String signatureWrong = Base64Util.base64urlencode(signatureArray);
+		
+		String signingInputWrong = signingInput.charAt(0) + signingInput;
+		
+		ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);		
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signatureWrong));		
+		
+		EDDSASigner ecdsaSigner4 = new EDDSASigner(SignatureAlgorithm.ED25519, publicKeyWrong);
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));
+
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signatureWrong));		
+		
 	}
 
 	@Test
@@ -299,6 +329,30 @@ public class SignatureTest {
 
 		assertTrue(Ed448.SECRET_KEY_SIZE == privateKeyLen);
 		assertTrue(Ed448.PUBLIC_KEY_SIZE == publicKeyLen);
+		
+		keyFactory = new EDDSAKeyFactory(SignatureAlgorithm.ED448, "CN=Test CA Certificate");
+		EDDSAPublicKey publicKeyWrong = keyFactory.getPublicKey();
+		
+		byte[] signatureArray = Base64Util.base64urldecode(signature);
+		signatureArray[0] = (byte)(~signatureArray[0]);
+		String signatureWrong = Base64Util.base64urlencode(signatureArray);
+		
+		String signingInputWrong = signingInput.charAt(0) + signingInput;
+		
+		ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);		
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signatureWrong));		
+		
+		EDDSASigner ecdsaSigner4 = new EDDSASigner(SignatureAlgorithm.ED448, publicKeyWrong);
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));
+
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signatureWrong));				
 	}
 
 	@Test
@@ -333,6 +387,30 @@ public class SignatureTest {
 
 		assertTrue(Ed25519.SECRET_KEY_SIZE == privateKeyLen);
 		assertTrue(Ed25519.PUBLIC_KEY_SIZE == publicKeyLen);
+		
+		keyFactory = new EDDSAKeyFactory(SignatureAlgorithm.EDDSA, "CN=Test CA Certificate");
+		EDDSAPublicKey publicKeyWrong = keyFactory.getPublicKey();
+		
+		byte[] signatureArray = Base64Util.base64urldecode(signature);
+		signatureArray[0] = (byte)(~signatureArray[0]);
+		String signatureWrong = Base64Util.base64urlencode(signatureArray);
+		
+		String signingInputWrong = signingInput.charAt(0) + signingInput;
+		
+		ecdsaSigner2 = new EDDSASigner(SignatureAlgorithm.EDDSA, publicKey);		
+		assertTrue(ecdsaSigner2.validateSignature(signingInput, signature));
+		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner2.validateSignature(signingInputWrong, signatureWrong));		
+		
+		EDDSASigner ecdsaSigner4 = new EDDSASigner(SignatureAlgorithm.EDDSA, publicKeyWrong);
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));
+
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signature));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInput, signatureWrong));		
+		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signatureWrong));			
 	}
 
 	/**
@@ -345,7 +423,7 @@ public class SignatureTest {
 	private int getDecodedKeysLength(EDDSAPrivateKey eddsaPrivateKey)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		int resLength = 0;
-		PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(eddsaPrivateKey.getPrivateKeyData());
+		PKCS8EncodedKeySpec privateKeySpec = eddsaPrivateKey.getPrivateKeySpec();
 		java.security.KeyFactory keyFactory = java.security.KeyFactory
 				.getInstance(eddsaPrivateKey.getSignatureAlgorithm().getName());
 		BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
@@ -374,7 +452,7 @@ public class SignatureTest {
 	private int getDecodedKeysLength(EDDSAPublicKey eddsaPublicKey)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		int resLength = 0;
-		X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(eddsaPublicKey.getPublicKeyData());
+		X509EncodedKeySpec publicKeySpec = eddsaPublicKey.getPublicKeySpec();
 		java.security.KeyFactory keyFactory = java.security.KeyFactory
 				.getInstance(eddsaPublicKey.getSignatureAlgorithm().getName());
 		BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(publicKeySpec);
