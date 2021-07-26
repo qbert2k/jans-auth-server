@@ -137,11 +137,11 @@ public class CrossEncryptionTest {
 	}
 
 	@Test
-	public void encryptWithGluu_RSA_OAEP_256_1_decryptByAll() {
-		final String jwt = encryptWithGluuJweEncrypter_RSA_OAEP_256_1();
-		System.out.println("Gluu encrypted (RSA_OAEP_256_1): " + jwt);
+	public void encryptWithGluu_RSA_OAEP_256_HS512_decryptByAll() {
+		final String jwt = encryptWithGluuJweEncrypter_RSA_OAEP_256_HS512();
+		System.out.println("Gluu encrypted (RSA_OAEP_256_HS512): " + jwt);
 
-		assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP_256_1(jwt));
+		assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP_256_HS512(jwt));
 	}
 
 	@Test
@@ -419,7 +419,7 @@ public class CrossEncryptionTest {
 		return null;		
 	}
 
-	private String encryptWithGluuJweEncrypter_RSA_OAEP_256_1() {
+	private String encryptWithGluuJweEncrypter_RSA_OAEP_256_HS512() {
 		try {
 			RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(recipientJwkJson));
 
@@ -1161,7 +1161,7 @@ public class CrossEncryptionTest {
 		return false;
 	}
 
-	private boolean testDecryptWithGluuDecrypter_RSA_OAEP_256_1(String jwe) {
+	private boolean testDecryptWithGluuDecrypter_RSA_OAEP_256_HS512(String jwe) {
 		try {
 			JWK jwk = JWK.parse(recipientJwkJson);
 			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
@@ -1171,10 +1171,10 @@ public class CrossEncryptionTest {
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP_256);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
 			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt RSA_OAEP_256_1 succeed: " + decryptedPayload);
+			System.out.println("Gluu decrypt RSA_OAEP_256_HS512 succeed: " + decryptedPayload);
 			return isJsonEqual(decryptedPayload, PAYLOAD);			
 		} catch (Exception e) {
-			System.out.println("Gluu decrypt RSA_OAEP_256_1 failed: " + e.getMessage());
+			System.out.println("Gluu decrypt RSA_OAEP_256_HS512 failed: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return false;
