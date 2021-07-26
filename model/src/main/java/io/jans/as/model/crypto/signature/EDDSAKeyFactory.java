@@ -101,7 +101,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
 				JcaX509v1CertificateBuilder certGen = new JcaX509v1CertificateBuilder(name, serialNumber,
 						startDate.getTime(), expiryDate.getTime(), name, publicKey);
 				X509CertificateHolder certHolder = certGen
-						.build(new JcaContentSignerBuilder(signatureAlgorithm.getName()).setProvider(DEF_BC)
+						.build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
 								.build(keyPair.getPrivate()));
 				X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
 				this.certificate = new Certificate(signatureAlgorithm, cert);
@@ -140,7 +140,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
 			JcaX509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(name, serialNumber, startDate,
 					expirationDate, name, publicKey);
 			X509CertificateHolder certHolder = certGen
-					.build(new JcaContentSignerBuilder(signatureAlgorithm.getName()).setProvider(DEF_BC).build(keyPair.getPrivate()));
+					.build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC).build(keyPair.getPrivate()));
 			X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
 			certificate = new Certificate(signatureAlgorithm, cert);
 		} catch (OperatorCreationException e) {

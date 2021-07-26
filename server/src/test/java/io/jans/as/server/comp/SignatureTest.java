@@ -654,7 +654,7 @@ public class SignatureTest {
 		assertFalse(ecdsaSigner4.validateSignature(signingInput, signatureWrong));		
 		assertFalse(ecdsaSigner4.validateSignature(signingInputWrong, signatureWrong));
 		
-		EDDSASigner ecdsaSigner5 = new EDDSASigner(SignatureAlgorithm.ED25519, certificateWrong);
+		EDDSASigner ecdsaSigner5 = new EDDSASigner(SignatureAlgorithm.EDDSA, certificateWrong);
 		assertFalse(ecdsaSigner5.validateSignature(signingInput, signature));		
 		assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));		
 		assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));		

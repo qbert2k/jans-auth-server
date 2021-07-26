@@ -28,9 +28,6 @@ import io.jans.as.model.util.StringUtils;
  */
 public class ECDSAPublicKey extends PublicKey {
 
-    private static final String ECDSA_ALGORITHM = "EC";
-    private static final String USE = "sig";
-
     private SignatureAlgorithm signatureAlgorithm;
     private BigInteger x;
     private BigInteger y;
