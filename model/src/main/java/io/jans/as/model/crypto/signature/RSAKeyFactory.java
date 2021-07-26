@@ -40,6 +40,8 @@ import io.jans.as.model.jwk.JSONWebKey;
  */
 @Deprecated
 public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
+	
+	public static int DEF_KEY_LENGTH = 2048;
 
     private RSAPrivateKey rsaPrivateKey;
     private RSAPublicKey rsaPublicKey;
@@ -54,12 +56,18 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
         }
 
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-        keyGen.initialize(2048, new SecureRandom());
+        keyGen.initialize(RSAKeyFactory.DEF_KEY_LENGTH, new SecureRandom());
 
         KeyPair keyPair = keyGen.generateKeyPair();
 
         BCRSAPrivateCrtKey jcersaPrivateCrtKey = (BCRSAPrivateCrtKey) keyPair.getPrivate();
         BCRSAPublicKey jcersaPublicKey = (BCRSAPublicKey) keyPair.getPublic();
+        
+        BigInteger p = jcersaPrivateCrtKey.getPrimeP();
+        BigInteger q = jcersaPrivateCrtKey.getPrimeQ();
+        
+        int len1 = p.toByteArray().length * 8;
+        int len2 = q.toByteArray().length * 8;
 
         rsaPrivateKey = new RSAPrivateKey(jcersaPrivateCrtKey.getModulus(),
                 jcersaPrivateCrtKey.getPrivateExponent());
