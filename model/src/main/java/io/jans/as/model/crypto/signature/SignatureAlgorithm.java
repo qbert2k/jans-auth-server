@@ -40,16 +40,6 @@ public enum SignatureAlgorithm {
     ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA),
 	EDDSA("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA);
 
-/*
-	PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512);
-	Ed25519
-	Ed448
- */
-/*	
-	Ed25519
-	Ed448
-*/		
-
     private final String name;
     private final AlgorithmFamily family;
     private final String algorithm;
