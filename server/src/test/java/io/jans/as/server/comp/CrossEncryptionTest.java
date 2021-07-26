@@ -871,7 +871,7 @@ public class CrossEncryptionTest {
 
 	private String encryptWithGluuJweEncrypter_Direct_128GCM() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes128JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes128JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -885,7 +885,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -903,7 +903,7 @@ public class CrossEncryptionTest {
 	
 	private String encryptWithGluuJweEncrypter_Direct_192GCM() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes192JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes192JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A192GCM;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -917,7 +917,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -936,7 +936,7 @@ public class CrossEncryptionTest {
 	
 	private String encryptWithGluuJweEncrypter_Direct_256GCM() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes256JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes256JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A256GCM;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -950,7 +950,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -969,7 +969,7 @@ public class CrossEncryptionTest {
 	
 	private String encryptWithGluuJweEncrypter_Direct_A128CBC_HS256() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes256JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes256JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128CBC_HS256;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -983,7 +983,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -1001,7 +1001,7 @@ public class CrossEncryptionTest {
 	
 	private String encryptWithGluuJweEncrypter_Direct_A192CBC_HS384() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes384JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes384JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A192CBC_HS384;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -1015,7 +1015,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -1034,7 +1034,7 @@ public class CrossEncryptionTest {
 	
 	private String encryptWithGluuJweEncrypter_Direct_A256CBC_HS512() {
 		try {
-			OctetSequenceKey aes128Key = (OctetSequenceKey) (JWK.parse(aes512JwkJson));
+			OctetSequenceKey aesKey = (OctetSequenceKey) (JWK.parse(aes512JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A256CBC_HS512;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.DIR;
@@ -1048,7 +1048,7 @@ public class CrossEncryptionTest {
 			jwe.getHeader().setKeyId("1");
 
 			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					aes128Key.toByteArray());
+					aesKey.toByteArray());
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
