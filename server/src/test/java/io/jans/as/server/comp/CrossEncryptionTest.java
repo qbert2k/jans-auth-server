@@ -137,25 +137,25 @@ public class CrossEncryptionTest {
 	};
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsECDH = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, null)			
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES, ecJwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, ecJwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, ecJwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, ecJwkJson)			
 	};	
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsAES = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128GCMKW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192GCMKW, null),			
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256GCMKW, null)
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128KW, aes128JwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192KW, aes192JwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256KW, aes256JwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128GCMKW, aes128GCMKJwkJson),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192GCMKW, aes192GCMKJwkJson),			
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256GCMKW, aes256GCMKJwkJson)
 	};
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsPassw = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, null)
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW, passwordValue),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW, passwordValue),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, passwordValue)
 	};
 
 	@Test
@@ -443,7 +443,7 @@ public class CrossEncryptionTest {
 					System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
 					jweStr = jwe.toString();
 					
-					JWK jwk = JWK.parse(recipientJwkJson);
+					JWK jwk = JWK.parse(keyEncrAlgorithmRSA.keyData);
 					RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
 
 					JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
@@ -455,6 +455,154 @@ public class CrossEncryptionTest {
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
 				} catch (Exception e) {
 					System.out.println("Error (encryptWithGluu_RSA_decryptByAll) : " + e.getMessage());
+				}
+			}
+		}
+	}	
+	
+	@Test
+	public void encryptWithGluu_ECDH_decryptByAll() {
+		for(BlockEncryptionAlgorithm blckEncrAlgorithm: BlockEncryptionAlgorithm.values()) {
+			for(KeyEncryptionAlgorithmSuite keyEnrAlgorithmECDH : keyEnrAlgorithmsECDH) {
+				
+				System.out.println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  blckEncrAlgorithm = " + blckEncrAlgorithm);				
+				System.out.println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  keyEnrAlgorithmECDH.keyEncrAlg = " + keyEnrAlgorithmECDH.keyEncrAlg);				
+				System.out.println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  keyEnrAlgorithmECDH.keyData = " + keyEnrAlgorithmECDH.keyData);				
+				
+				String jweStr = null;
+				try {
+					RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(keyEnrAlgorithmECDH.keyData));
+
+					BlockEncryptionAlgorithm blockEncryptionAlgorithm = blckEncrAlgorithm;
+					KeyEncryptionAlgorithm keyEncryptionAlgorithm = keyEnrAlgorithmECDH.keyEncrAlg;
+					Jwe jwe = new Jwe();
+					jwe.getHeader().setType(JwtType.JWT);
+					jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+					jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+					jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+					jwe.getClaims().setSubjectIdentifier("testing");
+					jwe.getHeader().setKeyId("1");
+
+					JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+							recipientPublicJWK.toPublicKey());
+					jwe = encrypter.encrypt(jwe);
+					System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+					System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+					System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+					System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+					System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+					jweStr = jwe.toString();
+					
+					JWK jwk = JWK.parse(keyEnrAlgorithmECDH.keyData);
+					ECPrivateKey ecPrivateKey = ((ECKey) jwk).toECPrivateKey();					
+
+					JweDecrypterImpl decrypter = new JweDecrypterImpl(ecPrivateKey);
+
+					decrypter.setKeyEncryptionAlgorithm(keyEncryptionAlgorithm);
+					decrypter.setBlockEncryptionAlgorithm(blockEncryptionAlgorithm);
+					final String decryptedPayload = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
+					
+					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
+				} catch (Exception e) {
+					System.out.println("Error (encryptWithGluu_ECDH_decryptByAll) : " + e.getMessage());
+				}
+			}
+		}
+	}
+	
+	@Test
+	public void encryptWithGluu_AES_decryptByAll() {
+		for(BlockEncryptionAlgorithm blckEncrAlgorithm: BlockEncryptionAlgorithm.values()) {
+			for(KeyEncryptionAlgorithmSuite keyEnrAlgorithmAES : keyEnrAlgorithmsAES) {
+				
+				System.out.println("Gluu encrypted (encryptWithGluu_AES_decryptByAll):  blckEncrAlgorithm = " + blckEncrAlgorithm);				
+				System.out.println("Gluu encrypted (encryptWithGluu_AES_decryptByAll):  keyEnrAlgorithmAES.keyEncrAlg = " + keyEnrAlgorithmAES.keyEncrAlg);				
+				System.out.println("Gluu encrypted (encryptWithGluu_AES_decryptByAll):  keyEnrAlgorithmAES.keyData = " + keyEnrAlgorithmAES.keyData);				
+				
+				String jweStr = null;
+				try {
+					RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(keyEnrAlgorithmAES.keyData));
+
+					BlockEncryptionAlgorithm blockEncryptionAlgorithm = blckEncrAlgorithm;
+					KeyEncryptionAlgorithm keyEncryptionAlgorithm = keyEnrAlgorithmAES.keyEncrAlg;
+					Jwe jwe = new Jwe();
+					jwe.getHeader().setType(JwtType.JWT);
+					jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+					jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+					jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+					jwe.getClaims().setSubjectIdentifier("testing");
+					jwe.getHeader().setKeyId("1");
+
+					JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+							recipientPublicJWK.toPublicKey());
+					jwe = encrypter.encrypt(jwe);
+					System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+					System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+					System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+					System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+					System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+					jweStr = jwe.toString();
+					
+					JWK jwk = JWK.parse(keyEnrAlgorithmAES.keyData);
+					OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
+
+					JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
+
+					decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128KW);
+					decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+					final String decryptedPayload = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
+					System.out.println("Gluu decrypt A128KW succeed: " + decryptedPayload);					
+					
+					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
+				} catch (Exception e) {
+					System.out.println("Error (encryptWithGluu_AES_decryptByAll) : " + e.getMessage());
+				}
+			}
+		}
+	}
+	
+	@Test
+	public void encryptWithGluu_Password_decryptByAll() {
+		for(BlockEncryptionAlgorithm blckEncrAlgorithm: BlockEncryptionAlgorithm.values()) {
+			for(KeyEncryptionAlgorithmSuite keyEnrAlgorithmPassw : keyEnrAlgorithmsPassw) {
+				
+				System.out.println("Gluu encrypted (encryptWithGluu_Password_decryptByAll):  blckEncrAlgorithm = " + blckEncrAlgorithm);				
+				System.out.println("Gluu encrypted (encryptWithGluu_Password_decryptByAll):  keyEnrAlgorithmAES.keyEncrAlg = " + keyEnrAlgorithmPassw.keyEncrAlg);				
+				System.out.println("Gluu encrypted (encryptWithGluu_Password_decryptByAll):  keyEnrAlgorithmAES.keyData = " + keyEnrAlgorithmPassw.keyData);				
+				
+				String jweStr = null;
+				try {
+					RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(keyEnrAlgorithmPassw.keyData));
+
+					BlockEncryptionAlgorithm blockEncryptionAlgorithm = blckEncrAlgorithm;
+					KeyEncryptionAlgorithm keyEncryptionAlgorithm = keyEnrAlgorithmPassw.keyEncrAlg;
+					Jwe jwe = new Jwe();
+					jwe.getHeader().setType(JwtType.JWT);
+					jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
+					jwe.getHeader().setEncryptionMethod(blockEncryptionAlgorithm);
+					jwe.getClaims().setIssuer("https:devgluu.saminet.local");
+					jwe.getClaims().setSubjectIdentifier("testing");
+					jwe.getHeader().setKeyId("1");
+
+					JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+							recipientPublicJWK.toPublicKey());
+					jwe = encrypter.encrypt(jwe);
+					System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
+					System.out.println("EncodedEncryptedKey: " + jwe.getEncodedEncryptedKey());
+					System.out.println("EncodedInitializationVector: " + jwe.getEncodedInitializationVector());
+					System.out.println("EncodedCiphertext: " + jwe.getEncodedCiphertext());
+					System.out.println("EncodedIntegrityValue: " + jwe.getEncodedIntegrityValue());
+					jweStr = jwe.toString();
+					
+					JweDecrypterImpl decrypter = new JweDecrypterImpl(keyEnrAlgorithmPassw.keyData);					
+
+					decrypter.setKeyEncryptionAlgorithm(keyEncryptionAlgorithm);
+					decrypter.setBlockEncryptionAlgorithm(blockEncryptionAlgorithm);
+					final String decryptedPayload = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
+					
+					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
+				} catch (Exception e) {
+					System.out.println("Error (encryptWithGluu_Password_decryptByAll) : " + e.getMessage());
 				}
 			}
 		}
@@ -1317,9 +1465,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A128KW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes128JwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1336,9 +1484,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A192KW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes192JwkJson);
-			OctetSequenceKey aes192KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes192KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1355,9 +1503,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A256KW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes256JwkJson);
-			OctetSequenceKey aes256KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes256KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1374,9 +1522,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A128GCMKW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes128GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128GCMKW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1393,9 +1541,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A192GCMKW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes192GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192GCMKW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1412,9 +1560,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A256GCMKW(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes256GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1431,9 +1579,9 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_A256GCMKW_A256CBC_PLUS_HS512(String jwe) {
 		try {
 			JWK jwk = JWK.parse(aes256GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
 
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
