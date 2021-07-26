@@ -108,6 +108,8 @@ public class CrossEncryptionTest {
 	private final String aes256GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A256GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq0\" }";
 	private final String aes384GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A384GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JK\" }";
 	private final String aes512GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A512GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JKzk8EeKHaHZY9Qj49CFIf8g\" }";
+	
+	private final String passwordValue = "password";	
 
 	@Test
 	public void encryptWithNimbus_decryptByAll() {
@@ -792,8 +794,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					"password");
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -822,8 +823,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					"password");
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -852,8 +852,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-					"password");
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
