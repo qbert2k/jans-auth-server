@@ -109,7 +109,54 @@ public class CrossEncryptionTest {
 	private final String aes384GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A384GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JK\" }";
 	private final String aes512GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A512GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JKzk8EeKHaHZY9Qj49CFIf8g\" }";
 	
-	private final String passwordValue = "password";	
+	private final String passwordValue = "password";
+	
+	/**
+	 * 
+	 * @author SMan
+	 *
+	 */
+	private static class KeyEncryptionAlgorithmSuite {
+		public KeyEncryptionAlgorithm keyEncrAlg;  
+		public String keyData;
+		/**
+		 * 
+		 * @param keyEncrAlg
+		 * @param keyData
+		 */
+		public KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm keyEncrAlg, String keyData) {
+			this.keyEncrAlg = keyEncrAlg; 
+			this.keyData = keyData;
+		}
+	}
+	
+	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsRSA = {
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA1_5, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP_256, null),
+	};
+
+	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsECDH = {
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, null)			
+	};	
+
+	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsAES = {
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A128GCMKW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A192GCMKW, null),			
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.A256GCMKW, null)
+	};
+
+	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsPassw = {
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, null)
+	};
 
 	@Test
 	public void encryptWithNimbus_decryptByAll() {
@@ -361,6 +408,20 @@ public class CrossEncryptionTest {
 		// jwe produced by Nimbus Jose+JWT
 		assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(encryptWithNimbusJoseJwt()));
 	}
+	
+	
+	@Test
+	public void encryptWithGluu_RSA_decryptByAll() {
+		for(BlockEncryptionAlgorithm be: BlockEncryptionAlgorithm.values()) {
+			
+		}
+		
+		
+//		RSA1_5("RSA1_5", "RSA", "RSA/ECB/PKCS1Padding"),
+//		RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
+//		RSA_OAEP_256("RSA-OAEP-256"),
+	}	
+	
 	
 
 	private String encryptWithGluuJweEncrypter_RSA_OAEP() {
