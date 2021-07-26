@@ -11,8 +11,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
@@ -20,7 +18,6 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.codec.Charsets;
@@ -512,413 +509,7 @@ public class CrossEncryptionTest {
 		// jwe produced by Nimbus Jose+JWT
 		assertTrue(testDecryptWithGluuDecrypter_RSA_OAEP(encryptWithNimbusJoseJwt()));
 	}
-
-	private boolean testDecryptNimbusJoseJwt(String jwe) {
-
-		try {
-			EncryptedJWT encryptedJwt = EncryptedJWT.parse(jwe);
-			// EncryptedJWT encryptedJwt = EncryptedJWT.parse(encryptWithGluu());
-			// EncryptedJWT encryptedJwt = EncryptedJWT.parse(encryptWithNimbus());
-
-			JWK jwk = JWK.parse(recipientJwkJson);
-			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
-
-			JWEDecrypter decrypter = new RSADecrypter(rsaPrivateKey);
-			decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
-
-			encryptedJwt.decrypt(decrypter);
-			final String decryptedPayload = new String(
-					Base64Util.base64urldecode(encryptedJwt.getPayload().toString()));
-			System.out.println("Nimbusds decrypt JoseJwt succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Nimbusds decrypt JoseJwt failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public static boolean isJsonEqual(String json1, String json2) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode tree1 = mapper.readTree(json1);
-		JsonNode tree2 = mapper.readTree(json2);
-		return tree1.equals(tree2);
-	}
-
-	public boolean testDecryptWithJose4J(String jwe) {
-
-		try {
-
-			PublicJsonWebKey jwk = PublicJsonWebKey.Factory.newPublicJwk(recipientJwkJson);
-
-			JsonWebEncryption receiverJwe = new JsonWebEncryption();
-
-			AlgorithmConstraints algConstraints = new AlgorithmConstraints(ConstraintType.WHITELIST,
-					KeyManagementAlgorithmIdentifiers.RSA_OAEP);
-			receiverJwe.setAlgorithmConstraints(algConstraints);
-			AlgorithmConstraints encConstraints = new AlgorithmConstraints(ConstraintType.WHITELIST,
-					ContentEncryptionAlgorithmIdentifiers.AES_128_GCM);
-			receiverJwe.setContentEncryptionAlgorithmConstraints(encConstraints);
-
-			receiverJwe.setKey(jwk.getPrivateKey());
-
-			receiverJwe.setCompactSerialization(jwe);
-			final String decryptedPayload = new String(Base64Util.base64urldecode(receiverJwe.getPlaintextString()));
-			System.out.println("Jose4j decrypt Jose4J succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Jose4j decrypt Jose4J failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_RSA_OAEP(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(recipientJwkJson);
-			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt RSA_OAEP succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt RSA_OAEP failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_RSA_OAEP_256(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(recipientJwkJson);
-			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP_256);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt RSA_OAEP_256 succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt RSA_OAEP_256 failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_RSA_OAEP_256_1(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(recipientJwkJson);
-			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP_256);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt RSA_OAEP_256_1 succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt RSA_OAEP_256_1 failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_RSA1_5(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(recipientJwkJson);
-			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA1_5);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt RSA1_5 succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt RSA1_5 failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_ECDH_ES(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(ecJwkJson);
-			ECPrivateKey ecPrivateKey = ((ECKey) jwk).toECPrivateKey();
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(ecPrivateKey);
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.ECDH_ES);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt ECDH_ES succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt ECDH_ES failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A128KW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes128JwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A128KW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A128KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A192KW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes192JwkJson);
-			OctetSequenceKey aes192KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes192KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A192KW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A192KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A256KW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes256JwkJson);
-			OctetSequenceKey aes256KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes256KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A256KW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A256KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A128GCMKW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes128GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128GCMKW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A128GCMKW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A128GCMKW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A192GCMKW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes192GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192GCMKW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A192GCMKW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A192GCMKW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A256GCMKW(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes256GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A256GCMKW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A256GCMKW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_A256GCMKW_A256CBC_PLUS_HS512(String jwe) {
-
-		try {
-			JWK jwk = JWK.parse(aes256GCMKJwkJson);
-			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt A256GCMKW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt A256GCMKW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(String jwe) {
-
-		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_PBES2_HS384_PLUS_A192KW(String jwe) {
-
-		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128CBC_PLUS_HS256);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A192KW succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A192KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	public boolean testDecryptWithGluuDecrypter_PBES2_HS512_PLUS_A256KW(String jwe) {
-		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A256K succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);			
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt PBES2_HS512_PLUS_A256KW failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
 	
-	public boolean testDecryptWithGluuDecrypter_Direct_128GCM(String jwe) {
-		try {
-			JWK jwk = JWK.parse(aes128JwkJson);
-			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt Direct_128GCM succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt Direct_128GCM failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}	
-	
-	public boolean testDecryptWithGluuDecrypter_Direct_192GCM(String jwe) {
-		try {
-			JWK jwk = JWK.parse(aes192JwkJson);
-			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A192GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt Direct_192GCM succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt Direct_192GCM failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public boolean testDecryptWithGluuDecrypter_Direct_256GCM(String jwe) {
-		try {
-			JWK jwk = JWK.parse(aes256JwkJson);
-			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
-
-			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
-
-			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
-			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256GCM);
-			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
-			System.out.println("Gluu decrypt Direct_256GCM succeed: " + decryptedPayload);
-			return isJsonEqual(decryptedPayload, PAYLOAD);
-		} catch (Exception e) {
-			System.out.println("Gluu decrypt Direct_256GCM failed: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}	
 
 	private String encryptWithGluuJweEncrypter_RSA_OAEP() {
 
@@ -1538,7 +1129,414 @@ public class CrossEncryptionTest {
 			System.out.println("Error encryption with Direct_256GCM: " + e.getMessage());
 			return null;
 		}		
+	}	
+
+	private boolean testDecryptNimbusJoseJwt(String jwe) {
+
+		try {
+			EncryptedJWT encryptedJwt = EncryptedJWT.parse(jwe);
+			// EncryptedJWT encryptedJwt = EncryptedJWT.parse(encryptWithGluu());
+			// EncryptedJWT encryptedJwt = EncryptedJWT.parse(encryptWithNimbus());
+
+			JWK jwk = JWK.parse(recipientJwkJson);
+			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+			JWEDecrypter decrypter = new RSADecrypter(rsaPrivateKey);
+			decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+
+			encryptedJwt.decrypt(decrypter);
+			final String decryptedPayload = new String(
+					Base64Util.base64urldecode(encryptedJwt.getPayload().toString()));
+			System.out.println("Nimbusds decrypt JoseJwt succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Nimbusds decrypt JoseJwt failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
 	}
+
+	public static boolean isJsonEqual(String json1, String json2) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode tree1 = mapper.readTree(json1);
+		JsonNode tree2 = mapper.readTree(json2);
+		return tree1.equals(tree2);
+	}
+
+	public boolean testDecryptWithJose4J(String jwe) {
+
+		try {
+
+			PublicJsonWebKey jwk = PublicJsonWebKey.Factory.newPublicJwk(recipientJwkJson);
+
+			JsonWebEncryption receiverJwe = new JsonWebEncryption();
+
+			AlgorithmConstraints algConstraints = new AlgorithmConstraints(ConstraintType.WHITELIST,
+					KeyManagementAlgorithmIdentifiers.RSA_OAEP);
+			receiverJwe.setAlgorithmConstraints(algConstraints);
+			AlgorithmConstraints encConstraints = new AlgorithmConstraints(ConstraintType.WHITELIST,
+					ContentEncryptionAlgorithmIdentifiers.AES_128_GCM);
+			receiverJwe.setContentEncryptionAlgorithmConstraints(encConstraints);
+
+			receiverJwe.setKey(jwk.getPrivateKey());
+
+			receiverJwe.setCompactSerialization(jwe);
+			final String decryptedPayload = new String(Base64Util.base64urldecode(receiverJwe.getPlaintextString()));
+			System.out.println("Jose4j decrypt Jose4J succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Jose4j decrypt Jose4J failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_RSA_OAEP(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(recipientJwkJson);
+			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt RSA_OAEP succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt RSA_OAEP failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_RSA_OAEP_256(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(recipientJwkJson);
+			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP_256);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt RSA_OAEP_256 succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt RSA_OAEP_256 failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_RSA_OAEP_256_1(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(recipientJwkJson);
+			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA_OAEP_256);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt RSA_OAEP_256_1 succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt RSA_OAEP_256_1 failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_RSA1_5(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(recipientJwkJson);
+			RSAPrivateKey rsaPrivateKey = ((RSAKey) jwk).toRSAPrivateKey();
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(rsaPrivateKey);
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.RSA1_5);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt RSA1_5 succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt RSA1_5 failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_ECDH_ES(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(ecJwkJson);
+			ECPrivateKey ecPrivateKey = ((ECKey) jwk).toECPrivateKey();
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(ecPrivateKey);
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.ECDH_ES);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt ECDH_ES succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt ECDH_ES failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A128KW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes128JwkJson);
+			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A128KW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A128KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A192KW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes192JwkJson);
+			OctetSequenceKey aes192KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes192KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A192KW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A192KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A256KW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes256JwkJson);
+			OctetSequenceKey aes256KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes256KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A256KW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A256KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A128GCMKW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes128GCMKJwkJson);
+			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128GCMKW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A128GCMKW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A128GCMKW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A192GCMKW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes192GCMKJwkJson);
+			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A192GCMKW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A192GCMKW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A192GCMKW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A256GCMKW(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes256GCMKJwkJson);
+			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A256GCMKW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A256GCMKW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_A256GCMKW_A256CBC_PLUS_HS512(String jwe) {
+
+		try {
+			JWK jwk = JWK.parse(aes256GCMKJwkJson);
+			OctetSequenceKey aes128KWKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aes128KWKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A256GCMKW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt A256GCMKW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt A256GCMKW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(String jwe) {
+
+		try {
+			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt PBES2_HS256_PLUS_A128KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_PBES2_HS384_PLUS_A192KW(String jwe) {
+
+		try {
+			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128CBC_PLUS_HS256);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A192KW succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A192KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean testDecryptWithGluuDecrypter_PBES2_HS512_PLUS_A256KW(String jwe) {
+		try {
+			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt PBES2_HS384_PLUS_A256K succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);			
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt PBES2_HS512_PLUS_A256KW failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean testDecryptWithGluuDecrypter_Direct_128GCM(String jwe) {
+		try {
+			JWK jwk = JWK.parse(aes128JwkJson);
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt Direct_128GCM succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt Direct_128GCM failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}	
+	
+	public boolean testDecryptWithGluuDecrypter_Direct_192GCM(String jwe) {
+		try {
+			JWK jwk = JWK.parse(aes192JwkJson);
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A192GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt Direct_192GCM succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt Direct_192GCM failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean testDecryptWithGluuDecrypter_Direct_256GCM(String jwe) {
+		try {
+			JWK jwk = JWK.parse(aes256JwkJson);
+			OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
+
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
+
+			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.DIR);
+			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256GCM);
+			final String decryptedPayload = decrypter.decrypt(jwe).getClaims().toJsonString().toString();
+			System.out.println("Gluu decrypt Direct_256GCM succeed: " + decryptedPayload);
+			return isJsonEqual(decryptedPayload, PAYLOAD);
+		} catch (Exception e) {
+			System.out.println("Gluu decrypt Direct_256GCM failed: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}	
 
 	@Test
 	public void nestedJWT() throws Exception {
