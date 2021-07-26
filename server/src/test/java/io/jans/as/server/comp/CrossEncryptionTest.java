@@ -454,7 +454,12 @@ public class CrossEncryptionTest {
 					
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
 				} catch (Exception e) {
-					System.out.println("Error (encryptWithGluu_RSA_decryptByAll) : " + e.getMessage());
+					System.out.println("Error (encryptWithGluu_RSA_decryptByAll) : " +
+							" blckEncrAlgorithm = " + blckEncrAlgorithm +
+							" keyEnrAlgorithmRSA.keyEncrAlg = " + keyEncrAlgorithmRSA.keyEncrAlg + 
+							" keyEnrAlgorithmRSA.keyData = " + keyEncrAlgorithmRSA.keyData +
+							" message: " + e.getMessage());
+					assertTrue(false);					
 				}
 			}
 		}
@@ -504,14 +509,20 @@ public class CrossEncryptionTest {
 					
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
 				} catch (Exception e) {
-					System.out.println("Error (encryptWithGluu_ECDH_decryptByAll) : " + e.getMessage());
+					String message = "Error (encryptWithGluu_ECDH_decryptByAll) : " +
+							" blckEncrAlgorithm = " + blckEncrAlgorithm +
+							" keyEnrAlgorithmECDH.keyEncrAlg = " + keyEnrAlgorithmECDH.keyEncrAlg + 
+							" keyEnrAlgorithmECDH.keyData = " + keyEnrAlgorithmECDH.keyData +
+							" message: " + e.getMessage();
+					System.out.println(message);
+					assertTrue(false, message);
 				}
 			}
 		}
 	}
 	
 	@Test
-	public void encryptWithGluu_AES_decryptByAll() {
+	public void encryptWithGluu_AES_decryptByAll() throws ParseException, JOSEException, InvalidJweException, InvalidJwtException, IOException {
 		for(BlockEncryptionAlgorithm blckEncrAlgorithm: BlockEncryptionAlgorithm.values()) {
 			for(KeyEncryptionAlgorithmSuite keyEnrAlgorithmAES : keyEnrAlgorithmsAES) {
 				
@@ -520,9 +531,9 @@ public class CrossEncryptionTest {
 				System.out.println("Gluu encrypted (encryptWithGluu_AES_decryptByAll):  keyEnrAlgorithmAES.keyData = " + keyEnrAlgorithmAES.keyData);				
 				
 				String jweStr = null;
-				try {
+				try {				
 					RSAKey recipientPublicJWK = (RSAKey) (JWK.parse(keyEnrAlgorithmAES.keyData));
-
+	
 					BlockEncryptionAlgorithm blockEncryptionAlgorithm = blckEncrAlgorithm;
 					KeyEncryptionAlgorithm keyEncryptionAlgorithm = keyEnrAlgorithmAES.keyEncrAlg;
 					Jwe jwe = new Jwe();
@@ -532,7 +543,7 @@ public class CrossEncryptionTest {
 					jwe.getClaims().setIssuer("https:devgluu.saminet.local");
 					jwe.getClaims().setSubjectIdentifier("testing");
 					jwe.getHeader().setKeyId("1");
-
+	
 					JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
 							recipientPublicJWK.toPublicKey());
 					jwe = encrypter.encrypt(jwe);
@@ -545,9 +556,9 @@ public class CrossEncryptionTest {
 					
 					JWK jwk = JWK.parse(keyEnrAlgorithmAES.keyData);
 					OctetSequenceKey aesKey = (OctetSequenceKey) jwk;
-
+	
 					JweDecrypterImpl decrypter = new JweDecrypterImpl(aesKey.toByteArray());
-
+	
 					decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.A128KW);
 					decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
 					final String decryptedPayload = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
@@ -555,8 +566,14 @@ public class CrossEncryptionTest {
 					
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
 				} catch (Exception e) {
-					System.out.println("Error (encryptWithGluu_AES_decryptByAll) : " + e.getMessage());
-				}
+					String message = "Error (encryptWithGluu_AES_decryptByAll) : " +
+							" blckEncrAlgorithm = " + blckEncrAlgorithm +
+							" keyEnrAlgorithmAES.keyEncrAlg = " + keyEnrAlgorithmAES.keyEncrAlg + 
+							" keyEnrAlgorithmAES.keyData = " + keyEnrAlgorithmAES.keyData +
+							" message: " + e.getMessage();
+					System.out.println(message);
+					assertTrue(false, message);
+				}				
 			}
 		}
 	}
@@ -602,7 +619,13 @@ public class CrossEncryptionTest {
 					
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
 				} catch (Exception e) {
-					System.out.println("Error (encryptWithGluu_Password_decryptByAll) : " + e.getMessage());
+					String message = "Error (encryptWithGluu_Password_decryptByAll) : " +
+							" blckEncrAlgorithm = " + blckEncrAlgorithm +
+							" keyEnrAlgorithmPassw.keyEncrAlg = " + keyEnrAlgorithmPassw.keyEncrAlg + 
+							" keyEnrAlgorithmPassw.keyData = " + keyEnrAlgorithmPassw.keyData +
+							" message: " + e.getMessage();
+					System.out.println(message);
+					assertTrue(false, message);
 				}
 			}
 		}
