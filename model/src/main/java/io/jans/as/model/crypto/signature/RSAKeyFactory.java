@@ -62,12 +62,6 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
 
         BCRSAPrivateCrtKey jcersaPrivateCrtKey = (BCRSAPrivateCrtKey) keyPair.getPrivate();
         BCRSAPublicKey jcersaPublicKey = (BCRSAPublicKey) keyPair.getPublic();
-        
-        BigInteger p = jcersaPrivateCrtKey.getPrimeP();
-        BigInteger q = jcersaPrivateCrtKey.getPrimeQ();
-        
-        int len1 = p.toByteArray().length * 8;
-        int len2 = q.toByteArray().length * 8;
 
         rsaPrivateKey = new RSAPrivateKey(jcersaPrivateCrtKey.getModulus(),
                 jcersaPrivateCrtKey.getPrivateExponent());

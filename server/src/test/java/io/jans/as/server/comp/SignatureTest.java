@@ -99,8 +99,6 @@ public class SignatureTest {
 		RSASigner rsaSigner3 = new RSASigner(SignatureAlgorithm.RS256, certificate);
 		assertTrue(rsaSigner3.validateSignature(signingInput, signature));
 
-		assertTrue((privateKey.getPrivateExponent().toByteArray().length * 8) == RSAKeyFactory.DEF_KEY_LENGTH);
-
 		keyFactory = new RSAKeyFactory(SignatureAlgorithm.RS256, DEF_CERTIFICATE_OWN);
 
 		Key<RSAPrivateKey, RSAPublicKey> keyWrong = keyFactory.getKey();
@@ -159,8 +157,6 @@ public class SignatureTest {
 		RSASigner rsaSigner3 = new RSASigner(SignatureAlgorithm.RS384, certificate);
 		assertTrue(rsaSigner3.validateSignature(signingInput, signature));
 
-		assertTrue((privateKey.getPrivateExponent().toByteArray().length * 8) == RSAKeyFactory.DEF_KEY_LENGTH);
-
 		keyFactory = new RSAKeyFactory(SignatureAlgorithm.RS384, DEF_CERTIFICATE_OWN);
 
 		Key<RSAPrivateKey, RSAPublicKey> keyWrong = keyFactory.getKey();
@@ -218,8 +214,6 @@ public class SignatureTest {
 		assertTrue(rsaSigner2.validateSignature(signingInput, signature));
 		RSASigner rsaSigner3 = new RSASigner(SignatureAlgorithm.RS512, certificate);
 		assertTrue(rsaSigner3.validateSignature(signingInput, signature));
-
-		assertTrue((privateKey.getPrivateExponent().toByteArray().length * 8) == RSAKeyFactory.DEF_KEY_LENGTH);
 		
 		keyFactory = new RSAKeyFactory(SignatureAlgorithm.RS512, DEF_CERTIFICATE_OWN);
 
