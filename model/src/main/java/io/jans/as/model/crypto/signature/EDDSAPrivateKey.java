@@ -5,12 +5,18 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import static io.jans.as.model.jwk.JWKParameter.EXPONENT;
+import static io.jans.as.model.jwk.JWKParameter.MODULUS;
+import static io.jans.as.model.jwk.JWKParameter.D;
+import static io.jans.as.model.jwk.JWKParameter.X;
+
 import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.jans.as.model.crypto.PrivateKey;
+import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -21,24 +27,19 @@ import io.jans.as.model.util.StringUtils;
  */
 public class EDDSAPrivateKey extends PrivateKey {
     
-    private byte [] privateKeyData;
+    private byte [] dEncoded;
+    private byte [] xEncoded;
 
     /**
      * 
      * @param signatureAlgorithm
-     * @param privateKeyData
+     * @param dEncoded
+     * @param xEncoded
      */
-    public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte [] privateKeyData) {
+    public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte [] dEncoded, byte [] xEncoded) {
     	setSignatureAlgorithm(signatureAlgorithm);
-        this.privateKeyData = privateKeyData.clone();
-    }
-
-    /**
-     * 
-     * @param privateKeyDataStr
-     */
-    public EDDSAPrivateKey(String privateKeyDataStr) {
-        this.privateKeyData =  privateKeyDataStr.getBytes().clone();
+        this.dEncoded = dEncoded.clone();
+        this.xEncoded = xEncoded.clone();
     }
 
     /**
@@ -46,7 +47,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @return
      */
     public PKCS8EncodedKeySpec getPrivateKeySpec() {
-    	return new PKCS8EncodedKeySpec(privateKeyData);  
+    	return new PKCS8EncodedKeySpec(dEncoded);  
     }
 
     /**
@@ -54,15 +55,12 @@ public class EDDSAPrivateKey extends PrivateKey {
      */
     @Override
     public JSONObject toJSONObject() throws JSONException {
-/*    	
-        JSONObject jsonObject = new JSONObject();
+    	JSONObject jsonObject = new JSONObject();
         jsonObject.put(MODULUS, JSONObject.NULL);
         jsonObject.put(EXPONENT, JSONObject.NULL);
-        jsonObject.put(D, Base64Util.base64urlencodeUnsignedBigInt(d));
-
-        return jsonObject;
-*/
-    	return null;
+        jsonObject.put(D, Base64Util.base64urlencode(this.dEncoded));
+        jsonObject.put(X, Base64Util.base64urlencode(this.xEncoded));
+    	return jsonObject;
     }
 
     /**
@@ -84,7 +82,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      */
     @Override
     public EDDSAPrivateKey clone() {
-    	EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.privateKeyData);
+    	EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
     	newObj.setKeyId(getKeyId());
     	return newObj;
     }

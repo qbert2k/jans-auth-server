@@ -5,12 +5,17 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import static io.jans.as.model.jwk.JWKParameter.EXPONENT;
+import static io.jans.as.model.jwk.JWKParameter.MODULUS;
+import static io.jans.as.model.jwk.JWKParameter.X;
+
 import java.security.spec.X509EncodedKeySpec;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.jans.as.model.crypto.PublicKey;
+import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -20,26 +25,17 @@ import io.jans.as.model.util.StringUtils;
  * @version July 23, 2021
  */
 public class EDDSAPublicKey extends PublicKey {
-    
-    private byte [] publicKeyData;
+	
+    private byte [] xEncoded;	
 
     /**
      * 
      * @param signatureAlgorithm
      * @param publicKeyData
      */
-    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] publicKeyData) {
+    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] xEncoded) {
     	setSignatureAlgorithm(signatureAlgorithm);
-        this.publicKeyData = publicKeyData.clone();        
-    }
-
-    /**
-     * 
-     * @param signatureAlgorithm
-     * @param publicKeyDataStr
-     */
-    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, String publicKeyDataStr) {
-        this(signatureAlgorithm, publicKeyDataStr.getBytes().clone());
+        this.xEncoded = xEncoded.clone();        
     }
 
     /**
@@ -47,7 +43,7 @@ public class EDDSAPublicKey extends PublicKey {
      * @return
      */
     public X509EncodedKeySpec getPublicKeySpec() {
-    	return new X509EncodedKeySpec(publicKeyData);
+    	return new X509EncodedKeySpec(this.xEncoded);
     }
 
     /**
@@ -55,14 +51,11 @@ public class EDDSAPublicKey extends PublicKey {
      */
     @Override
     public JSONObject toJSONObject() throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-/*        
+    	JSONObject jsonObject = new JSONObject();
         jsonObject.put(MODULUS, JSONObject.NULL);
         jsonObject.put(EXPONENT, JSONObject.NULL);
-        jsonObject.put(X, Base64Util.base64urlencodeUnsignedBigInt(x));
-        jsonObject.put(Y, Base64Util.base64urlencodeUnsignedBigInt(y));
-*/        
-        return jsonObject;
+        jsonObject.put(X, Base64Util.base64urlencode(this.xEncoded));
+    	return jsonObject;    	
     }
 
     /**
@@ -84,7 +77,7 @@ public class EDDSAPublicKey extends PublicKey {
      */
     @Override
     public EDDSAPublicKey clone() {
-    	EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.publicKeyData);
+    	EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.xEncoded);
     	newObj.setKeyId(getKeyId());
     	return newObj;
     }
