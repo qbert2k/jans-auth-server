@@ -13,6 +13,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.MessageDigest;
@@ -70,11 +71,13 @@ import com.nimbusds.jwt.SignedJWT;
 
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
-import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.Key;
 import io.jans.as.model.crypto.KeyFactory;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.ECDSAKeyFactory;
+import io.jans.as.model.crypto.signature.ECDSAPrivateKey;
+import io.jans.as.model.crypto.signature.ECDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAKeyFactory;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
@@ -110,9 +113,12 @@ public class CrossEncryptionTest {
 	private final String rsa1JwkJson = "{ \"kty\":\"RSA\", \"d\":\"BSOr_bbK0THvHyqE8CaPE-f26VBUFRqry47VW0MWtZyU7tGWoBNJi-hB4kxDskw7HitOpdx2zXDhQq6rg6Yv1Wn4WTHSFtQ1_vEJaCOunN1SejrhfEz1eFrADuCyOUXflrUduhymvWGltIgd000kib3QvwvsIft597wqfW5kDds_JgnTILnk-UkKdVx58SGhkgkcUI8uo9BSN5MMGgqEUHY_orqMa-oVWy5VsOAMU22m2ZuPhEZa4uOH4xCRkRtid7LlgzWCOncAAhM4trspKM60Zntq1m6D7ir_bDD1qxpEWYOvEH1UhvUcQw8UKYxGZ3VwscSBlTxQ15mNiDi-wQ\", \"e\":\"AQAB\", \"use\":\"enc\", \"use\":\"sig\", \"kid\":\"1\", \"alg\":\"RS256\", \"n\":\"ALPsdlfm6QYerQFRhL2-QOJUn-a70JsuElspspyBXRZUllhpxSaNWZlouT0DAf3NUmEm8wgVbJF1-exMVaaF8kUrdGYKS5N1uDnZwc1G8MIt29YQ6xoLLqzihJlD-syYL6tPYCr97a4AbA8EssrMjynk_WIBh18gRESq-I9vyvlYyjRfZ9ey185ERGpMfm0d4Mouttl2nc3VRfuuLIstQ4ylKvMjnWtuAvBdwF7jJSIalDUjxIA9kkg6dH2e0ZNyDlN8-14VkeAaC73f-va0kBrD9bPIUSuaaIkmgN0lKwR_xH1Y7vG2xs45R1d_cVTSo-yXhPgKLphPXflPkMMXBs0\" }";	
 	private final String rsa2JwkJson = "{ \"kty\":\"RSA\", \"d\":\"BCS_6xY0EZQ9jcusklPvP97Ydvo7I7kdb3na3b7HPzxRsfP2NJluz3noPydH7RtY2H1osEy4TJVHZRHtH00DjUAB-dk1KGkNNpGBl51uNZgQ9L0hbz_EvSdXQoNNaCOXhXjeOoM3P_keH4ztJMpLIvI5E4SDVA7zuze24HVNOijIR0NwulhtcdblmkbsKVU0lCvDK2eJnVF-rSEk4Vor4w-bA4hzEMof79W26VsdQVGs9Yc6p1zWiefe9dTo_hIploXTxgF4D_8na1vyHZu5xrtBqK87DDAq9RK70uC3OPVE2lGSjnlP-MeTsbW_fFKK_BV9-0dAloTM85-D_aOhgQ\", \"e\":\"AQAB\", \"use\":\"enc\", \"use\":\"sig\", \"kid\":\"1\", \"alg\":\"RS256\", \"n\":\"AM4kBzkoQcWAWYd-YxwVCQfr2siOZz8DVZ70iUAPevM4JgMsFFHO6eSsg1DAFIuEyMcsy7ucGaVb-sGNYanfY2tx25EzoPZS-KvMukIkXudPAXO1ii3WR_PWXR8So-hbI_a_bHJJ7fa-VaLLiSSvJMZ7mXjLb4cuFKHV6cAI4M1aX-SvR3Y-VvJBSLIwuW7AVtaVgiO24YIlbegfNnx2iHxu-ZWcl5fdbgrLfWRVD29udwCQqiCosMBL6Yfvax-_H4Q9-ir6sna5eJSLCPWuBiwdOqE6Y3eZQxVoY2CCVlVjWY8UXQra8RPMcwAvdOCbpNPuY4Wq7b1T18l-e79xtA8\" }";;
 	
-	private final String encryptedRsa2JweProducedByGluu = "eyJraWQiOiIxIiwidHlwIjoiSldUIiwiZW5jIjoiQTEyOENCQytIUzI1NiIsImFsZyI6IlJTQTFfNSJ9.jzdQDZMZJEBb1v-N2DcSg1k0j8wPMGLhWRhIsFvEpS5A7JyKfEY2fkptWDStB_sEl4uZKODuN6WCmNO6ESetYJq0a2BIS_M5MurXPXLEXZey96PJK1h9EWl-Mi-HgEYGS_56EFag3n-87JEPbyG-v65sk7Z6sHm4ti0azf5WPUqskhBEe1YgdgPaZKfLq-hWJ11teFt3vD-xxYNXOmbrGV3RrV-BEtzh69O87Ik_kkhCsc_Jlul2AxXDBJAhJhy_2bVPuXS1WUoEJ6UuWEj-us20OS2H2BuTU8Xh7k9TtHbsx_XF7qe7Syey3A1ET_7T-r922OZJDmHoJlCrEqp3rQ.0UKKw6CuiHOFMHbcENGo4w.7RYTtNPmdCFcsu2yDzjMggMUBe1eUgPLmz84O6QACAJjT4wJ8vTHZwMSUvJoCEv9yQYoMSy5cHXO2JiLGQ3U0CTIAiuF_viMbQPudADJENQ.poaAuMG83LFk2oCREptmamh6uQvbiy2WCqB6WSKzdWk";	
+	private final String encryptedRsa2Jwe = "eyJraWQiOiIxIiwidHlwIjoiSldUIiwiZW5jIjoiQTEyOENCQytIUzI1NiIsImFsZyI6IlJTQTFfNSJ9.jzdQDZMZJEBb1v-N2DcSg1k0j8wPMGLhWRhIsFvEpS5A7JyKfEY2fkptWDStB_sEl4uZKODuN6WCmNO6ESetYJq0a2BIS_M5MurXPXLEXZey96PJK1h9EWl-Mi-HgEYGS_56EFag3n-87JEPbyG-v65sk7Z6sHm4ti0azf5WPUqskhBEe1YgdgPaZKfLq-hWJ11teFt3vD-xxYNXOmbrGV3RrV-BEtzh69O87Ik_kkhCsc_Jlul2AxXDBJAhJhy_2bVPuXS1WUoEJ6UuWEj-us20OS2H2BuTU8Xh7k9TtHbsx_XF7qe7Syey3A1ET_7T-r922OZJDmHoJlCrEqp3rQ.0UKKw6CuiHOFMHbcENGo4w.7RYTtNPmdCFcsu2yDzjMggMUBe1eUgPLmz84O6QACAJjT4wJ8vTHZwMSUvJoCEv9yQYoMSy5cHXO2JiLGQ3U0CTIAiuF_viMbQPudADJENQ.poaAuMG83LFk2oCREptmamh6uQvbiy2WCqB6WSKzdWk";	
 
-	private final String ecJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";
+	private final String ec1JwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";
+	private final String ec2JwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MBiqPPePV0UDsvPS6PC9tC6ZikJP3o4sRFnlIQTX5Mw\", \"y\":\"AJLmKWvp8GCEnuFtodk0feyeW2FS4T_Ok9zGc1xVVMrU\", \"d\":\"PwBwLX_3nQozA0t2DKDH0K28re9O2cvxOZkS212zfYk\", \"use\":\"enc\", \"kid\":\"3\" }";	
+	
+	private final String encryptedEc2Jwe = "eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJRc0FEbjZtalBRWW0zRnJWaHZqbi1Gc0s5dlpOLTlMaWg3eFY1blVtQTRvIiwieSI6IlVsWnBIT3dfbUl6TWdhUllXQmNlaVQ4Yl9NM2VnS0s4ODdtX2xXcE42OW8ifSwia2lkIjoiMSIsInR5cCI6IkpXVCIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJhbGciOiJFQ0RILUVTIn0..4y_NFicmz3pAjzpKo0RFGw._BRu1vhk5WiAGQUZ51v2ykC6nDpBGCG2NWwfJNePt_krLcYJ3Paqa67nuRN8f8Yfzify1q5v3oTBsaAJRu9zx5oocCI6oiWQewgFlz-CThc.mc-8GKaH105ZY2Syi8gLoQ";
 
 	private final String aes128JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A128KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhg\" }";
 	private final String aes192JwkJson = "{ \"kty\":\"oct\", \"alg\":\"A192KW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAt\" }";
@@ -126,7 +132,8 @@ public class CrossEncryptionTest {
 	private final String aes384GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A384GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JK\" }";
 	private final String aes512GCMKJwkJson = "{ \"kty\":\"oct\", \"alg\":\"A512GCMKW\", \"k\":\"bcDF5_XQSpDPnGXR6RyDhsgXfmbScFAtw3Kpqkrudq2M3T9YqsQdtoZrl1Yfn8JKzk8EeKHaHZY9Qj49CFIf8g\" }";
 	
-	private final String passwordValue = "password";
+	private final String passwordValue1 = "password_1";
+	private final String passwordValue2 = "password_2";
 	
 	/**
 	 * 
@@ -179,16 +186,16 @@ public class CrossEncryptionTest {
 	};	
 	
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsRSA = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA1_5, rsa1JwkJson, rsa2JwkJson, encryptedRsa2JweProducedByGluu,  null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP, rsa1JwkJson, rsa2JwkJson, encryptedRsa2JweProducedByGluu, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP_256, rsa1JwkJson, rsa2JwkJson, encryptedRsa2JweProducedByGluu, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA1_5, rsa1JwkJson, rsa2JwkJson, encryptedRsa2Jwe,  null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP, rsa1JwkJson, rsa2JwkJson, encryptedRsa2Jwe, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.RSA_OAEP_256, rsa1JwkJson, rsa2JwkJson, encryptedRsa2Jwe, null),
 	};
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsECDH = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES, ecJwkJson, null, null, blockEncryptionAlgorithms_ECDH_ES),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, ecJwkJson, null, null, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, ecJwkJson, null, null, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, ecJwkJson, null, null, null)			
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES, ec1JwkJson, ec2JwkJson, encryptedEc2Jwe, blockEncryptionAlgorithms_ECDH_ES),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, ec1JwkJson, ec2JwkJson, encryptedEc2Jwe, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, ec1JwkJson, ec2JwkJson, encryptedEc2Jwe, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, ec1JwkJson, ec2JwkJson, encryptedEc2Jwe, null)			
 	};	
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsAES = {
@@ -201,12 +208,12 @@ public class CrossEncryptionTest {
 	};
 
 	KeyEncryptionAlgorithmSuite[] keyEnrAlgorithmsPassw = {
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW, passwordValue, null, null, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW, passwordValue, null, null, null),
-			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, passwordValue, null, null, null)
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW, passwordValue1, null, null, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW, passwordValue1, null, null, null),
+			new KeyEncryptionAlgorithmSuite (KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, passwordValue1, null, null, null)
 	};
 
-//	@Test
+	@Test
     public void getKeys() {
     	
 		try {
@@ -256,23 +263,11 @@ public class CrossEncryptionTest {
 	        assertTrue(Arrays.equals(sha512Array_48, sha512Array_48_dec));	        
 	        assertTrue(Arrays.equals(sha512Array_64, sha512Array_64_dec));
 	        
-/*	        
-	        import io.jans.as.model.crypto.signature.ECDSAKeyFactory;
-	        import io.jans.as.model.crypto.signature.ECDSAPrivateKey;
-	        import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-	        import io.jans.as.model.crypto.signature.EDDSAKeyFactory;
-	        import io.jans.as.model.crypto.signature.EDDSAPrivateKey;
-	        import io.jans.as.model.crypto.signature.EDDSAPublicKey;
-	        import io.jans.as.model.crypto.signature.RSAKeyFactory;
-	        import io.jans.as.model.crypto.signature.RSAPrivateKey;
-	        import io.jans.as.model.crypto.signature.RSAPublicKey;
-*/	        	        
-	        
 	        io.jans.as.model.crypto.KeyFactory<io.jans.as.model.crypto.signature.RSAPrivateKey, 
-	        io.jans.as.model.crypto.signature.RSAPublicKey> keyFactory = new io.jans.as.model.crypto.signature.RSAKeyFactory(SignatureAlgorithm.RS256,
+	        io.jans.as.model.crypto.signature.RSAPublicKey> keyFactoryRSA = new io.jans.as.model.crypto.signature.RSAKeyFactory(SignatureAlgorithm.RS256,
 	        		"CN=Test CA Certificate");
 
-			Key<io.jans.as.model.crypto.signature.RSAPrivateKey, io.jans.as.model.crypto.signature.RSAPublicKey> key = keyFactory.getKey();
+			Key<io.jans.as.model.crypto.signature.RSAPrivateKey, io.jans.as.model.crypto.signature.RSAPublicKey> key = keyFactoryRSA.getKey();
 
 			io.jans.as.model.crypto.signature.RSAPrivateKey privateKey = key.getPrivateKey();
 			io.jans.as.model.crypto.signature.RSAPublicKey publicKey = key.getPublicKey();
@@ -295,6 +290,44 @@ public class CrossEncryptionTest {
 	        
 	        System.out.println("dPubStr = " + dPubStr);
 	        System.out.println("nPubStr = " + nPubStr);
+	        
+	    	// private final String ecJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";
+	        
+	        String xStr = "MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4";
+	        String yStr = "4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM";
+	        String dStr = "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE";
+	        
+	        byte [] xArray = Base64Util.base64urldecode(xStr);
+	        byte [] yArray = Base64Util.base64urldecode(yStr);
+	        byte [] dArray = Base64Util.base64urldecode(dStr);
+	        
+	        System.out.println("xArray = " + xArray);	        
+	        System.out.println("yArray = " + yArray);	        
+	        System.out.println("dArray = " + dArray);	        
+	        
+			KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(SignatureAlgorithm.ES256,
+					"CN=Test CA Certificate");	  
+			
+			ECDSAPrivateKey ecdsaPrivateKey = keyFactory.getPrivateKey();
+			ECDSAPublicKey ecdsaPublicKey = keyFactory.getPublicKey();
+			
+			BigInteger xEcdsa =	ecdsaPublicKey.getX();
+			BigInteger yEcdsa =	ecdsaPublicKey.getY();
+			BigInteger dEcdsa = ecdsaPrivateKey.getD();
+			
+	        String xEcdsaStr = Base64Util.base64urlencode(xEcdsa.toByteArray());
+	        String yEcdsaStr = Base64Util.base64urlencode(yEcdsa.toByteArray());
+	        String dEcdsaStr = Base64Util.base64urlencode(dEcdsa.toByteArray());
+	        
+	        System.out.println("xEcdsaStr = " + xEcdsaStr);
+	        System.out.println("yEcdsaStr = " + yEcdsaStr);	        
+	        System.out.println("dEcdsaStr = " + dEcdsaStr);	
+	        
+	        xArray = Base64Util.base64urldecode(xEcdsaStr);
+	        yArray = Base64Util.base64urldecode(yEcdsaStr);
+	        dArray = Base64Util.base64urldecode(dEcdsaStr);	  
+	        
+	        dArray = dArray;
 			
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
@@ -308,11 +341,12 @@ public class CrossEncryptionTest {
 			e.printStackTrace();
 		} catch (SignatureException e) {
 			e.printStackTrace();
+		} catch (InvalidAlgorithmParameterException e) {
+			e.printStackTrace();
 		}
     	
         assertTrue(true);
     }
-	
 
 	@Test
 	public void encryptWithNimbus_decryptByAll() {
@@ -692,6 +726,32 @@ public class CrossEncryptionTest {
 					final String decryptedPayload = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
 					
 					assertTrue(isJsonEqual(decryptedPayload, PAYLOAD));
+					
+					try {
+						final String decryptedPayloadWrong = decrypter.decrypt(keyEnrAlgorithmECDH.encData2).getClaims().toJsonString().toString();
+						assertFalse(isJsonEqual(decryptedPayloadWrong, PAYLOAD));
+						assertTrue(false);
+					} catch (io.jans.as.model.exception.InvalidJweException e) {
+						assertTrue(true);					
+					}						
+					
+					ECPrivateKey ecPrivateKeyWrong = ((ECKey) JWK.parse(keyEnrAlgorithmECDH.keyData2)).toECPrivateKey();
+					
+					decrypter = new JweDecrypterImpl(ecPrivateKeyWrong);
+
+					decrypter.setKeyEncryptionAlgorithm(keyEncryptionAlgorithm);
+					decrypter.setBlockEncryptionAlgorithm(blockEncryptionAlgorithm);
+					
+					try {
+						String decryptedPayloadWrong = decrypter.decrypt(jweStr).getClaims().toJsonString().toString();
+						assertFalse(isJsonEqual(decryptedPayloadWrong, PAYLOAD));
+						assertTrue(false);
+					} catch (io.jans.as.model.exception.InvalidJweException e) {
+						assertTrue(true);					
+					}
+					
+					String decryptedPayloadWrong = decrypter.decrypt(keyEnrAlgorithmECDH.encData2).getClaims().toJsonString().toString();
+					assertTrue(isJsonEqual(decryptedPayloadWrong, PAYLOAD));					
 				} catch (Exception e) {
 					String message = "Error (encryptWithGluu_ECDH_decryptByAll) : " +
 							" blckEncrAlgorithm = " + blckEncrAlgorithm +
@@ -927,7 +987,7 @@ public class CrossEncryptionTest {
 
 	private String encryptWithGluuJweEncrypter_ECDH_ES() {
 		try {
-			ECKey recipientPublicJWK = (ECKey) (JWK.parse(ecJwkJson));
+			ECKey recipientPublicJWK = (ECKey) (JWK.parse(ec1JwkJson));
 
 			BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.A128GCM;
 			KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.ECDH_ES;
@@ -1240,7 +1300,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue1);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -1269,7 +1329,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue1);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -1298,7 +1358,7 @@ public class CrossEncryptionTest {
 			jwe.getClaims().setSubjectIdentifier("testing");
 			jwe.getHeader().setKeyId("1");
 
-			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue);
+			JweEncrypterImpl encrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, passwordValue1);
 			jwe = encrypter.encrypt(jwe);
 
 			System.out.println("EncodedHeader: " + jwe.getEncodedHeader());
@@ -1646,7 +1706,7 @@ public class CrossEncryptionTest {
 
 	private boolean testDecryptWithGluuDecrypter_ECDH_ES(String jwe) {
 		try {
-			JWK jwk = JWK.parse(ecJwkJson);
+			JWK jwk = JWK.parse(ec1JwkJson);
 			ECPrivateKey ecPrivateKey = ((ECKey) jwk).toECPrivateKey();
 
 			JweDecrypterImpl decrypter = new JweDecrypterImpl(ecPrivateKey);
@@ -1799,7 +1859,7 @@ public class CrossEncryptionTest {
 	private boolean testDecryptWithGluuDecrypter_PBES2_HS256_PLUS_A128KW(String jwe) {
 
 		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(passwordValue1);
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128GCM);
@@ -1815,7 +1875,7 @@ public class CrossEncryptionTest {
 
 	private boolean testDecryptWithGluuDecrypter_PBES2_HS384_PLUS_A192KW(String jwe) {
 		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(passwordValue1);
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A128CBC_PLUS_HS256);
@@ -1831,7 +1891,7 @@ public class CrossEncryptionTest {
 
 	private boolean testDecryptWithGluuDecrypter_PBES2_HS512_PLUS_A256KW(String jwe) {
 		try {
-			JweDecrypterImpl decrypter = new JweDecrypterImpl("password");
+			JweDecrypterImpl decrypter = new JweDecrypterImpl(passwordValue1);
 
 			decrypter.setKeyEncryptionAlgorithm(KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW);
 			decrypter.setBlockEncryptionAlgorithm(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
