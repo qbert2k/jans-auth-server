@@ -13,6 +13,7 @@ import java.util.List;
 import io.jans.as.model.crypto.PublicKey;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
@@ -80,6 +81,13 @@ public class JwkResponse extends BaseResponse {
                             SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()),
                             JSONWebKey.getX(),
                             JSONWebKey.getY());
+                    break;
+                case OKP:
+                	if(AlgorithmFamily.ED.equals(JSONWebKey.getAlg().getFamily())) {
+                        publicKey = new EDDSAPublicKey(
+                                SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()),
+                                JSONWebKey.getX().getBytes());
+                	}
                     break;
                 default:
                     break;

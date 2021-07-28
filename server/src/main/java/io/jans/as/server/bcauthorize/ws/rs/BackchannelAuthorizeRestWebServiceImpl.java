@@ -16,6 +16,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.error.DefaultErrorResponse;
@@ -23,6 +24,7 @@ import io.jans.as.model.error.ErrorResponseFactory;
 import io.jans.as.model.exception.InvalidClaimException;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jws.ECDSASigner;
+import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.server.audit.ApplicationAuditLogger;
@@ -242,6 +244,10 @@ public class BackchannelAuthorizeRestWebServiceImpl implements BackchannelAuthor
                 } else if (algorithm.getFamily() == AlgorithmFamily.EC) {
                     ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(client.getJwksUri(), keyId);
                     ECDSASigner ecdsaSigner = new ECDSASigner(algorithm, publicKey);
+                    validSignature = ecdsaSigner.validate(jwt);
+                } else if (algorithm.getFamily() == AlgorithmFamily.ED) {
+                    EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(client.getJwksUri(), keyId);
+                    EDDSASigner ecdsaSigner = new EDDSASigner(algorithm, publicKey);
                     validSignature = ecdsaSigner.validate(jwt);
                 }
                 if (!validSignature) {
