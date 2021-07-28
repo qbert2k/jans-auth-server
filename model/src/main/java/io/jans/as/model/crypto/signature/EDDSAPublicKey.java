@@ -25,17 +25,17 @@ import io.jans.as.model.util.StringUtils;
  * @version July 23, 2021
  */
 public class EDDSAPublicKey extends PublicKey {
-	
-    private byte [] xEncoded;	
+
+    private byte[] xEncoded;
 
     /**
      * 
      * @param signatureAlgorithm
      * @param publicKeyData
      */
-    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte [] xEncoded) {
-    	setSignatureAlgorithm(signatureAlgorithm);
-        this.xEncoded = xEncoded.clone();        
+    public EDDSAPublicKey(SignatureAlgorithm signatureAlgorithm, byte[] xEncoded) {
+        setSignatureAlgorithm(signatureAlgorithm);
+        this.xEncoded = xEncoded.clone();
     }
 
     /**
@@ -43,7 +43,7 @@ public class EDDSAPublicKey extends PublicKey {
      * @return
      */
     public X509EncodedKeySpec getPublicKeySpec() {
-    	return new X509EncodedKeySpec(this.xEncoded);
+        return new X509EncodedKeySpec(this.xEncoded);
     }
 
     /**
@@ -51,11 +51,11 @@ public class EDDSAPublicKey extends PublicKey {
      */
     @Override
     public JSONObject toJSONObject() throws JSONException {
-    	JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put(MODULUS, JSONObject.NULL);
         jsonObject.put(EXPONENT, JSONObject.NULL);
         jsonObject.put(X, Base64Util.base64urlencode(this.xEncoded));
-    	return jsonObject;    	
+        return jsonObject;
     }
 
     /**
@@ -70,16 +70,16 @@ public class EDDSAPublicKey extends PublicKey {
         } catch (Exception e) {
             return StringUtils.EMPTY_STRING;
         }
-    }	
-    
+    }
+
     /**
      * 
      */
     @Override
     public EDDSAPublicKey clone() {
-    	EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.xEncoded);
-    	newObj.setKeyId(getKeyId());
-    	return newObj;
+        EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.xEncoded);
+        newObj.setKeyId(getKeyId());
+        return newObj;
     }
 
 }

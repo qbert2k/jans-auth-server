@@ -26,9 +26,9 @@ import io.jans.as.model.util.StringUtils;
  * @version July 23, 2021
  */
 public class EDDSAPrivateKey extends PrivateKey {
-    
-    private byte [] dEncoded;
-    private byte [] xEncoded;
+
+    private byte[] dEncoded;
+    private byte[] xEncoded;
 
     /**
      * 
@@ -36,8 +36,8 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @param dEncoded
      * @param xEncoded
      */
-    public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte [] dEncoded, byte [] xEncoded) {
-    	setSignatureAlgorithm(signatureAlgorithm);
+    public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte[] dEncoded, byte[] xEncoded) {
+        setSignatureAlgorithm(signatureAlgorithm);
         this.dEncoded = dEncoded.clone();
         this.xEncoded = xEncoded.clone();
     }
@@ -47,7 +47,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @return
      */
     public PKCS8EncodedKeySpec getPrivateKeySpec() {
-    	return new PKCS8EncodedKeySpec(dEncoded);  
+        return new PKCS8EncodedKeySpec(dEncoded);
     }
 
     /**
@@ -55,12 +55,12 @@ public class EDDSAPrivateKey extends PrivateKey {
      */
     @Override
     public JSONObject toJSONObject() throws JSONException {
-    	JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put(MODULUS, JSONObject.NULL);
         jsonObject.put(EXPONENT, JSONObject.NULL);
         jsonObject.put(D, Base64Util.base64urlencode(this.dEncoded));
         jsonObject.put(X, Base64Util.base64urlencode(this.xEncoded));
-    	return jsonObject;
+        return jsonObject;
     }
 
     /**
@@ -76,14 +76,14 @@ public class EDDSAPrivateKey extends PrivateKey {
             return StringUtils.EMPTY_STRING;
         }
     }
-    
+
     /**
      * 
      */
     @Override
     public EDDSAPrivateKey clone() {
-    	EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
-    	newObj.setKeyId(getKeyId());
-    	return newObj;
+        EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
+        newObj.setKeyId(getKeyId());
+        return newObj;
     }
 }

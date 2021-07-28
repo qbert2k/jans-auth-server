@@ -24,27 +24,20 @@ import io.jans.as.model.util.StringUtils;
 public enum Algorithm {
 
     // Signature
-    RS256("RS256", Use.SIGNATURE, AlgorithmFamily.RSA),
-    RS384("RS384", Use.SIGNATURE, AlgorithmFamily.RSA),
-    RS512("RS512", Use.SIGNATURE, AlgorithmFamily.RSA),
-    ES256("ES256", Use.SIGNATURE, AlgorithmFamily.EC),
-    ES256K("ES256K", Use.SIGNATURE, AlgorithmFamily.EC),    
-    ES384("ES384", Use.SIGNATURE, AlgorithmFamily.EC),
-    ES512("ES512", Use.SIGNATURE, AlgorithmFamily.EC),
-    PS256("PS256", Use.SIGNATURE, AlgorithmFamily.RSA),
-    PS384("PS384", Use.SIGNATURE, AlgorithmFamily.RSA),
-    PS512("PS512", Use.SIGNATURE, AlgorithmFamily.RSA),
-    ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED),    
-    ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED),
-    
+    RS256("RS256", Use.SIGNATURE, AlgorithmFamily.RSA), RS384("RS384", Use.SIGNATURE, AlgorithmFamily.RSA),
+    RS512("RS512", Use.SIGNATURE, AlgorithmFamily.RSA), ES256("ES256", Use.SIGNATURE, AlgorithmFamily.EC),
+    ES256K("ES256K", Use.SIGNATURE, AlgorithmFamily.EC), ES384("ES384", Use.SIGNATURE, AlgorithmFamily.EC),
+    ES512("ES512", Use.SIGNATURE, AlgorithmFamily.EC), PS256("PS256", Use.SIGNATURE, AlgorithmFamily.RSA),
+    PS384("PS384", Use.SIGNATURE, AlgorithmFamily.RSA), PS512("PS512", Use.SIGNATURE, AlgorithmFamily.RSA),
+    ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED), ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED),
+
     // Encryption
-    RSA1_5("RSA1_5", Use.ENCRYPTION, AlgorithmFamily.RSA),
-    RSA_OAEP("RSA-OAEP", Use.ENCRYPTION, AlgorithmFamily.RSA),
+    RSA1_5("RSA1_5", Use.ENCRYPTION, AlgorithmFamily.RSA), RSA_OAEP("RSA-OAEP", Use.ENCRYPTION, AlgorithmFamily.RSA),
     RSA_OAEP_256("RSA-OAEP-256", Use.ENCRYPTION, AlgorithmFamily.RSA),
-	ECDH_ES("ECDH-ES", Use.ENCRYPTION, AlgorithmFamily.EC),
-	ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", Use.ENCRYPTION, AlgorithmFamily.EC),	
-	ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", Use.ENCRYPTION, AlgorithmFamily.EC),	
-	ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC);	
+    ECDH_ES("ECDH-ES", Use.ENCRYPTION, AlgorithmFamily.EC),
+    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", Use.ENCRYPTION, AlgorithmFamily.EC),
+    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", Use.ENCRYPTION, AlgorithmFamily.EC),
+    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC);
 
     private final String paramName;
     private final Use use;
@@ -101,9 +94,9 @@ public enum Algorithm {
         return algorithms;
     }
 
-
     /**
-     * Returns a string representation of the object. In this case the parameter name.
+     * Returns a string representation of the object. In this case the parameter
+     * name.
      *
      * @return The string representation of the object.
      */

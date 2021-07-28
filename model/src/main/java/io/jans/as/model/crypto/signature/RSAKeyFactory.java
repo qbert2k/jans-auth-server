@@ -40,8 +40,8 @@ import io.jans.as.model.jwk.JSONWebKey;
  */
 @Deprecated
 public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
-	
-	public static int DEF_KEY_LENGTH = 2048;
+
+    public static int DEF_KEY_LENGTH = 2048;
 
     private RSAPrivateKey rsaPrivateKey;
     private RSAPublicKey rsaPublicKey;
@@ -63,11 +63,9 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
         BCRSAPrivateCrtKey jcersaPrivateCrtKey = (BCRSAPrivateCrtKey) keyPair.getPrivate();
         BCRSAPublicKey jcersaPublicKey = (BCRSAPublicKey) keyPair.getPublic();
 
-        rsaPrivateKey = new RSAPrivateKey(jcersaPrivateCrtKey.getModulus(),
-                jcersaPrivateCrtKey.getPrivateExponent());
+        rsaPrivateKey = new RSAPrivateKey(jcersaPrivateCrtKey.getModulus(), jcersaPrivateCrtKey.getPrivateExponent());
 
-        rsaPublicKey = new RSAPublicKey(jcersaPublicKey.getModulus(),
-                jcersaPublicKey.getPublicExponent());
+        rsaPublicKey = new RSAPublicKey(jcersaPublicKey.getModulus(), jcersaPublicKey.getPublicExponent());
 
         if (StringUtils.isNotBlank(dnName)) {
             // Create certificate
@@ -98,12 +96,8 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
             throw new IllegalArgumentException("Key value must not be null.");
         }
 
-        rsaPrivateKey = new RSAPrivateKey(
-                p_key.getN(),
-                p_key.getE());
-        rsaPublicKey = new RSAPublicKey(
-                p_key.getN(),
-                p_key.getE());
+        rsaPrivateKey = new RSAPrivateKey(p_key.getN(), p_key.getE());
+        rsaPublicKey = new RSAPublicKey(p_key.getN(), p_key.getE());
         certificate = null;
     }
 

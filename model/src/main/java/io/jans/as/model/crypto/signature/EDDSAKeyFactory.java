@@ -38,7 +38,6 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.KeyFactory;
 
-
 /**
  * 
  *
@@ -47,138 +46,139 @@ import io.jans.as.model.crypto.KeyFactory;
  */
 public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> {
 
-	public static String DEF_BC = "BC";
+    public static String DEF_BC = "BC";
 
-	private SignatureAlgorithm signatureAlgorithm;
-	private KeyPair keyPair;
+    private SignatureAlgorithm signatureAlgorithm;
+    private KeyPair keyPair;
 
-	private EDDSAPrivateKey eddsaPrivateKey;
-	private EDDSAPublicKey eddsaPublicKey;
-	private Certificate certificate;
+    private EDDSAPrivateKey eddsaPrivateKey;
+    private EDDSAPublicKey eddsaPublicKey;
+    private Certificate certificate;
 
-	/**
-	 * 
-	 * @param signatureAlgorithm
-	 * @param dnName
-	 * @throws InvalidParameterException
-	 * @throws NoSuchProviderException
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws SignatureException
-	 * @throws InvalidKeyException
-	 * @throws CertificateEncodingException
-	 */
-	public EDDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName)
-			throws InvalidParameterException, NoSuchProviderException, NoSuchAlgorithmException,
-			InvalidAlgorithmParameterException, SignatureException, InvalidKeyException, CertificateEncodingException {
-		if (signatureAlgorithm == null) {
-			throw new InvalidParameterException("The signature algorithm cannot be null");
-		}
-		if (!AlgorithmFamily.ED.equals(signatureAlgorithm.getFamily())) {
-			throw new InvalidParameterException("Wrong value of the family of the SignatureAlgorithm");
-		}
-		try {
-			this.signatureAlgorithm = signatureAlgorithm;
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param dnName
+     * @throws InvalidParameterException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws SignatureException
+     * @throws InvalidKeyException
+     * @throws CertificateEncodingException
+     */
+    public EDDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName)
+            throws InvalidParameterException, NoSuchProviderException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, SignatureException, InvalidKeyException, CertificateEncodingException {
+        if (signatureAlgorithm == null) {
+            throw new InvalidParameterException("The signature algorithm cannot be null");
+        }
+        if (!AlgorithmFamily.ED.equals(signatureAlgorithm.getFamily())) {
+            throw new InvalidParameterException("Wrong value of the family of the SignatureAlgorithm");
+        }
+        try {
+            this.signatureAlgorithm = signatureAlgorithm;
 
-			EdDSAParameterSpec ecSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
+            EdDSAParameterSpec ecSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
 
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), DEF_BC);
-			keyGen.initialize(ecSpec, new SecureRandom());
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), DEF_BC);
+            keyGen.initialize(ecSpec, new SecureRandom());
 
-			this.keyPair = keyGen.generateKeyPair();
+            this.keyPair = keyGen.generateKeyPair();
 
-			BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyPair.getPrivate();
-			BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
+            BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyPair.getPrivate();
+            BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
 
-			byte[] privateKeyData = privateKey.getEncoded();
-			byte[] publicKeyData = publicKey.getEncoded();
+            byte[] privateKeyData = privateKey.getEncoded();
+            byte[] publicKeyData = publicKey.getEncoded();
 
-			this.eddsaPrivateKey = new EDDSAPrivateKey(signatureAlgorithm, privateKeyData, publicKeyData);
-			this.eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKeyData);
+            this.eddsaPrivateKey = new EDDSAPrivateKey(signatureAlgorithm, privateKeyData, publicKeyData);
+            this.eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKeyData);
 
-			if (StringUtils.isNotBlank(dnName)) {
-				// Create certificate
-				GregorianCalendar startDate = new GregorianCalendar(); // time from which certificate is valid
-				GregorianCalendar expiryDate = new GregorianCalendar(); // time after which certificate is not valid
-				expiryDate.add(Calendar.YEAR, 1);
-				BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
-				X500Name name = new X500Name(dnName);
-				JcaX509v1CertificateBuilder certGen = new JcaX509v1CertificateBuilder(name, serialNumber,
-						startDate.getTime(), expiryDate.getTime(), name, publicKey);
-				X509CertificateHolder certHolder = certGen
-						.build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
-								.build(keyPair.getPrivate()));
-				X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
-				this.certificate = new Certificate(signatureAlgorithm, cert);
-			}
-		} catch (OperatorCreationException e) {
-			throw new SignatureException(e);
-		} catch (CertificateException e) {
-			throw new SignatureException(e);
-		} catch (Exception e) {
-			throw new SignatureException(e);
-		}
-	}
+            if (StringUtils.isNotBlank(dnName)) {
+                // Create certificate
+                GregorianCalendar startDate = new GregorianCalendar(); // time from which certificate is valid
+                GregorianCalendar expiryDate = new GregorianCalendar(); // time after which certificate is not valid
+                expiryDate.add(Calendar.YEAR, 1);
+                BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
+                X500Name name = new X500Name(dnName);
+                JcaX509v1CertificateBuilder certGen = new JcaX509v1CertificateBuilder(name, serialNumber,
+                        startDate.getTime(), expiryDate.getTime(), name, publicKey);
+                X509CertificateHolder certHolder = certGen
+                        .build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
+                                .build(keyPair.getPrivate()));
+                X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
+                this.certificate = new Certificate(signatureAlgorithm, cert);
+            }
+        } catch (OperatorCreationException e) {
+            throw new SignatureException(e);
+        } catch (CertificateException e) {
+            throw new SignatureException(e);
+        } catch (Exception e) {
+            throw new SignatureException(e);
+        }
+    }
 
-	/**
-	 * 
-	 * @param startDate
-	 * @param expirationDate
-	 * @param dnName
-	 * @return
-	 * @throws CertificateEncodingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalStateException
-	 * @throws NoSuchProviderException
-	 * @throws NoSuchAlgorithmException
-	 * @throws SignatureException
-	 */
-	public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName)
-			throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException,
-			NoSuchAlgorithmException, SignatureException {
-		// Create certificate
-		Certificate certificate = null;
-		try {
-			BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
-			BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
-			X500Name name = new X500Name(dnName);
-			JcaX509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(name, serialNumber, startDate,
-					expirationDate, name, publicKey);
-			X509CertificateHolder certHolder = certGen
-					.build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC).build(keyPair.getPrivate()));
-			X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
-			certificate = new Certificate(signatureAlgorithm, cert);
-		} catch (OperatorCreationException e) {
-			throw new SignatureException(e);
-		} catch (CertificateException e) {
-			throw new SignatureException(e);
-		} catch (Exception e) {
-			throw new SignatureException(e);
-		}
-		return certificate;
-	}
+    /**
+     * 
+     * @param startDate
+     * @param expirationDate
+     * @param dnName
+     * @return
+     * @throws CertificateEncodingException
+     * @throws InvalidKeyException
+     * @throws IllegalStateException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws SignatureException
+     */
+    public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName)
+            throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException,
+            NoSuchAlgorithmException, SignatureException {
+        // Create certificate
+        Certificate certificate = null;
+        try {
+            BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
+            BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
+            X500Name name = new X500Name(dnName);
+            JcaX509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(name, serialNumber, startDate,
+                    expirationDate, name, publicKey);
+            X509CertificateHolder certHolder = certGen
+                    .build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
+                            .build(keyPair.getPrivate()));
+            X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
+            certificate = new Certificate(signatureAlgorithm, cert);
+        } catch (OperatorCreationException e) {
+            throw new SignatureException(e);
+        } catch (CertificateException e) {
+            throw new SignatureException(e);
+        } catch (Exception e) {
+            throw new SignatureException(e);
+        }
+        return certificate;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public EDDSAPrivateKey getPrivateKey() {
-		return this.eddsaPrivateKey;
-	}
+    /**
+     * 
+     */
+    @Override
+    public EDDSAPrivateKey getPrivateKey() {
+        return this.eddsaPrivateKey;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public EDDSAPublicKey getPublicKey() {
-		return this.eddsaPublicKey;
-	}
+    /**
+     * 
+     */
+    @Override
+    public EDDSAPublicKey getPublicKey() {
+        return this.eddsaPublicKey;
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public Certificate getCertificate() {
-		return this.certificate;
-	}
+    /**
+     * 
+     */
+    @Override
+    public Certificate getCertificate() {
+        return this.certificate;
+    }
 }

@@ -22,21 +22,20 @@ import io.jans.as.model.jwt.JwtType;
  */
 public enum SignatureAlgorithm {
 
-    NONE("none"),
-    HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
+    NONE("none"), HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
     HS384("HS384", AlgorithmFamily.HMAC, "HMACSHA384", JWSAlgorithm.HS384),
     HS512("HS512", AlgorithmFamily.HMAC, "HMACSHA512", JWSAlgorithm.HS512),
     RS256("RS256", AlgorithmFamily.RSA, "SHA256WITHRSA", JWSAlgorithm.RS256),
     RS384("RS384", AlgorithmFamily.RSA, "SHA384WITHRSA", JWSAlgorithm.RS384),
     RS512("RS512", AlgorithmFamily.RSA, "SHA512WITHRSA", JWSAlgorithm.RS512),
     ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256, JWSAlgorithm.ES256),
-    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K, JWSAlgorithm.ES256K),    
+    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K, JWSAlgorithm.ES256K),
     ES384("ES384", AlgorithmFamily.EC, "SHA384WITHECDSA", EllipticEdvardsCurve.P_384, JWSAlgorithm.ES384),
     ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", EllipticEdvardsCurve.P_521, JWSAlgorithm.ES512),
     PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1", JWSAlgorithm.PS256),
     PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1", JWSAlgorithm.PS384),
     PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512),
-    ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),    
+    ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),
     ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA);
 
     private final String name;
@@ -47,7 +46,8 @@ public enum SignatureAlgorithm {
     private final JWSAlgorithm jwsAlgorithm;
     private final Algorithm alg;
 
-    SignatureAlgorithm(String name, AlgorithmFamily family, String algorithm, EllipticEdvardsCurve curve, JWSAlgorithm jwsAlgorithm) {
+    SignatureAlgorithm(String name, AlgorithmFamily family, String algorithm, EllipticEdvardsCurve curve,
+            JWSAlgorithm jwsAlgorithm) {
         this.name = name;
         this.family = family;
         this.algorithm = algorithm;
@@ -103,7 +103,8 @@ public enum SignatureAlgorithm {
     }
 
     /**
-     * Returns the corresponding {@link SignatureAlgorithm} for a parameter alg of the JWK endpoint.
+     * Returns the corresponding {@link SignatureAlgorithm} for a parameter alg of
+     * the JWK endpoint.
      *
      * @param param The alg parameter.
      * @return The corresponding alg if found, otherwise <code>null</code>.
@@ -121,7 +122,8 @@ public enum SignatureAlgorithm {
     }
 
     /**
-     * Returns a string representation of the object. In this case the parameter name.
+     * Returns a string representation of the object. In this case the parameter
+     * name.
      *
      * @return The string representation of the object.
      */

@@ -69,8 +69,9 @@ public class ECDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signing input is null");
         }
         try {
-            // ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
-        	ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getAlias());
+            // ECParameterSpec ecSpec =
+            // ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
+            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getAlias());
             ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(ecdsaPrivateKey.getD(), ecSpec);
 
             KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
@@ -82,7 +83,8 @@ public class ECDSASigner extends AbstractJwsSigner {
 
             byte[] signature = signer.sign();
             if (AlgorithmFamily.EC.equals(getSignatureAlgorithm().getFamily())) {
-            	int signatureLenght = ECDSA.getSignatureByteArrayLength(JWSAlgorithm.parse(getSignatureAlgorithm().getName()));
+                int signatureLenght = ECDSA
+                        .getSignatureByteArrayLength(JWSAlgorithm.parse(getSignatureAlgorithm().getName()));
                 signature = ECDSA.transcodeSignatureToConcat(signature, signatureLenght);
             }
 
