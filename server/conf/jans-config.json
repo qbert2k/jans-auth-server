@@ -68,7 +68,9 @@
         "ES512",
         "PS256",
         "PS384",
-        "PS512"
+        "PS512",
+        "ED25519",
+        "ED448"        
     ],
     "userInfoEncryptionAlgValuesSupported":[
         "RSA1_5",
@@ -108,11 +110,14 @@
         "RS384",
         "RS512",
         "ES256",
+        "ES256K",
         "ES384",
         "ES512",
         "PS256",
         "PS384",
-        "PS512"
+        "PS512",
+        "ED25519",
+        "ED448"
     ],
     "idTokenEncryptionAlgValuesSupported":[
         "RSA1_5",
@@ -152,11 +157,14 @@
         "RS384",
         "RS512",
         "ES256",
+        "ES256K",
         "ES384",
         "ES512",
         "PS256",
         "PS384",
-        "PS512"
+        "PS512",
+        "ED25519",
+        "ED448"
     ],
     "requestObjectEncryptionAlgValuesSupported":[
 		"RSA1_5",
@@ -194,6 +202,7 @@
         "private_key_jwt"
     ],
     "tokenEndpointAuthSigningAlgValuesSupported":[
+        "none",
         "HS256",
         "HS384",
         "HS512",
@@ -201,11 +210,14 @@
         "RS384",
         "RS512",
         "ES256",
+        "ES256K",
         "ES384",
         "ES512",
         "PS256",
         "PS384",
-        "PS512"
+        "PS512",
+        "ED25519",
+        "ED448"
     ],
     "dynamicRegistrationCustomAttributes":[
         "jansTrustedClnt",
@@ -349,13 +361,21 @@
     "loggingLevel": "DEBUG",
     "backchannelTokenDeliveryModesSupported": ["poll", "ping", "push"],
     "backchannelAuthenticationRequestSigningAlgValuesSupported": [
+        "HS256",
+        "HS384",
+        "HS512",
+        "RS256",
+        "RS384",
         "RS512",
         "ES256",
+        "ES256K",
         "ES384",
         "ES512",
         "PS256",
         "PS384",
-        "PS512"
+        "PS512",
+        "ED25519",
+        "ED448"
     ],
     "backchannelClientId": "123-123-123",
     "backchannelRedirectUri": "https://ce.gluu.info:8443/ciba/home.htm",
