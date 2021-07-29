@@ -24,6 +24,8 @@ import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -114,6 +116,15 @@ public class JwtCrossCheckTest extends BaseTest {
         AbstractJwsSigner oxauthVerifier = null;
         switch (signatureAlgorithm.getFamily()) {
             case EC:
+                final ECKey ecKey = ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                final ECPublicKey ecPublicKey = ecKey.toECPublicKey();
+                nimbusVerifier = new ECDSAVerifier(ecKey);
+                oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
+                break;
+            case ED:
+                final JWK edKey = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                edKey
+                
                 final ECKey ecKey = ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 final ECPublicKey ecPublicKey = ecKey.toECPublicKey();
                 nimbusVerifier = new ECDSAVerifier(ecKey);

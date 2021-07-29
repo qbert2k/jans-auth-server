@@ -127,6 +127,16 @@
 								<resource>
 									<directory>${basedir}/conf</directory>
 									<filtering>true</filtering>
+							        <excludes>
+										<exclude>keystore.jks</exclude>
+									</excludes>
+								</resource>
+								<resource>
+									<directory>${basedir}/conf</directory>
+									<filtering>false</filtering>
+							        <includes>
+										<include>keystore.jks</include>
+									</includes>
 								</resource>
 							</resources>
 							<filters>
