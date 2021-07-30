@@ -274,7 +274,7 @@
 	</test>
 
     <!-- Enable it when client jks is regenerated -->
-    <test name="JWT cross-check test" enabled="false">
+    <test name="JWT cross-check test" enabled="true">
         <classes>
             <class name="io.jans.as.server.comp.JwtCrossCheckTest" />
         </classes>
