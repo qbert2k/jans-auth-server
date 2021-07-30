@@ -10,10 +10,12 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNotNull;
 
 import java.security.KeyStoreException;
+import java.security.Security;
 import java.security.interfaces.ECPublicKey;
 import java.util.Date;
 import java.util.List;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -47,6 +49,11 @@ import io.jans.as.server.BaseTest;
  * @author Yuriy Zabrovarnyy
  */
 public class JwtCrossCheckTest extends BaseTest {
+//public class JwtCrossCheckTest {
+    
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
@@ -121,6 +128,7 @@ public class JwtCrossCheckTest extends BaseTest {
                 nimbusVerifier = new ECDSAVerifier(ecKey);
                 oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
                 break;
+/*                
             case ED:
                 final JWK edKey = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 edKey
@@ -130,6 +138,7 @@ public class JwtCrossCheckTest extends BaseTest {
                 nimbusVerifier = new ECDSAVerifier(ecKey);
                 oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
                 break;
+*/                
             case RSA:
                 RSAKey rsaKey = RSAKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 final java.security.interfaces.RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
