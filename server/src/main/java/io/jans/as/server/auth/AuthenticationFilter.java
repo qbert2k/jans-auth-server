@@ -28,7 +28,6 @@ import io.jans.as.server.service.ClientService;
 import io.jans.as.server.service.CookieService;
 import io.jans.as.server.service.SessionIdService;
 import io.jans.as.server.service.token.TokenService;
-import io.jans.as.server.util.ServerUtil;
 import io.jans.model.security.Identity;
 import io.jans.util.StringHelper;
 import org.apache.commons.codec.binary.Base64;
@@ -132,13 +131,11 @@ public class AuthenticationFilter implements Filter {
             final String requestUrl = httpRequest.getRequestURL().toString();
             log.trace("Get request to: '{}'", requestUrl);
 
-            boolean tokenEndpoint = ServerUtil.isSameRequestPath(requestUrl, appConfiguration.getTokenEndpoint());
-            boolean tokenRevocationEndpoint = ServerUtil.isSameRequestPath(requestUrl, appConfiguration.getTokenRevocationEndpoint());
-            boolean backchannelAuthenticationEnpoint = ServerUtil.isSameRequestPath(requestUrl, appConfiguration.getBackchannelAuthenticationEndpoint());
-            boolean deviceAuthorizationEndpoint = ServerUtil.isSameRequestPath(requestUrl, appConfiguration.getDeviceAuthzEndpoint());
-            boolean umaTokenEndpoint = requestUrl.endsWith("/uma/token");
+            boolean tokenEndpoint = requestUrl.endsWith("/token");
+            boolean tokenRevocationEndpoint = requestUrl.endsWith("/revoke");
+            boolean backchannelAuthenticationEnpoint = requestUrl.endsWith("/bc-authorize");
+            boolean deviceAuthorizationEndpoint = requestUrl.endsWith("/device_authorization");
             boolean revokeSessionEndpoint = requestUrl.endsWith("/revoke_session");
-            boolean statEndpoint = requestUrl.endsWith("/stat");
             boolean isParEndpoint = requestUrl.endsWith("/par");
             String authorizationHeader = httpRequest.getHeader("Authorization");
 
@@ -152,7 +149,7 @@ public class AuthenticationFilter implements Filter {
                 return;
             }
 
-            if (tokenEndpoint || umaTokenEndpoint || revokeSessionEndpoint || tokenRevocationEndpoint || deviceAuthorizationEndpoint || statEndpoint || isParEndpoint) {
+            if (tokenEndpoint || revokeSessionEndpoint || tokenRevocationEndpoint || deviceAuthorizationEndpoint || isParEndpoint) {
                 log.debug("Starting endpoint authentication {}", requestUrl);
 
                 // #686 : allow authenticated client via user access_token
@@ -336,7 +333,6 @@ public class AuthenticationFilter implements Filter {
                                 || servletRequest.getRequestURI().endsWith("/revoke_session")
                                 || servletRequest.getRequestURI().endsWith("/userinfo")
                                 || servletRequest.getRequestURI().endsWith("/bc-authorize")
-                                || servletRequest.getRequestURI().endsWith("/stat")
                                 || servletRequest.getRequestURI().endsWith("/par")
                                 || servletRequest.getRequestURI().endsWith("/device_authorization")) {
                             Client client = clientService.getClient(username);

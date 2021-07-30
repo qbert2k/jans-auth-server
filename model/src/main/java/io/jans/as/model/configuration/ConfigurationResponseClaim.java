@@ -8,15 +8,13 @@ package io.jans.as.model.configuration;
 
 /**
  * @author Javier Rojas Blum
- * @version August 20, 2019
+ * @version July 28, 2021
  */
 public interface ConfigurationResponseClaim {
 
     String ISSUER = "issuer";
     String AUTHORIZATION_ENDPOINT = "authorization_endpoint";
     String TOKEN_ENDPOINT = "token_endpoint";
-    @Deprecated // remove in 5.x version
-    String TOKEN_REVOCATION_ENDPOINT = "token_revocation_endpoint";
     String REVOCATION_ENDPOINT = "revocation_endpoint";
     String SESSION_REVOCATION_ENDPOINT = "session_revocation_endpoint";
     String USER_INFO_ENDPOINT = "userinfo_endpoint";
@@ -37,6 +35,9 @@ public interface ConfigurationResponseClaim {
     String GRANT_TYPES_SUPPORTED = "grant_types_supported";
     String ACR_VALUES_SUPPORTED = "acr_values_supported";
     String SUBJECT_TYPES_SUPPORTED = "subject_types_supported";
+    String AUTHORIZATION_SIGNING_ALG_VALUES_SUPPORTED = "authorization_signing_alg_values_supported";
+    String AUTHORIZATION_ENCRYPTION_ALG_VALUES_SUPPORTED = "authorization_encryption_alg_values_supported";
+    String AUTHORIZATION_ENCRYPTION_ENC_VALUES_SUPPORTED = "authorization_encryption_enc_values_supported";
     String USER_INFO_SIGNING_ALG_VALUES_SUPPORTED = "userinfo_signing_alg_values_supported";
     String USER_INFO_ENCRYPTION_ALG_VALUES_SUPPORTED = "userinfo_encryption_alg_values_supported";
     String USER_INFO_ENCRYPTION_ENC_VALUES_SUPPORTED = "userinfo_encryption_enc_values_supported";
@@ -70,6 +71,7 @@ public interface ConfigurationResponseClaim {
     String FRONT_CHANNEL_LOGOUT_SESSION_SUPPORTED = "frontchannel_logout_session_supported";
     String BACKCHANNEL_LOGOUT_SUPPORTED = "backchannel_logout_supported";
     String BACKCHANNEL_LOGOUT_SESSION_SUPPORTED = "backchannel_logout_session_supported";
+    String MTLS_ENDPOINT_ALIASES = "mtls_endpoint_aliases";
 
     // CIBA
     String BACKCHANNEL_AUTHENTICATION_ENDPOINT = "backchannel_authentication_endpoint";

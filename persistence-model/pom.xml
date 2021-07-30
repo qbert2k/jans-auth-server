@@ -80,6 +80,9 @@
 			<groupId>io.jans</groupId>
 			<artifactId>jans-core-document-store</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>io.jans</groupId>
+			<artifactId>jans-orm-model</artifactId>
+		</dependency>
 	</dependencies>
 </project>

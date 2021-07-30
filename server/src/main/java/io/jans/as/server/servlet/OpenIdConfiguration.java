@@ -46,7 +46,7 @@ import static io.jans.as.model.util.StringUtils.implode;
 /**
  * @author Javier Rojas Blum
  * @author Yuriy Movchan Date: 2016/04/26
- * @version August 14, 2019
+ * @version July 28, 2021
  */
 @WebServlet(urlPatterns = "/.well-known/openid-configuration", loadOnStartup = 10)
 public class OpenIdConfiguration extends HttpServlet {
@@ -85,7 +85,7 @@ public class OpenIdConfiguration extends HttpServlet {
 	 *            servlet request
 	 * @param httpResponse
 	 *            servlet response
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@SuppressWarnings("deprecation")
 	protected void processRequest(HttpServletRequest servletRequest, HttpServletResponse httpResponse) throws IOException {
@@ -109,7 +109,6 @@ public class OpenIdConfiguration extends HttpServlet {
 			jsonObj.put(ISSUER, appConfiguration.getIssuer());
 			jsonObj.put(AUTHORIZATION_ENDPOINT, appConfiguration.getAuthorizationEndpoint());
 			jsonObj.put(TOKEN_ENDPOINT, appConfiguration.getTokenEndpoint());
-			jsonObj.put(TOKEN_REVOCATION_ENDPOINT, appConfiguration.getTokenRevocationEndpoint()); // remove this line
             jsonObj.put(JWKS_URI, appConfiguration.getJwksUri());
             jsonObj.put(CHECK_SESSION_IFRAME, appConfiguration.getCheckSessionIFrame());
 
@@ -176,6 +175,30 @@ public class OpenIdConfiguration extends HttpServlet {
 			if (subjectTypesSupported.length() > 0) {
 				jsonObj.put(SUBJECT_TYPES_SUPPORTED, subjectTypesSupported);
 			}
+
+			JSONArray authorizationSigningAlgValuesSupported = new JSONArray();
+			for (String authorizationSigningAlg : appConfiguration.getAuthorizationSigningAlgValuesSupported()) {
+				authorizationSigningAlgValuesSupported.put(authorizationSigningAlg);
+			}
+			if (!authorizationSigningAlgValuesSupported.isEmpty()) {
+				jsonObj.put(AUTHORIZATION_SIGNING_ALG_VALUES_SUPPORTED, authorizationSigningAlgValuesSupported);
+			}
+
+			JSONArray authorizationEncryptionAlgValuesSupported = new JSONArray();
+			for (String authorizationEncryptionAlg : appConfiguration.getAuthorizationEncryptionAlgValuesSupported()) {
+			    authorizationEncryptionAlgValuesSupported.put(authorizationEncryptionAlg);
+            }
+			if (!authorizationEncryptionAlgValuesSupported.isEmpty()) {
+			    jsonObj.put(AUTHORIZATION_ENCRYPTION_ALG_VALUES_SUPPORTED, authorizationEncryptionAlgValuesSupported);
+            }
+
+			JSONArray authorizationEncryptionEncValuesSupported = new JSONArray();
+			for (String authorizationEncyptionEnc : appConfiguration.getAuthorizationEncryptionEncValuesSupported()) {
+			    authorizationEncryptionEncValuesSupported.put(authorizationEncyptionEnc);
+            }
+			if (!authorizationEncryptionEncValuesSupported.isEmpty()) {
+			    jsonObj.put(AUTHORIZATION_ENCRYPTION_ENC_VALUES_SUPPORTED, authorizationEncryptionEncValuesSupported);
+            }
 
 			JSONArray userInfoSigningAlgValuesSupported = new JSONArray();
 			for (String userInfoSigningAlg : appConfiguration.getUserInfoSigningAlgValuesSupported()) {
@@ -332,6 +355,8 @@ public class OpenIdConfiguration extends HttpServlet {
 			jsonObj.put(FRONT_CHANNEL_LOGOUT_SESSION_SUPPORTED,
 					appConfiguration.getFrontChannelLogoutSessionSupported());
 
+			addMtlsAliases(jsonObj);
+
 			// CIBA Configuration
 			cibaConfigurationService.processConfiguration(jsonObj);
 
@@ -343,6 +368,44 @@ public class OpenIdConfiguration extends HttpServlet {
 			log.error(e.getMessage(), e);
 		}
 	}
+
+    private void addMtlsAliases(JSONObject jsonObj) {
+        JSONObject aliases = new JSONObject();
+
+        if (StringUtils.isNotBlank(appConfiguration.getMtlsAuthorizationEndpoint()))
+            aliases.put(AUTHORIZATION_ENDPOINT, appConfiguration.getMtlsAuthorizationEndpoint());
+        if (StringUtils.isNotBlank(appConfiguration.getMtlsTokenEndpoint()))
+            aliases.put(TOKEN_ENDPOINT, appConfiguration.getMtlsTokenEndpoint());
+        if (StringUtils.isNotBlank(appConfiguration.getMtlsJwksUri()))
+            aliases.put(JWKS_URI, appConfiguration.getMtlsJwksUri());
+        if (StringUtils.isNotBlank(appConfiguration.getMtlsCheckSessionIFrame()))
+            aliases.put(CHECK_SESSION_IFRAME, appConfiguration.getMtlsCheckSessionIFrame());
+        if (appConfiguration.isEnabledComponent(ComponentType.REVOKE_TOKEN) && StringUtils.isNotBlank(appConfiguration.getMtlsTokenRevocationEndpoint()))
+            aliases.put(REVOCATION_ENDPOINT, appConfiguration.getMtlsTokenRevocationEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.REVOKE_SESSION) && StringUtils.isNotBlank(appConfiguration.getMtlsEndSessionEndpoint()))
+            aliases.put(SESSION_REVOCATION_ENDPOINT, StringUtils.replace(appConfiguration.getMtlsEndSessionEndpoint(), "/end_session", "/revoke_session"));
+        if (appConfiguration.isEnabledComponent(ComponentType.USERINFO) && StringUtils.isNotBlank(appConfiguration.getMtlsUserInfoEndpoint()))
+            aliases.put(USER_INFO_ENDPOINT, appConfiguration.getMtlsUserInfoEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.CLIENTINFO) && StringUtils.isNotBlank(appConfiguration.getMtlsClientInfoEndpoint()))
+            aliases.put(CLIENT_INFO_ENDPOINT, appConfiguration.getMtlsClientInfoEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.END_SESSION) && StringUtils.isNotBlank(appConfiguration.getMtlsEndSessionEndpoint()))
+            aliases.put(END_SESSION_ENDPOINT, appConfiguration.getMtlsEndSessionEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.REGISTRATION) && StringUtils.isNotBlank(appConfiguration.getMtlsRegistrationEndpoint()))
+            aliases.put(REGISTRATION_ENDPOINT, appConfiguration.getMtlsRegistrationEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.ID_GENERATION) && StringUtils.isNotBlank(appConfiguration.getMtlsIdGenerationEndpoint()))
+            aliases.put(ID_GENERATION_ENDPOINT, appConfiguration.getMtlsIdGenerationEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.INTROSPECTION) && StringUtils.isNotBlank(appConfiguration.getMtlsIntrospectionEndpoint()))
+            aliases.put(INTROSPECTION_ENDPOINT, appConfiguration.getMtlsIntrospectionEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.DEVICE_AUTHZ) && StringUtils.isNotBlank(appConfiguration.getMtlsDeviceAuthzEndpoint()))
+            aliases.put(DEVICE_AUTHZ_ENDPOINT, appConfiguration.getMtlsDeviceAuthzEndpoint());
+        if (appConfiguration.isEnabledComponent(ComponentType.PAR) && StringUtils.isNotBlank(appConfiguration.getMtlsParEndpoint())) {
+            aliases.put(PAR_ENDPOINT, appConfiguration.getMtlsParEndpoint());
+        }
+
+        log.trace("MTLS aliases: " + aliases.toString());
+        if (!aliases.isEmpty())
+            jsonObj.put(MTLS_ENDPOINT_ALIASES, aliases);
+    }
 
     private void filterOutKeys(JSONObject jsonObj) {
         final List<String> allowedKeys = appConfiguration.getDiscoveryAllowedKeys();
