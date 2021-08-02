@@ -20,15 +20,21 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.util.OpenSSHPrivateKeyUtil;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyFactorySpi;
 import org.bouncycastle.jcajce.spec.OpenSSHPrivateKeySpec;
 import org.bouncycastle.jcajce.spec.RawEncodedKeySpec;
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyFactorySpi;
 
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
@@ -105,19 +111,22 @@ public class EDDSASigner extends AbstractJwsSigner {
             
             KeyFactorySpi.Ed25519 kf = new KeyFactorySpi.Ed25519();
             
-            KeyFactorySpi keyFactorySpi = kf;  
-            
+            KeyFactorySpi keyFactorySpi = kf;
+
+            // generating original array (private key)
             PrivateKeyInfo pki = PrivateKeyInfo.getInstance(((PKCS8EncodedKeySpec)privateKeySpec).getEncoded());
+            byte[] encoding = ASN1OctetString.getInstance(pki.parsePrivateKey()).getOctets();
+            ////
             
             BCEdDSAPrivateKey privateKey1 = (BCEdDSAPrivateKey)kf.generatePrivate(pki);
             
-            byte[] encoding = ASN1OctetString.getInstance(pki.parsePrivateKey()).getOctets();
+            byte[] encoded8 = privateKey1.getEncoded();
             
+            //generating encoded (private key) from original array  
             Ed25519PrivateKeyParameters params = new Ed25519PrivateKeyParameters(encoding);
-            
             PrivateKeyInfo privInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(params, null);
-            
             byte[] encoded7 = privInfo.getEncoded();
+            ////
             
             RawEncodedKeySpec rawSpec = new RawEncodedKeySpec(encoding); 
             
@@ -236,6 +245,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             
 //            BCEdDSAPrivateKey privateKey = new BCEdDSAPrivateKey(privateKeySpec);
             
+            
             BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
             Signature signer = Signature.getInstance(signatureAlgorithm.getName(), DEF_BC);
             signer.initSign(privateKey);
@@ -254,6 +264,9 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException(e);            
         }
     }
+    
+    static final byte[] Ed448Prefix = Hex.decode("3043300506032b6571033a00");
+    static final byte[] Ed25519Prefix = Hex.decode("302a300506032b6570032100");    
 
     /**
      * 
@@ -276,8 +289,39 @@ public class EDDSASigner extends AbstractJwsSigner {
         }
         try {
             X509EncodedKeySpec publicKeySpec = eddsaPublicKey.getPublicKeySpec();
+            
+            SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo.getInstance(((X509EncodedKeySpec)publicKeySpec).getEncoded());  
+            
+            byte[] encoded1 = subPubKeyInfo.getEncoded();
+            
+            byte[] encoded2 = subPubKeyInfo.getPublicKeyData().getOctets();    
+            
+            Ed25519PublicKeyParameters params = new Ed25519PublicKeyParameters(encoded2);
+            
+            byte[] encoded5 = params.getEncoded();
+            
+            Ed25519PublicKeyParameters keyParam = (Ed25519PublicKeyParameters)PublicKeyFactory.createKey(subPubKeyInfo);
+            
+            byte[] encoded3 = keyParam.getEncoded();
+            
+//            BCEdDSAPublicKey publicKey1 = new BCEdDSAPublicKey(params);
+            
+            //AsymmetricKeyParameter PublicKeyFactory. .createKey(subPubKeyInfo);
+            
+//            PublicKeyFactory.createKey(keyInfoData)
+            
+//            byte[] encoding = ASN1OctetString.getInstance(subPubKeyInfo. .parsePrivateKey()).getOctets();            
+            
             java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
             BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+            
+            byte[] encoding6 = new byte[Ed25519Prefix.length + Ed25519PublicKeyParameters.KEY_SIZE];
+
+            System.arraycopy(Ed25519Prefix, 0, encoding6, 0, Ed25519Prefix.length);            
+            System.arraycopy(encoded2, 0, encoding6, Ed25519Prefix.length, encoded2.length);
+            
+            byte[] encoded4 = publicKey.getEncoded();
+            
             Signature virifier = Signature.getInstance(signatureAlgorithm.getName(), "BC");
             virifier.initVerify(publicKey);
             virifier.update(signingInput.getBytes());
@@ -292,6 +336,8 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException(e);
         } catch (IllegalArgumentException e) {
             throw new SignatureException(e);
+        } catch (IOException e) {
+            throw new SignatureException(e);            
         }
     }
 }
