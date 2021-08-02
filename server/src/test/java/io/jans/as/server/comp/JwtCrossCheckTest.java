@@ -9,39 +9,66 @@ package io.jans.as.server.comp;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNotNull;
 
+import java.net.URI;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
 import java.security.interfaces.ECPublicKey;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.crypto.Ed25519Signer;
+import com.nimbusds.jose.crypto.Ed25519Verifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.KeyOperation;
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.util.Base64;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Use;
 import io.jans.as.model.jws.AbstractJwsSigner;
 import io.jans.as.model.jws.ECDSASigner;
+import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtType;
 import io.jans.as.server.BaseTest;
+import io.jans.as.model.exception.SignatureException;
+
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed448PrivateKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 /**
  * @author Yuriy Zabrovarnyy
@@ -87,6 +114,15 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String kid) throws Exception {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256, kid);
     }
+    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })
+    @Test
+    public void es256KCrossCheck(final String dnName,
+                                final String keyStoreFile,
+                                final String keyStoreSecret,
+                                final String kid) throws Exception {
+        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256K, kid);
+    }    
 
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })
     @Test
@@ -104,6 +140,15 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES512, kid);
+    }
+    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })
+    @Test
+    public void ed25519CrossCheck(final String dnName,
+                                final String keyStoreFile,
+                                final String keyStoreSecret,
+                                final String kid) throws Exception {
+        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ED25519, kid);
     }
 
     private void crossCheck(AuthCryptoProvider cryptoProvider, SignatureAlgorithm signatureAlgorithm, String kid) throws Exception {
@@ -129,23 +174,23 @@ public class JwtCrossCheckTest extends BaseTest {
                 nimbusVerifier = new ECDSAVerifier(ecKey);
                 oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
                 break;
-/*                
             case ED:
-                final JWK edKey = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
-                edKey
-                
-                final ECKey ecKey = ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
-                final ECPublicKey ecPublicKey = ecKey.toECPublicKey();
-                nimbusVerifier = new ECDSAVerifier(ecKey);
-                oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
+                Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                JWK jwk = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                OctetKeyPair octetKeyPair = jwk.toOctetKeyPair();
+                KeyPair keyPair = octetKeyPair.toKeyPair();
+                BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
+                nimbusVerifier = new Ed25519Verifier(octetKeyPair);
+                oxauthVerifier = new EDDSASigner(jwt.getHeader().getSignatureAlgorithm(), new EDDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), publicKey.getEncoded()));
                 break;
-*/                
             case RSA:
                 RSAKey rsaKey = RSAKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 final java.security.interfaces.RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
                 nimbusVerifier = new RSASSAVerifier(rsaKey);
                 oxauthVerifier = new RSASigner(signatureAlgorithm, new RSAPublicKey(rsaPublicKey.getModulus(), rsaPublicKey.getPublicExponent()));
                 break;
+            default:
+                throw new SignatureException(String.format("wrong type of the Algorithm Family: %s", signatureAlgorithm.getFamily().toString()));
         }
 
         assertNotNull(nimbusVerifier);
@@ -174,6 +219,75 @@ public class JwtCrossCheckTest extends BaseTest {
             case EC:
                 signer = new com.nimbusds.jose.crypto.ECDSASigner(ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray()));
                 break;
+            case ED:
+                //OctetKeyPair okp = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray()).toOctetKeyPair();
+/*                
+                ASN1OctetString.getInstance(obj)
+                
+                BCEdDSAPrivateKey prKey = new BCEdDSAPrivateKey() ;
+                
+                PKCS8EncodedKeySpec
+                
+                byte[] encoding = ASN1OctetString.getInstance(keyInfo.parsePrivateKey()).getOctets();
+
+                if (EdECObjectIdentifiers.id_Ed448.equals(keyInfo.getPrivateKeyAlgorithm().getAlgorithm()))
+                {
+                    eddsaPrivateKey = new Ed448PrivateKeyParameters(encoding);
+                }
+                else
+                {
+                    eddsaPrivateKey = new Ed25519PrivateKeyParameters(encoding);
+                }                
+*/                
+/*                
+                Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+                BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+                
+                PKCS8EncodedKeySpec
+                
+                PrivateKeyInfo pki = new PrivateKeyInfo(signatureAlgorithm.)
+                
+                org.bouncycastle.jcajce.provider.asymmetric.edec.KeyFactorySpi.Ed25519
+                
+                byte[] encoded = bcEdPrivKey.getEncoded();
+                
+                String encodedStr = new String (encoded);
+                
+                OctetKeyPair okp1 = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(bcEdPubKey.getEncoded())).d(Base64URL.encode(bcEdPrivKey.getEncoded())).build();                
+  */              
+//                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(bcEdPubKey.getEncoded()).d(Base64URL.encode(bcEdPrivKey.getEncoded())).build();
+ //               signer = new Ed25519Signer(okp);
+
+//              bcEdprivKey.
+                
+//              OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(bcEdprivKey.getEncoded()));
+//              public Builder(final Curve crv, final Base64URL x) {                
+//              bcEdprivKey.
+
+/*                
+                OctetKeyPair.Builder(Curve.Ed25519, bcEdprivKey);
+                
+                public Builder(final Curve crv, final Base64URL x
+                OctetKeyPair ckp = new OctetKeyPair();
+                
+                
+                public OctetKeyPair(final Curve crv, final Base64URL x,
+                        final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
+                        final URI x5u, final Base64URL x5t, final Base64URL x5t256, final List<Base64> x5c,
+                        final KeyStore ks) {                
+                
+                
+                OctetKeyPair.Builder(cryptoProvider.getKeyStore()).
+                
+                
+                OctetKeyPair okp = OctetKeyPair.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray()).toOctetKeyPair();
+                
+                signer = new Ed25519Signer(okp);
+*/                
+                break;
+            default:
+                throw new SignatureException(String.format("wrong type of the Algorithm Family: %s", family.toString()));
         }
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
