@@ -22,9 +22,9 @@
             <class name="io.jans.as.model.util.CertUtilsTest"/>
         </classes>
     </test>
-    <test name="EDDSA Encryption-Decryption Test" enabled="true">
+    <test name="EDDSA Keys Test" enabled="true">
         <classes>
-            <class name="io.jans.as.model.crypto.signature.EDDSAEncryptionDecryptionTest"/>
+            <class name="io.jans.as.model.crypto.signature.EDDSAKeysTest"/>
         </classes>
     </test>    
 </suite>

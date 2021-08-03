@@ -120,6 +120,34 @@ public class EDDSAPublicKey extends PublicKey {
         if(!Arrays.equals(this.xEncoded, objTyped.xEncoded))
             return false;
         
-        return true;
+
+        String thisKeyId = getKeyId();
+        String objKeyId = objTyped.getKeyId();
+        
+        if(thisKeyId != null) {
+            if(objKeyId == null || !thisKeyId.equals(objKeyId)) {
+                return false;
+            }
+        }
+        else if(objKeyId != null) {
+            if(thisKeyId == null || !objKeyId.equals(thisKeyId)) {
+                return false;
+            }
+        }
+        
+        SignatureAlgorithm thisSignAlg = this.getSignatureAlgorithm();        
+        SignatureAlgorithm objSignAlg = objTyped.getSignatureAlgorithm();
+        
+        if(thisSignAlg != null) {
+            if(objSignAlg == null || !thisSignAlg.equals(objSignAlg)) {
+                return false;
+            }
+        }
+        else if (objSignAlg != null) {
+            if(thisSignAlg == null || !objSignAlg.equals(thisSignAlg)) {
+                return false;
+            }
+        }
+        return true;        
     }    
 }

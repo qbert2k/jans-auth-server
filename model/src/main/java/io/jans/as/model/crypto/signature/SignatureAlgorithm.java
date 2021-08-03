@@ -23,7 +23,9 @@ import io.jans.as.model.jwt.JwtType;
  */
 public enum SignatureAlgorithm {
 
-    NONE("none"), HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
+    NONE("none"),
+    
+    HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
     HS384("HS384", AlgorithmFamily.HMAC, "HMACSHA384", JWSAlgorithm.HS384),
     HS512("HS512", AlgorithmFamily.HMAC, "HMACSHA512", JWSAlgorithm.HS512),
     
@@ -147,69 +149,4 @@ public enum SignatureAlgorithm {
         return jwsAlgorithm;
     }
 }
-    
-    /**
-     * 
-     * @return
-     */
-/*    
-    public static Algorithm getJWKAlgorithm(SignatureAlgorithm signAlg) {
-        Algorithm alg = null;
-        
-        switch(signAlg) {
-        case NONE: {
-            break;
-        }
-        case HS384: {
-            break;
-        }
-        case HS512: {
-            break;
-        }
-            
-        
-        }
-        
-        return alg;
-    }
-}
-*/
-/*
-    NONE("none"), HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
-    HS384("HS384", AlgorithmFamily.HMAC, "HMACSHA384", JWSAlgorithm.HS384),
-    HS512("HS512", AlgorithmFamily.HMAC, "HMACSHA512", JWSAlgorithm.HS512),
-    RS256("RS256", AlgorithmFamily.RSA, "SHA256WITHRSA", JWSAlgorithm.RS256),
-    RS384("RS384", AlgorithmFamily.RSA, "SHA384WITHRSA", JWSAlgorithm.RS384),
-    RS512("RS512", AlgorithmFamily.RSA, "SHA512WITHRSA", JWSAlgorithm.RS512),
-    ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256, JWSAlgorithm.ES256),
-    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K, JWSAlgorithm.ES256K),
-    ES384("ES384", AlgorithmFamily.EC, "SHA384WITHECDSA", EllipticEdvardsCurve.P_384, JWSAlgorithm.ES384),
-    ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", EllipticEdvardsCurve.P_521, JWSAlgorithm.ES512),
-    PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1", JWSAlgorithm.PS256),
-    PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1", JWSAlgorithm.PS384),
-    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512),
-    ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),
-    ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA),
-    EDDSA("EdDSA", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA); 
- */
-
-/*
-    RS256("RS256", Use.SIGNATURE, AlgorithmFamily.RSA), RS384("RS384", Use.SIGNATURE, AlgorithmFamily.RSA),
-    RS512("RS512", Use.SIGNATURE, AlgorithmFamily.RSA), ES256("ES256", Use.SIGNATURE, AlgorithmFamily.EC),
-    ES256K("ES256K",
-            Use.SIGNATURE, AlgorithmFamily.EC), ES384("ES384", Use.SIGNATURE, AlgorithmFamily.EC),
-    ES512("ES512", Use.SIGNATURE, AlgorithmFamily.EC), PS256("PS256", Use.SIGNATURE, AlgorithmFamily.RSA),
-    PS384("PS384", Use.SIGNATURE, AlgorithmFamily.RSA), PS512("PS512", Use.SIGNATURE, AlgorithmFamily.RSA),
-    ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED), ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED),
-
-    // Encryption
-    RSA1_5("RSA1_5", Use.ENCRYPTION, AlgorithmFamily.RSA), RSA_OAEP("RSA-OAEP", Use.ENCRYPTION, AlgorithmFamily.RSA),
-    RSA_OAEP_256("RSA-OAEP-256", Use.ENCRYPTION, AlgorithmFamily.RSA),
-    ECDH_ES("ECDH-ES", Use.ENCRYPTION, AlgorithmFamily.EC),
-    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", Use.ENCRYPTION, AlgorithmFamily.EC),
-    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", Use.ENCRYPTION, AlgorithmFamily.EC),
-    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC); 
- * 
- */
-
 

@@ -111,12 +111,8 @@ public enum Algorithm {
     ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),
     ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA),
     EDDSA("EdDSA", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA);
- 
- 
- 
      
  */
-    
     
     
 /*    

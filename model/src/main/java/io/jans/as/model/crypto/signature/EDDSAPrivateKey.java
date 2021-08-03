@@ -153,23 +153,34 @@ public class EDDSAPrivateKey extends PrivateKey {
 
         if(!Arrays.equals(this.dEncoded, objTyped.dEncoded))
             return false;
-/*        
-        if()
-        
-        
-        public String getKeyId() {
-            return keyId;
-        }
 
-        public void setKeyId(String keyId) {
-            this.keyId = keyId;
-        }
-
-        public SignatureAlgorithm getSignatureAlgorithm() {
-            return signatureAlgorithm;
-        }
-*/        
+        String thisKeyId = getKeyId();
+        String objKeyId = objTyped.getKeyId();
         
+        if(thisKeyId != null) {
+            if(objKeyId == null || !thisKeyId.equals(objKeyId)) {
+                return false;
+            }
+        }
+        else if(objKeyId != null) {
+            if(thisKeyId == null || !objKeyId.equals(thisKeyId)) {
+                return false;
+            }
+        }
+        
+        SignatureAlgorithm thisSignAlg = this.getSignatureAlgorithm();        
+        SignatureAlgorithm objSignAlg = objTyped.getSignatureAlgorithm();
+        
+        if(thisSignAlg != null) {
+            if(objSignAlg == null || !thisSignAlg.equals(objSignAlg)) {
+                return false;
+            }
+        }
+        else if (objSignAlg != null) {
+            if(thisSignAlg == null || !objSignAlg.equals(thisSignAlg)) {
+                return false;
+            }
+        }
         return true;
     }
 }
