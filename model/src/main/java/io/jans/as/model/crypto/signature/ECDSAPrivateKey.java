@@ -29,11 +29,13 @@ public class ECDSAPrivateKey extends PrivateKey {
 
     private BigInteger d;
 
-    public ECDSAPrivateKey(BigInteger d) {
+    public ECDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, BigInteger d) {
+        super(null, signatureAlgorithm);        
         this.d = d;
     }
 
     public ECDSAPrivateKey(String d) {
+        super(null, null);
         this.d = new BigInteger(1, Base64Util.base64urldecode(d));
     }
 

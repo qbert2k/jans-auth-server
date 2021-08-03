@@ -13,6 +13,7 @@ import static io.jans.as.model.jwk.JWKParameter.X;
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -42,7 +43,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @param xEncoded
      */
     public EDDSAPrivateKey(SignatureAlgorithm signatureAlgorithm, byte[] dEncoded, byte[] xEncoded) {
-        setSignatureAlgorithm(signatureAlgorithm);
+        super(null, signatureAlgorithm);
         this.dEncoded = dEncoded.clone();
         this.xEncoded = xEncoded.clone();
     }
@@ -128,8 +129,47 @@ public class EDDSAPrivateKey extends PrivateKey {
      */
     @Override
     public EDDSAPrivateKey clone() {
-        EDDSAPrivateKey newObj = new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
-        newObj.setKeyId(getKeyId());
-        return newObj;
+        return new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;            
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(this.getClass() != obj.getClass()) {
+            return false;
+        }
+        EDDSAPrivateKey objTyped = (EDDSAPrivateKey) obj;
+
+        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded))
+            return false;
+
+        if(!Arrays.equals(this.dEncoded, objTyped.dEncoded))
+            return false;
+/*        
+        if()
+        
+        
+        public String getKeyId() {
+            return keyId;
+        }
+
+        public void setKeyId(String keyId) {
+            this.keyId = keyId;
+        }
+
+        public SignatureAlgorithm getSignatureAlgorithm() {
+            return signatureAlgorithm;
+        }
+*/        
+        
+        return true;
     }
 }

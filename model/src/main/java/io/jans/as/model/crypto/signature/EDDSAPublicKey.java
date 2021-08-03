@@ -11,6 +11,8 @@ import static io.jans.as.model.jwk.JWKParameter.X;
 
 import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,5 +100,26 @@ public class EDDSAPublicKey extends PublicKey {
         newObj.setKeyId(getKeyId());
         return newObj;
     }
+    
+    /**
+     * 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;            
+        }
+        if(obj == null) {
+            return false;
+        }
+        if(this.getClass() != obj.getClass()) {
+            return false;
+        }
+        EDDSAPublicKey objTyped = (EDDSAPublicKey) obj;
 
+        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded))
+            return false;
+        
+        return true;
+    }    
 }

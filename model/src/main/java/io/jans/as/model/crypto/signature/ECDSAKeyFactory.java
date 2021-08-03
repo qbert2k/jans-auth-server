@@ -83,7 +83,7 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
             BigInteger y = publicKeySpec.getQ().getYCoord().toBigInteger();
             BigInteger d = privateKeySpec.getD();
 
-            this.ecdsaPrivateKey = new ECDSAPrivateKey(d);
+            this.ecdsaPrivateKey = new ECDSAPrivateKey(signatureAlgorithm, d);
             this.ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, x, y);
 
             if (StringUtils.isNotBlank(dnName)) {

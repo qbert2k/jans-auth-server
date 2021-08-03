@@ -63,7 +63,7 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
         BCRSAPrivateCrtKey jcersaPrivateCrtKey = (BCRSAPrivateCrtKey) keyPair.getPrivate();
         BCRSAPublicKey jcersaPublicKey = (BCRSAPublicKey) keyPair.getPublic();
 
-        rsaPrivateKey = new RSAPrivateKey(jcersaPrivateCrtKey.getModulus(), jcersaPrivateCrtKey.getPrivateExponent());
+        rsaPrivateKey = new RSAPrivateKey(signatureAlgorithm, jcersaPrivateCrtKey.getModulus(), jcersaPrivateCrtKey.getPrivateExponent());
 
         rsaPublicKey = new RSAPublicKey(jcersaPublicKey.getModulus(), jcersaPublicKey.getPublicExponent());
 
@@ -95,8 +95,7 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
         if (p_key == null) {
             throw new IllegalArgumentException("Key value must not be null.");
         }
-
-        rsaPrivateKey = new RSAPrivateKey(p_key.getN(), p_key.getE());
+        rsaPrivateKey = new RSAPrivateKey(null, p_key.getN(), p_key.getE());
         rsaPublicKey = new RSAPublicKey(p_key.getN(), p_key.getE());
         certificate = null;
     }

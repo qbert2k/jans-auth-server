@@ -30,12 +30,14 @@ public class RSAPrivateKey extends PrivateKey {
     private BigInteger modulus;
     private BigInteger privateExponent;
 
-    public RSAPrivateKey(BigInteger modulus, BigInteger privateExponent) {
+    public RSAPrivateKey(SignatureAlgorithm signatureAlgorithm, BigInteger modulus, BigInteger privateExponent) {
+        super(null, signatureAlgorithm);
         this.modulus = modulus;
         this.privateExponent = privateExponent;
     }
 
-    public RSAPrivateKey(String modulus, String privateExponent) {
+    public RSAPrivateKey(SignatureAlgorithm signatureAlgorithm, String modulus, String privateExponent) {
+        super(null, signatureAlgorithm);        
         this.modulus = new BigInteger(1, Base64Util.base64urldecode(modulus));
         this.privateExponent = new BigInteger(1, Base64Util.base64urldecode(privateExponent));
     }
