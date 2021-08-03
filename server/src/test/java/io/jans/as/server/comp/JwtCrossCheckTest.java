@@ -148,7 +148,7 @@ public class JwtCrossCheckTest extends BaseTest {
     
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })
     @Test
-    public void ed25519CrossCheck(final String dnName,
+    public void edDsaCrossCheck(final String dnName,
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
