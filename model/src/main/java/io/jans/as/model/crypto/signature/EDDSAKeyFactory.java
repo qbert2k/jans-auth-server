@@ -5,6 +5,7 @@
  */
 package io.jans.as.model.crypto.signature;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -24,16 +25,22 @@ import java.util.GregorianCalendar;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
+import org.bouncycastle.crypto.params.Ed448PublicKeyParameters;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.util.encoders.Hex;
 
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.KeyFactory;
@@ -46,11 +53,13 @@ import io.jans.as.model.crypto.KeyFactory;
  */
 public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> {
 
-    public static String DEF_BC = "BC";
+    public static final String DEF_BC = "BC";
+    public static final byte[] Ed448Prefix = Hex.decode("3043300506032b6571033a00");
+    public static final byte[] Ed25519Prefix = Hex.decode("302a300506032b6570032100");        
 
     private SignatureAlgorithm signatureAlgorithm;
-    private KeyPair keyPair;
 
+    private KeyPair keyPair;
     private EDDSAPrivateKey eddsaPrivateKey;
     private EDDSAPublicKey eddsaPublicKey;
     private Certificate certificate;
@@ -181,4 +190,72 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
     public Certificate getCertificate() {
         return this.certificate;
     }
+
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param decodedPublicKey
+     * @return
+     * @throws IOException
+     * @throws SignatureException 
+     */
+    public static EDDSAPublicKey createEDDSAPublicKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPublicKey) throws IOException, SignatureException {
+        byte[] encodedPubKey = null; 
+        switch(signatureAlgorithm) {
+        case EDDSA:
+        case ED25519: {
+            encodedPubKey = new byte[Ed25519Prefix.length + Ed25519PublicKeyParameters.KEY_SIZE];
+            System.arraycopy(Ed25519Prefix, 0, encodedPubKey, 0, Ed25519Prefix.length);
+            System.arraycopy(decodedPublicKey, 0, encodedPubKey, Ed25519Prefix.length, decodedPublicKey.length);                
+            break;
+        }
+        case ED448: {
+            encodedPubKey = new byte[Ed448Prefix.length + Ed448PublicKeyParameters.KEY_SIZE];
+            System.arraycopy(Ed448Prefix, 0, encodedPubKey, 0, Ed448Prefix.length);
+            System.arraycopy(decodedPublicKey, 0, encodedPubKey, Ed448Prefix.length, decodedPublicKey.length);                
+            break;
+        }
+        default: {
+            throw new SignatureException(String.format("Wrong type of the signature algorithm (SignatureAlgorithm): %s", signatureAlgorithm.toString()));     
+        }
+        }
+        return new EDDSAPublicKey(signatureAlgorithm, encodedPubKey);        
+    }
+    
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param decodedPrivateKey
+     * @param decodedPublicKey
+     * @return
+     * @throws IOException 
+     * @throws SignatureException 
+     */
+    public static EDDSAPrivateKey createEDDSAPrivateKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPrivateKey, byte [] decodedPublicKey) throws IOException, SignatureException {
+        byte[] encodedPubKey = null; 
+        if(decodedPublicKey != null) {
+            switch(signatureAlgorithm) {
+            case EDDSA:
+            case ED25519: {
+                encodedPubKey = new byte[Ed25519Prefix.length + Ed25519PublicKeyParameters.KEY_SIZE];
+                System.arraycopy(Ed25519Prefix, 0, encodedPubKey, 0, Ed25519Prefix.length);
+                System.arraycopy(decodedPublicKey, 0, encodedPubKey, Ed25519Prefix.length, decodedPublicKey.length);                
+                break;
+            }
+            case ED448: {
+                encodedPubKey = new byte[Ed448Prefix.length + Ed448PublicKeyParameters.KEY_SIZE];
+                System.arraycopy(Ed448Prefix, 0, encodedPubKey, 0, Ed448Prefix.length);
+                System.arraycopy(decodedPublicKey, 0, encodedPubKey, Ed448Prefix.length, decodedPublicKey.length);                
+                break;
+            }
+            default: {
+                throw new SignatureException(String.format("Wrong type of the signature algorithm (SignatureAlgorithm): %s", signatureAlgorithm.toString()));     
+            }
+            }
+        }
+        Ed25519PrivateKeyParameters privKeysParams = new Ed25519PrivateKeyParameters(decodedPrivateKey);
+        PrivateKeyInfo privKeyInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(privKeysParams, null);
+        return new EDDSAPrivateKey(signatureAlgorithm, privKeyInfo.getEncoded(), encodedPubKey);
+    }    
+    
 }

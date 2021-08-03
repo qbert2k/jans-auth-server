@@ -9,8 +9,9 @@ import static io.jans.as.model.jwk.JWKParameter.EXPONENT;
 import static io.jans.as.model.jwk.JWKParameter.MODULUS;
 import static io.jans.as.model.jwk.JWKParameter.X;
 
+import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
-
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,11 +40,27 @@ public class EDDSAPublicKey extends PublicKey {
     }
 
     /**
+     * get public key value array (X509 encoded) in X509EncodedKeySpec object;
+     * X509EncodedKeySpec allows to get encoded array (byte[] getEncoded());
      * 
-     * @return
+     * @return public key value array (X509 encoded) in X509EncodedKeySpec object;
+     *         X509EncodedKeySpec allows to get encoded array (byte[] getEncoded());
      */
     public X509EncodedKeySpec getPublicKeySpec() {
         return new X509EncodedKeySpec(this.xEncoded);
+    }
+
+    /**
+     * get original array (decoded) of the public key (ED25519 - 32 byte, ED448 - 56
+     * bytes);
+     * 
+     * @return original array (decoded) of the public key;
+     * 
+     * @throws IOException
+     */
+    public byte[] getPublicKeyDecoded() throws IOException {
+        SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(xEncoded);
+        return subjPubKeyInfo.getPublicKeyData().getOctets();
     }
 
     /**

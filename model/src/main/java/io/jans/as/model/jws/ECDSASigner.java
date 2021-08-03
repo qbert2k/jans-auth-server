@@ -69,8 +69,6 @@ public class ECDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signing input is null");
         }
         try {
-            // ECParameterSpec ecSpec =
-            // ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getName());
             ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(getSignatureAlgorithm().getCurve().getAlias());
             ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(ecdsaPrivateKey.getD(), ecSpec);
 

@@ -51,13 +51,13 @@ import io.jans.as.model.jws.ECDSASigner;
 import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.util.Base64Util;
+import io.jans.as.server.BaseTest;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
  */
-//public class SignatureTest extends BaseTest {
-
-public class SignatureTest {
+@SuppressWarnings("deprecation")
+public class SignatureTest extends BaseTest {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -65,14 +65,6 @@ public class SignatureTest {
 
     private static String DEF_CERTIFICATE_OWN = "CN=Test CA Certificate";
     private static String DEF_INPUT = "Hello World!";
-
-    public static void showTitle(String title) {
-        title = "TEST: " + title;
-
-        System.out.println("#######################################################");
-        System.out.println(title);
-        System.out.println("#######################################################");
-    }
 
     @Test
     public void generateRS256Keys() throws Exception {

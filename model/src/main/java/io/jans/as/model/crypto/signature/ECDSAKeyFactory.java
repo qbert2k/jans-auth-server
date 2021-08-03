@@ -50,7 +50,7 @@ import io.jans.as.model.crypto.KeyFactory;
  */
 public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> {
 
-    public static String DEF_BC = "BC";
+    public static final String DEF_BC = "BC";
 
     private SignatureAlgorithm signatureAlgorithm;
     private KeyPair keyPair;

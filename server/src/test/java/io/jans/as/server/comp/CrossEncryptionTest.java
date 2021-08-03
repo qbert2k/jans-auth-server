@@ -81,6 +81,7 @@ import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
 import io.jans.as.server.model.token.JwtSigner;
 
+@SuppressWarnings("deprecation")
 public class CrossEncryptionTest {
 
     static {
@@ -715,7 +716,6 @@ public class CrossEncryptionTest {
             // .build(),
             // new Payload(signedJWT));
 
-            @SuppressWarnings("deprecation")
             JWEObject jweObject = new JWEObject(
                     new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM).type(JOSEObjectType.JWT)
                             .keyID(senderJWK.getKeyID()).build(),
@@ -927,6 +927,7 @@ public class CrossEncryptionTest {
         return JSONWebKey.fromJSONObject(new JSONObject(senderJwkJson));
     }
 
+    @SuppressWarnings("unused")
     private RSAPublicKey getSenderPublicKey() {
         return RSAKeyFactory.valueOf(getSenderWebKey()).getPublicKey();
     }
