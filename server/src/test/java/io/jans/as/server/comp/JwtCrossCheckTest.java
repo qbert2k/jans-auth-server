@@ -64,6 +64,12 @@ public class JwtCrossCheckTest extends BaseTest {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
+    
+    @Parameters({ "userId" })
+    @Test
+    public void someTest(final String userId) throws Exception {
+            System.out.println("userId = " + userId);
+    }    
 
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })
     @Test

@@ -61,10 +61,6 @@ public class CryptoProviderTest extends ConfigurableTest {
 	@Test
 	public void configuration() {
 		try {
-		    Class class_ = cryptoProvider.getClass();
-		    
-		    String signature = cryptoProvider.sign(SIGNING_INPUT, null, SHARED_SECRET, SignatureAlgorithm.HS256);		    
-		    
 			AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 			assertNotNull(appConfiguration);
 
