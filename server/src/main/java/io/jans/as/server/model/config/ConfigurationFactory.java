@@ -393,7 +393,6 @@ public class ConfigurationFactory {
 
 	private boolean createFromLdap(boolean recoverFromFiles) {
 		log.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
-/*		
 		try {
 			final io.jans.as.model.config.Conf c = loadConfigurationFromLdap();
 			if (c != null) {
@@ -419,7 +418,6 @@ public class ConfigurationFactory {
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
-*/		
 
 		if (recoverFromFiles) {
 			log.info("Unable to find configuration in LDAP, try to load configuration from file system... ");
