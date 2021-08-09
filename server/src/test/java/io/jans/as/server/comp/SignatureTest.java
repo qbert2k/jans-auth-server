@@ -46,7 +46,7 @@ import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP384R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP521R1Curve;
-
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import io.jans.as.model.crypto.AuthCryptoProvider;
@@ -74,8 +74,8 @@ import io.jans.as.server.BaseTest;
  * @author Javier Rojas Blum Date: 12.03.2012
  */
 @SuppressWarnings("deprecation")
-//public class SignatureTest extends BaseTest {
-public class SignatureTest {
+public class SignatureTest extends BaseTest {
+//public class SignatureTest {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -83,15 +83,6 @@ public class SignatureTest {
 
     private static String DEF_CERTIFICATE_OWN = "CN=Test CA Certificate";
     private static String DEF_INPUT = "Hello World!";
-    
-    private static String DEF_CLIENT_KEYSTORE_FILE = "profiles/ce.gluu.info/client_keystore.jks";
-    private static String DEF_CLIENT_KEYSTORE_SECRET = "secret";    
-    
-    private static String DEF_KEYSTORE_FILE = "conf/keystore.jks";
-    private static String DEF_KEYSTORE_SECRET = "secret";
-    
-    private static String DEF_CERTIFICATE_READ = "CN=Jans Auth CA Certificates";    
-    
 
     public static void showTitle(String title) {
         title = "TEST: " + title;
@@ -924,27 +915,26 @@ public class SignatureTest {
             System.out.println(e.getMessage());
         }
     }
-    
-/*    
-    private static String DEF_CERTIFICATE_OWN = "CN=Test CA Certificate";
-    private static String DEF_INPUT = "Hello World!";
-    
-    private static String DEF_CLIENT_KEYSTORE_FILE = "profiles/ce.gluu.info/client_keystore.jks";
-    private static String DEF_CLIENT_KEYSTORE_SECRET = "secret";    
-    
-    private static String DEF_KEYSTORE_FILE = "conf/keystore.jks";
-    private static String DEF_KEYSTORE_SECRET = "secret";
-    
-    private static String DEF_CERTIFICATE_READ = "CN=Jans Auth CA Certificates";     
-*/   
-    
+
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })    
     @Test
-    public void readRS256Keys() throws Exception {
+    public void readRS256Keys(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
         
         showTitle("TEST: readRS256Keys");
         
-        TestKeys testKeys = loadTestKeys(SignatureAlgorithm.RS256, DEF_CLIENT_KEYSTORE_FILE, DEF_CLIENT_KEYSTORE_SECRET, DEF_CERTIFICATE_READ,
-                "6fb1859a-54d9-47c6-a293-92ce2cee63e0");
+        TestKeys testKeys = loadTestKeys(SignatureAlgorithm.RS256, keyStoreFile, keyStoreSecret, dnName,
+                kid);
 
         java.security.interfaces.RSAPrivateKey privateKey = (java.security.interfaces.RSAPrivateKey) testKeys.privateKey;
         java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) testKeys.publicKey;
