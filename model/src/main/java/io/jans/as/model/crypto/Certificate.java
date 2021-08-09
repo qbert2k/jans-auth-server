@@ -59,26 +59,31 @@ public class Certificate {
 
     public RSAPublicKey getRsaPublicKey() {
         RSAPublicKey rsaPublicKey = null;
-        if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCRSAPublicKey) {
-            BCRSAPublicKey publicKey = (BCRSAPublicKey) x509Certificate.getPublicKey();
-            rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
-        } else if (x509Certificate != null &&  x509Certificate.getPublicKey() instanceof java.security.interfaces.RSAPublicKey)  {
-            java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey)x509Certificate.getPublicKey();
-            rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
+        if(x509Certificate != null) {
+            if (x509Certificate.getPublicKey() instanceof BCRSAPublicKey) {
+                BCRSAPublicKey publicKey = (BCRSAPublicKey) x509Certificate.getPublicKey();
+                rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
+            } else if (x509Certificate.getPublicKey() instanceof java.security.interfaces.RSAPublicKey)  {
+                java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) x509Certificate.getPublicKey();
+                rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
+            }
         }
         return rsaPublicKey;
     }
 
     public ECDSAPublicKey getEcdsaPublicKey() {
         ECDSAPublicKey ecdsaPublicKey = null;
-
-        if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCECPublicKey) {
-            BCECPublicKey publicKey = (BCECPublicKey) x509Certificate.getPublicKey();
-
-            ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getQ().getXCoord().toBigInteger(),
-                    publicKey.getQ().getYCoord().toBigInteger());
+        if(x509Certificate != null) {
+            if (x509Certificate.getPublicKey() instanceof BCECPublicKey) {
+                BCECPublicKey publicKey = (BCECPublicKey) x509Certificate.getPublicKey();
+                ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getQ().getXCoord().toBigInteger(),
+                        publicKey.getQ().getYCoord().toBigInteger());
+            } else if(x509Certificate.getPublicKey() instanceof java.security.interfaces.ECPublicKey) {
+                java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) x509Certificate.getPublicKey();
+                ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
+                        publicKey.getW().getAffineY());
+            }
         }
-
         return ecdsaPublicKey;
     }
     
