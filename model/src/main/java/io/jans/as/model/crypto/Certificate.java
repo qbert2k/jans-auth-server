@@ -33,11 +33,20 @@ public class Certificate {
     private SignatureAlgorithm signatureAlgorithm;
     private X509Certificate x509Certificate;
 
+    /**
+     * 
+     * @param signatureAlgorithm
+     * @param x509Certificate
+     */
     public Certificate(SignatureAlgorithm signatureAlgorithm, X509Certificate x509Certificate) {
         this.signatureAlgorithm = signatureAlgorithm;
         this.x509Certificate = x509Certificate;
     }
 
+    /**
+     * 
+     * @return
+     */
     public PublicKey getPublicKey() {
         PublicKey publicKey = null;
 
@@ -57,6 +66,10 @@ public class Certificate {
         return publicKey;
     }
 
+    /**
+     * 
+     * @return
+     */
     public RSAPublicKey getRsaPublicKey() {
         RSAPublicKey rsaPublicKey = null;
         if(x509Certificate != null) {
@@ -71,6 +84,10 @@ public class Certificate {
         return rsaPublicKey;
     }
 
+    /**
+     * 
+     * @return
+     */
     public ECDSAPublicKey getEcdsaPublicKey() {
         ECDSAPublicKey ecdsaPublicKey = null;
         if(x509Certificate != null) {
@@ -87,12 +104,14 @@ public class Certificate {
         return ecdsaPublicKey;
     }
     
+    /**
+     * 
+     * @return
+     */
     public EDDSAPublicKey getEddsaPublicKey() {
         EDDSAPublicKey eddsaPublicKey = null;
-
         if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
             BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) x509Certificate.getPublicKey();
-            
             eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());
         }
 
