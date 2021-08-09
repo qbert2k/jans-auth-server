@@ -31,6 +31,7 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
@@ -65,12 +66,248 @@ public class JwtCrossCheckTest extends BaseTest {
         Security.addProvider(new BouncyCastleProvider());
     }
     
-    @Parameters({ "userId" })
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })    
     @Test
-    public void someTest(final String userId) throws Exception {
-            System.out.println("userId = " + userId);
+    public void loadJWK_RS256Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS384_keyId" })    
+    @Test
+    public void loadJWK_RS384Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
     }    
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS512_keyId" })    
+    @Test
+    public void loadJWK_RS512Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })    
+    @Test
+    public void loadJWK_ES256Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }    
+
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })    
+    @Test
+    public void loadJWK_ES256KTest(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }    
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })    
+    @Test
+    public void loadJWK_ES384Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })    
+    @Test
+    public void loadJWK_ES512Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }  
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })    
+    @Test
+    public void loadJWK_ED25519Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    } 
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED448_keyId" })    
+    @Test
+    public void loadJWK_ED448Test(final String dnName,
+            final String keyStoreFile,
+            final String keyStoreSecret,
+            final String kid) throws Exception {
+        
+        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+
+        assertTrue(jwk != null);
+        assertTrue(jwk.toJSONString().length() != 0);
+        assertTrue(jwk.toString().length() != 0);        
+       
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
+        System.out.println("jwk.toString() = " + jwk.toString());        
+    }          
+
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })
     @Test
     public void rs256CrossCheck(final String dnName,
@@ -80,6 +317,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS256, kid);
     }
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS384_keyId" })
     @Test
     public void rs384CrossCheck(final String dnName,
@@ -89,6 +334,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS384, kid);
     }
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS512_keyId"  })
     @Test
     public void rs512CrossCheck(final String dnName,
@@ -98,6 +351,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS512, kid);
     }
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })
     @Test
     public void es256CrossCheck(final String dnName,
@@ -107,6 +368,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256, kid);
     }
     
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })
     @Test
     public void es256KCrossCheck(final String dnName,
@@ -116,6 +385,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256K, kid);
     }    
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })
     @Test
     public void es384CrossCheck(final String dnName,
@@ -125,6 +402,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES384, kid);
     }
 
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })
     @Test
     public void es512CrossCheck(final String dnName,
@@ -134,6 +419,14 @@ public class JwtCrossCheckTest extends BaseTest {
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES512, kid);
     }
     
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })
     @Test
     public void edDsaCrossCheck(final String dnName,
@@ -263,6 +556,14 @@ public class JwtCrossCheckTest extends BaseTest {
         return signedJWT.serialize();
     }
 
+    /**
+     * 
+     * @param cryptoProvider
+     * @param kid
+     * @param algorithm
+     * @return
+     * @throws Exception
+     */
     private static String createOxauthJwt(AuthCryptoProvider cryptoProvider, String kid, SignatureAlgorithm algorithm) throws Exception {
         Jwt jwt = new Jwt();
 
@@ -281,6 +582,14 @@ public class JwtCrossCheckTest extends BaseTest {
         return jwt.toString();
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param use
+     * @param cryptoProvider
+     * @return
+     * @throws KeyStoreException
+     */
     @SuppressWarnings("unused")
     private static String getKeyIdByAlgorithm(SignatureAlgorithm algorithm, Use use, AuthCryptoProvider cryptoProvider) throws KeyStoreException {
         final List<String> aliases = cryptoProvider.getKeys();
