@@ -59,13 +59,13 @@ public class Certificate {
 
     public RSAPublicKey getRsaPublicKey() {
         RSAPublicKey rsaPublicKey = null;
-
         if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCRSAPublicKey) {
             BCRSAPublicKey publicKey = (BCRSAPublicKey) x509Certificate.getPublicKey();
-
+            rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
+        } else if (x509Certificate != null &&  x509Certificate.getPublicKey() instanceof java.security.interfaces.RSAPublicKey)  {
+            java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey)x509Certificate.getPublicKey();
             rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
         }
-
         return rsaPublicKey;
     }
 
