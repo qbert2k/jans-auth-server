@@ -81,6 +81,7 @@ import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
 import io.jans.as.server.model.token.JwtSigner;
 
+
 @SuppressWarnings("deprecation")
 public class CrossEncryptionTest {
 
@@ -225,7 +226,7 @@ public class CrossEncryptionTest {
                     passwordValue2, encryptedPassword2Jwe, null),
             new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, passwordValue1,
                     passwordValue2, encryptedPassword2Jwe, null) };
-
+    
     @Test
     public void encryptWithNimbus_decryptByAll() {
         final String jwt = encryptWithNimbusJoseJwt();

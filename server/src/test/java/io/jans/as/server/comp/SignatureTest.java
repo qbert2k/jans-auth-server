@@ -9,8 +9,13 @@ package io.jans.as.server.comp;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 
+import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.Security;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -34,9 +39,11 @@ import org.bouncycastle.math.ec.custom.sec.SecP521R1Curve;
 
 import org.testng.annotations.Test;
 
+import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.Key;
 import io.jans.as.model.crypto.KeyFactory;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.ECDSAKeyFactory;
 import io.jans.as.model.crypto.signature.ECDSAPrivateKey;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
@@ -57,7 +64,8 @@ import io.jans.as.server.BaseTest;
  * @author Javier Rojas Blum Date: 12.03.2012
  */
 @SuppressWarnings("deprecation")
-public class SignatureTest extends BaseTest {
+//public class SignatureTest extends BaseTest {
+public class SignatureTest {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -65,6 +73,14 @@ public class SignatureTest extends BaseTest {
 
     private static String DEF_CERTIFICATE_OWN = "CN=Test CA Certificate";
     private static String DEF_INPUT = "Hello World!";
+    
+    public static void showTitle(String title) {
+        title = "TEST: " + title;
+
+        System.out.println("#######################################################");
+        System.out.println(title);
+        System.out.println("#######################################################");
+    }    
 
     @Test
     public void generateRS256Keys() throws Exception {
@@ -760,4 +776,287 @@ public class SignatureTest extends BaseTest {
         }
         return resLength;
     }
+
+    private static class Keys {
+        
+        java.security.Key privateKey;        
+        java.security.Key privateKey;        
+        
+        
+        
+    };
+    
+
+    /**
+     * 
+     * @return
+     */
+    private KeyPair loadRSAKeys (SignatureAlgorithm signatureAlgorithm, String keyStore, String keyStoreSecret, String dName, String keyID) {
+        KeyPair keyPair = null;
+        
+        
+        
+        return keyPair;
+    }
+    
+
+    /**
+     * 
+     * @param signatureAlgorithmTest
+     * @param keyStore
+     * @param keyStoreSecret
+     * @param dName
+     * @param keyID
+     */
+    private void loadKey(SignatureAlgorithm signatureAlgorithm, String keyStore, String keyStoreSecret, String dName, String keyID) {
+        try {
+            AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStore, keyStoreSecret, dName);
+            java.security.Key privKey = authCryptoProvider.getKeyStore().getKey(keyID, authCryptoProvider.getKeyStoreSecret().toCharArray());
+            java.security.PublicKey pubKey = authCryptoProvider.getKeyStore().getCertificate(keyID).getPublicKey();
+            if(signatureAlgorithm.getFamily() == AlgorithmFamily.RSA) {
+                java.security.interfaces.RSAPrivateKey rsaPrivateKey = (java.security.interfaces.RSAPrivateKey) privKey;  
+                java.security.interfaces.RSAPublicKey rsaPublicKey = (java.security.interfaces.RSAPublicKey) pubKey;
+                
+                java.security.cert.Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(keyID);
+                
+                byte[] encoded = rsaPrivateKey.getEncoded();
+                
+                String privateStr = Base64Util.base64urlencode(rsaPrivateKey.getEncoded());   
+                String publicStr = Base64Util.base64urlencode(rsaPublicKey.getEncoded());                
+                
+                String certStr = Base64Util.base64urlencode(certificate.getEncoded());                    
+                
+                System.out.println("------------------------- >>");
+                System.out.println("keyStore    = " + keyStore);
+                System.out.println("signatureAlgorithm.getName()    = " + signatureAlgorithm.getName());
+                System.out.println("signatureAlgorithm.getAlgorithm() = " + signatureAlgorithm.getAlgorithm());
+                System.out.println("keyID       = " + keyID);                
+                System.out.println("privateStr = " + privateStr);
+                System.out.println("publicStr  = " + publicStr);                
+                System.out.println("certStr     = " + certStr);
+                System.out.println("------------------------- <<");                  
+                
+            } else if (signatureAlgorithm.getFamily() == AlgorithmFamily.EC) {
+                ECPrivateKey ecPrivateKey = (ECPrivateKey) privKey;
+                ECPublicKey ecPublicKey = (ECPublicKey) pubKey;
+                
+                java.security.cert.Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(keyID);
+                
+                BigInteger privateS = ecPrivateKey.getS();
+                
+                BigInteger publicX = ecPublicKey.getW().getAffineX();
+                BigInteger publicY = ecPublicKey.getW().getAffineY();
+                
+                String privateSStr = Base64Util.base64urlencode(privateS.toByteArray());
+                String publicXStr = Base64Util.base64urlencode(publicX.toByteArray());                
+                String publicYStr = Base64Util.base64urlencode(publicY.toByteArray());
+                
+                String certStr = Base64Util.base64urlencode(certificate.getEncoded());                
+
+                System.out.println("------------------------- >>");
+                System.out.println("keyStore    = " + keyStore);
+                System.out.println("signatureAlgorithm.getName()    = " + signatureAlgorithm.getName());
+                System.out.println("signatureAlgorithm.getAlgorithm() = " + signatureAlgorithm.getAlgorithm());
+                System.out.println("keyID       = " + keyID);                
+                System.out.println("privateSStr = " + privateSStr);
+                System.out.println("publicXStr  = " + publicXStr);                
+                System.out.println("publicYStr  = " + publicYStr);
+                System.out.println("certStr     = " + certStr);
+                System.out.println("------------------------- <<");                
+                
+            } else if (signatureAlgorithm.getFamily() == AlgorithmFamily.ED) {
+                BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)privKey;
+                BCEdDSAPublicKey bcEdPublicKey = (BCEdDSAPublicKey) pubKey;
+                
+                EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(signatureAlgorithm, bcEdPrivKey.getEncoded(), bcEdPublicKey.getEncoded()) ;                
+                EDDSAPublicKey edPublicKey = new EDDSAPublicKey(signatureAlgorithm, bcEdPublicKey.getEncoded());
+                
+                String privateStr = Base64Util.base64urlencode(edPrivKey.getPrivateKeyDecoded());                
+                String publicStr = Base64Util.base64urlencode(edPublicKey.getPublicKeyDecoded());                
+                
+                java.security.cert.Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(keyID);  
+                
+                String certStr = Base64Util.base64urlencode(certificate.getEncoded());
+                
+                System.out.println("------------------------- >>");
+                System.out.println("keyStore    = " + keyStore);
+                System.out.println("signatureAlgorithm.getName()    = " + signatureAlgorithm.getName());
+                System.out.println("signatureAlgorithm.getAlgorithm() = " + signatureAlgorithm.getAlgorithm());
+                System.out.println("keyID       = " + keyID);                
+                System.out.println("privateStr  = " + privateStr);
+                System.out.println("publicStr   = " + publicStr);                
+                System.out.println("certStr     = " + certStr);
+                System.out.println("------------------------- <<");                 
+            }
+            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());            
+        }
+    }
+    
+    @Test
+    public void aLoadKeysTemp() {
+        
+        try {
+            String clientKeyStoreFile="profiles/ce.gluu.info/client_keystore.jks";
+            String keyStoreFile="conf/keystore.jks";
+            
+            String clientKeyStoreSecret="secret";
+            String dName = "CN=Jans Auth CA Certificates";
+            
+            ///----------------------------------------------
+            
+            loadKey(SignatureAlgorithm.RS256, clientKeyStoreFile, clientKeyStoreSecret, dName, "6fb1859a-54d9-47c6-a293-92ce2cee63e0");
+            loadKey(SignatureAlgorithm.RS384, clientKeyStoreFile, clientKeyStoreSecret, dName, "a68c61dd-f8f6-4faf-855b-fbbb8bee028a");            
+            loadKey(SignatureAlgorithm.RS512, clientKeyStoreFile, clientKeyStoreSecret, dName, "79d12e66-0baa-4b59-8a8b-bd3164260bf5");
+            
+            loadKey(SignatureAlgorithm.ES256, clientKeyStoreFile, clientKeyStoreSecret, dName, "a8b62c9d-65ea-4384-a491-e52924c4a0e3");            
+            loadKey(SignatureAlgorithm.ES256K, clientKeyStoreFile, clientKeyStoreSecret, dName, "356c7a32-3ea2-4c7a-9d12-fe8f80732ec9");
+            loadKey(SignatureAlgorithm.ES384, clientKeyStoreFile, clientKeyStoreSecret, dName, "0b1a019f-fcfb-4d3d-981b-16b45355dfdf");            
+            loadKey(SignatureAlgorithm.ES512, clientKeyStoreFile, clientKeyStoreSecret, dName, "07c917ef-943f-4a9a-961c-d3cba28c81d5");
+            
+            loadKey(SignatureAlgorithm.ED25519, clientKeyStoreFile, clientKeyStoreSecret, dName, "77cd3480-0dd4-4617-bfc7-523062566aa3");
+            loadKey(SignatureAlgorithm.ED448, clientKeyStoreFile, clientKeyStoreSecret, dName, "f7c79092-43dc-472e-90f6-1644b7788450");
+
+            ///----------------------------------------------
+            
+            loadKey(SignatureAlgorithm.RS256, keyStoreFile, clientKeyStoreSecret, dName, "15d79fe5-55de-4e3d-a6dd-9ce15e07b382");
+            loadKey(SignatureAlgorithm.RS384, keyStoreFile, clientKeyStoreSecret, dName, "ffb5bb6e-0c86-4ee5-8fb1-1366b6eca189");            
+            loadKey(SignatureAlgorithm.RS512, keyStoreFile, clientKeyStoreSecret, dName, "13a6a2cb-3bc3-4cae-82e9-e5a516288815");
+            
+            loadKey(SignatureAlgorithm.ES256, keyStoreFile, clientKeyStoreSecret, dName, "e98f2a7c-0ff2-4313-939a-0b6f41d9cfd6");            
+            loadKey(SignatureAlgorithm.ES256K, keyStoreFile, clientKeyStoreSecret, dName, "3df98442-e895-49c2-a855-09c0948c9d98");
+            loadKey(SignatureAlgorithm.ES384, keyStoreFile, clientKeyStoreSecret, dName, "bc3dca3f-9358-4fba-968e-fadc5adc5c11");            
+            loadKey(SignatureAlgorithm.ES512, keyStoreFile, clientKeyStoreSecret, dName, "2f081371-3593-4bd0-87de-4b3b743ec742");
+            
+            loadKey(SignatureAlgorithm.ED25519, keyStoreFile, clientKeyStoreSecret, dName, "da89a229-24cb-4c01-bd96-e33342223841");
+            loadKey(SignatureAlgorithm.ED448, keyStoreFile, clientKeyStoreSecret, dName, "b2221043-d4bf-41b4-9f41-27c6f3ad4d8b");
+            
+            ///----------------------------------------------            
+            
+/*
+    ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256, JWSAlgorithm.ES256),
+    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K, JWSAlgorithm.ES256K),
+    ES384("ES384", AlgorithmFamily.EC, "SHA384WITHECDSA", EllipticEdvardsCurve.P_384, JWSAlgorithm.ES384),
+    ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", EllipticEdvardsCurve.P_521, JWSAlgorithm.ES512),
+    
+    PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1", JWSAlgorithm.PS256),
+    PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1", JWSAlgorithm.PS384),
+    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1", JWSAlgorithm.PS512),
+    
+    ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),
+    ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA),
+    EDDSA("EdDSA", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA);             
+ */
+   
+/*            
+            AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(clientKeyStoreFile, clientKeyStoreSecret, dName);
+            
+            {
+                String kid = "a8b62c9d-65ea-4384-a491-e52924c4a0e3"; 
+                Key key = authCryptoProvider.getKeyStore().getKey(kid, authCryptoProvider.getKeyStoreSecret().toCharArray());
+                ECPrivateKey ecPrivateKey = (ECPrivateKey) key;
+                PublicKey pubKey = authCryptoProvider.getKeyStore().getCertificate(kid).getPublicKey();
+                ECPublicKey ecPublicKey = (ECPublicKey) pubKey;
+                
+                Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);
+                
+                BigInteger privateS = ecPrivateKey.getS();
+                
+                BigInteger publicX = ecPublicKey.getW().getAffineX();
+                BigInteger publicY = ecPublicKey.getW().getAffineY();
+                
+                String res = "";
+                
+                String privateSArray = Base64Util.base64urlencode(privateS.toByteArray());
+                String publicXArray = Base64Util.base64urlencode(publicX.toByteArray());                
+                String publicYArray = Base64Util.base64urlencode(publicY.toByteArray());
+
+                System.out.println("kid = " + kid);                
+                System.out.println("privateSArray = " + privateSArray);
+                System.out.println("publicXArray = " + publicXArray);                
+                System.out.println("publicYArray = " + publicYArray);                  
+                
+            }
+
+            SignatureAlgorithm signatureAlgorithmTest = SignatureAlgorithm.ES256;
+            
+            switch(signatureAlgorithmTest) {
+            case ES256: {
+                String kid = "a8b62c9d-65ea-4384-a491-e52924c4a0e3"; 
+                Key key = authCryptoProvider.getKeyStore().getKey(kid, authCryptoProvider.getKeyStoreSecret().toCharArray());
+                ECPrivateKey ecPrivateKey = (ECPrivateKey) key;
+                PublicKey pubKey = authCryptoProvider.getKeyStore().getCertificate(kid).getPublicKey();
+                ECPublicKey ecPublicKey = (ECPublicKey) pubKey;
+                
+                Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);
+                
+                BigInteger privateS = ecPrivateKey.getS();
+                
+                BigInteger publicX = ecPublicKey.getW().getAffineX();
+                BigInteger publicY = ecPublicKey.getW().getAffineY();
+                
+                String res = "";
+                
+                String privateSArray = Base64Util.base64urlencode(privateS.toByteArray());
+                String publicXArray = Base64Util.base64urlencode(publicX.toByteArray());                
+                String publicYArray = Base64Util.base64urlencode(publicY.toByteArray());
+
+                System.out.println("kid = " + kid);                
+                System.out.println("privateSArray = " + privateSArray);
+                System.out.println("publicXArray = " + publicXArray);                
+                System.out.println("publicYArray = " + publicYArray);  
+
+                break;
+            }
+            case ES256K: {
+                break;
+            }
+            default: {
+                return;
+            }
+            }
+*/
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }            
+
+/*                
+        final String ec1JwkJson1 = ""
+                + "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";                
+        
+        final String ec1JwkJson1 = "kty":  "EC"                
+        
+        { 
+            "kty":  "EC", 
+            "crv":  "P-256", 
+            "x":    "APS72gkIPSdfdxGQfdKRScs5BRFrIXMfkbd-M-b32CXU", 
+            "y":    "akmZ3aHwJks4EpkSoVSwFZMtoPkLqhSbKqae2hWqnRY", 
+            "d":    "WaXjTYk_7wWXiE3Lh2Y5xXssGz4WAou0GmhGM2ZXf9A", 
+            "use":  "enc",
+            "kid":  "3" 
+            }
+        
+//        Ec
+//        BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+//        BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+        
+*/        
+        
+/*        
+        clientKeyStoreFile=profiles/ce.gluu.info/client_keystore.jks;
+        clientKeyStoreSecret=secret
+*/        
+
+/*        
+        ED25519("Ed25519", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA),
+        ED448("Ed448", AlgorithmFamily.ED, "Ed448", JWSAlgorithm.EdDSA),
+        EDDSA("EdDSA", AlgorithmFamily.ED, "Ed25519", JWSAlgorithm.EdDSA);
+        
+        ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256, JWSAlgorithm.ES256),
+        ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K, JWSAlgorithm.ES256K),
+*/
+        
+    }    
+    
 }
