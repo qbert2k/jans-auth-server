@@ -86,7 +86,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateRS256Keys() throws Exception {
-        showTitle("TEST: generateRS256Keys");
+        showTitle("generateRS256Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;        
 
@@ -164,7 +164,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
-        showTitle("TEST: readRS256Keys");
+        showTitle("readRS256Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;
         
@@ -235,7 +235,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateRS384Keys() throws Exception {
-        showTitle("TEST: generateRS384Keys");
+        showTitle("generateRS384Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS384;        
 
@@ -312,7 +312,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readRS384Keys");
+        showTitle("readRS384Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS384;
         
@@ -383,7 +383,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateRS512Keys() throws Exception {
-        showTitle("TEST: generateRS512Keys");
+        showTitle("generateRS512Keys");
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS512;
         
@@ -460,7 +460,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readRS512Keys");
+        showTitle("readRS512Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS512;        
         
@@ -531,7 +531,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateES256Keys() throws Exception {
-        showTitle("TEST: generateES256Keys");
+        showTitle("generateES256Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;
 
@@ -632,7 +632,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: generateES256Keys");
+        showTitle("generateES256Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;        
         
@@ -727,7 +727,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateES256KKeys() throws Exception {
-        showTitle("TEST: generateES256KKeys");
+        showTitle("generateES256KKeys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;          
 
@@ -828,7 +828,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readES256KKeys");
+        showTitle("readES256KKeys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;        
         
@@ -923,7 +923,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateES384Keys() throws Exception {
-        showTitle("TEST: generateES384Keys");
+        showTitle("generateES384Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES384;
 
@@ -1024,7 +1024,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readES384Keys");
+        showTitle("readES384Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES384;
         
@@ -1119,7 +1119,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateES512Keys() throws Exception {
-        showTitle("TEST: generateES512Keys");
+        showTitle("generateES512Keys");
 
         KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(SignatureAlgorithm.ES512,
                 DEF_CERTIFICATE_OWN);
@@ -1215,7 +1215,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readES512Keys");
+        showTitle("readES512Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES512;
         
@@ -1310,7 +1310,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateED25519Keys() throws Exception {
-        showTitle("TEST: generateED25519Keys");
+        showTitle("generateED25519Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED25519;
 
@@ -1391,7 +1391,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readED25519Keys");
+        showTitle("readED25519Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED25519;
         
@@ -1469,7 +1469,7 @@ public class SignatureTest extends BaseTest {
      */
     @Test
     public void generateED448Keys() throws Exception {
-        showTitle("TEST: generateED448Keys");
+        showTitle("generateED448Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED448;        
 
@@ -1549,7 +1549,7 @@ public class SignatureTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        showTitle("TEST: readED448Keys");
+        showTitle("readED448Keys");
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED448;
         
