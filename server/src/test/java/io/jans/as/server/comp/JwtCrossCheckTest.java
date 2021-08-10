@@ -13,6 +13,8 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.Security;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
@@ -33,6 +36,7 @@ import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetKeyPair;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -52,6 +56,7 @@ import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtType;
+import io.jans.as.model.util.Base64Util;
 import io.jans.as.server.BaseTest;
 import io.jans.as.model.exception.SignatureException;
 
@@ -264,14 +269,28 @@ public class JwtCrossCheckTest extends BaseTest {
             final String kid) throws Exception {
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
+        
+        Key key = authCryptoProvider.getKeyStore().getKey(kid, keyStoreSecret.toCharArray());
+        BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+        BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+        
+        EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, bcEdPubKey.getEncoded());        
+        EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED25519, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
+        
+        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());        
+        
+        OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed25519, edPubKeyBase64).d(edPrivKeyBase64).
+                algorithm(JWSAlgorithm.EdDSA).keyID(kid).build();
+        
+        JWK jwk = octetKeyPair;
+        
         assertTrue(jwk != null);
         assertTrue(jwk.toJSONString().length() != 0);
         assertTrue(jwk.toString().length() != 0);        
        
         System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
+        System.out.println("jwk.toString() = " + jwk.toString());             
     } 
     
     /**
@@ -290,14 +309,28 @@ public class JwtCrossCheckTest extends BaseTest {
             final String kid) throws Exception {
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
+        
+        Key key = authCryptoProvider.getKeyStore().getKey(kid, keyStoreSecret.toCharArray());
+        BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+        BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+        
+        EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());        
+        EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED448, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
+        
+        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());        
+        
+        OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed448, edPubKeyBase64).d(edPrivKeyBase64).
+                algorithm(JWSAlgorithm.EdDSA).keyID(kid).build();
+        
+        JWK jwk = octetKeyPair;
+        
         assertTrue(jwk != null);
         assertTrue(jwk.toJSONString().length() != 0);
         assertTrue(jwk.toString().length() != 0);        
        
         System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
+        System.out.println("jwk.toString() = " + jwk.toString());                     
     }          
 
     /**
