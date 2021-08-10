@@ -13,8 +13,6 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.Security;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -56,7 +53,6 @@ import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtType;
-import io.jans.as.model.util.Base64Util;
 import io.jans.as.server.BaseTest;
 import io.jans.as.model.exception.SignatureException;
 
@@ -86,6 +82,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
+        showTitle("TEST: loadJWK_RS256Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
+        
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
 
@@ -111,6 +113,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
+        
+        showTitle("TEST: loadJWK_RS384Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
@@ -138,6 +146,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
+        showTitle("TEST: loadJWK_RS512Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
+        
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
 
@@ -163,6 +177,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
+        
+        showTitle("TEST: loadJWK_ES256Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
@@ -190,6 +210,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
+        showTitle("TEST: loadJWK_ES256KTest");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
+        
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
 
@@ -215,6 +241,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
+        
+        showTitle("TEST: loadJWK_ES384Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
@@ -242,6 +274,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
+        showTitle("TEST: loadJWK_ES512Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
+        
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
 
@@ -267,6 +305,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
+        
+        showTitle("TEST: loadJWK_ED25519Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
         
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         
@@ -308,6 +352,12 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreSecret,
             final String kid) throws Exception {
         
+        showTitle("TEST: loadJWK_ED448Test");
+        
+        System.out.println("dnName          = " + dnName);        
+        System.out.println("keyStoreFile    = " + keyStoreFile);        
+        System.out.println("kid             = " + kid);        
+        
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         
         Key key = authCryptoProvider.getKeyStore().getKey(kid, keyStoreSecret.toCharArray());
@@ -347,6 +397,7 @@ public class JwtCrossCheckTest extends BaseTest {
                               final String keyStoreFile,
                               final String keyStoreSecret,
                               final String kid) throws Exception {
+        showTitle("TEST: rs256CrossCheck");             
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS256, kid);
     }
 
@@ -364,6 +415,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: rs384CrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS384, kid);
     }
 
@@ -381,6 +433,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: rs512CrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS512, kid);
     }
 
@@ -398,6 +451,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: es256CrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256, kid);
     }
     
@@ -415,6 +469,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: es256KCrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256K, kid);
     }    
 
@@ -432,6 +487,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: es384CrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES384, kid);
     }
 
@@ -449,6 +505,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: es512CrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES512, kid);
     }
     
@@ -466,6 +523,7 @@ public class JwtCrossCheckTest extends BaseTest {
                                 final String keyStoreFile,
                                 final String keyStoreSecret,
                                 final String kid) throws Exception {
+        showTitle("TEST: edDsaCrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.EDDSA, kid);
     }
 
@@ -495,7 +553,6 @@ public class JwtCrossCheckTest extends BaseTest {
      * @throws Exception
      */
     private static void validate(String jwtAsString, AuthCryptoProvider cryptoProvider, String kid, SignatureAlgorithm signatureAlgorithm) throws Exception {
-
         SignedJWT signedJWT = SignedJWT.parse(jwtAsString);
         Jwt jwt = Jwt.parse(jwtAsString);
         JWSVerifier nimbusVerifier = null;
@@ -551,7 +608,6 @@ public class JwtCrossCheckTest extends BaseTest {
      */
     private static String createNimbusJwt(AuthCryptoProvider cryptoProvider, String kid, SignatureAlgorithm signatureAlgorithm) throws Exception {
         final AlgorithmFamily family = signatureAlgorithm.getFamily();
-
         JWSSigner signer = null;
         switch (family) {
             case RSA:
@@ -571,7 +627,6 @@ public class JwtCrossCheckTest extends BaseTest {
             default:
                 throw new SignatureException(String.format("wrong type of the Algorithm Family: %s", family.toString()));
         }
-
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject("1202.d50a4eeb-ab5d-474b-aaaf-e4aa47bc54a5")
                 .issuer("1202.d50a4eeb-ab5d-474b-aaaf-e4aa47bc54a5")
@@ -579,13 +634,10 @@ public class JwtCrossCheckTest extends BaseTest {
                 .issueTime(new Date(1575559276888000L))
                 .audience("https://gomer-vbox/jans-auth/restv1/token")
                 .build();
-
         SignedJWT signedJWT = new SignedJWT(
                 new JWSHeader.Builder(signatureAlgorithm.getJwsAlgorithm()).keyID(kid).build(),
                 claimsSet);
-
         signedJWT.sign(signer);
-
         return signedJWT.serialize();
     }
 
