@@ -1386,7 +1386,7 @@ public class SignatureTest extends BaseTest {
      * @throws Exception
      */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })        
-    @Test
+//    @Test
     public void readED25519Keys(final String dnName,
             final String keyStoreFile,
             final String keyStoreSecret,

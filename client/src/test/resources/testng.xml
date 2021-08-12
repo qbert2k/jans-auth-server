@@ -7,12 +7,10 @@
     </listeners>
 
     <!-- Address claims test -->
-<!--
     <test name="Address claims test (HTTP)" enabled="true">
         <classes>
             <class name="io.jans.as.client.ws.rs.AddressClaimsTest"/>
         </classes>
     </test>
--->
 
 </suite>

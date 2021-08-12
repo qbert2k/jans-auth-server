@@ -97,13 +97,15 @@ public class JwkResponse extends BaseResponse {
 
         if (AlgorithmFamily.RSA.equals(algorithm.getFamily())) {
             for (JSONWebKey jsonWebKey : jwks.getKeys()) {
-                if (jsonWebKey.getAlg().equals(algorithm)) {
+                Algorithm webKeyAlg = jsonWebKey.getAlg();
+                if (webKeyAlg != null && webKeyAlg.equals(algorithm)) {
                     jsonWebKeys.add(jsonWebKey);
                 }
             }
         } else if (AlgorithmFamily.EC.equals(algorithm.getFamily())) {
             for (JSONWebKey jsonWebKey : jwks.getKeys()) {
-                if (jsonWebKey.getAlg().equals(algorithm)) {
+                Algorithm webKeyAlg = jsonWebKey.getAlg();
+                if (webKeyAlg != null && webKeyAlg.equals(algorithm)) {
                     jsonWebKeys.add(jsonWebKey);
                 }
             }

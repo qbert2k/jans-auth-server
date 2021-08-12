@@ -13,6 +13,8 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.Security;
 import java.security.interfaces.ECPublicKey;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -318,14 +321,19 @@ public class JwtCrossCheckTest extends BaseTest {
         BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
         BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
         
+        Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);
+        
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED25519, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
         
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());        
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+        
+        List<Base64> edCerts = new ArrayList<Base64>();
+        edCerts.add(Base64.encode(certificate.getEncoded()));
         
         OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed25519, edPubKeyBase64).d(edPrivKeyBase64).
-                algorithm(JWSAlgorithm.EdDSA).keyID(kid).build();
+                algorithm(JWSAlgorithm.EdDSA).keyID(kid).x509CertChain(edCerts).build();
         
         JWK jwk = octetKeyPair;
         
@@ -364,14 +372,19 @@ public class JwtCrossCheckTest extends BaseTest {
         BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
         BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
         
+        Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);        
+        
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED448, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
         
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());        
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+        
+        List<Base64> edCerts = new ArrayList<Base64>();
+        edCerts.add(Base64.encode(certificate.getEncoded()));        
         
         OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed448, edPubKeyBase64).d(edPrivKeyBase64).
-                algorithm(JWSAlgorithm.EdDSA).keyID(kid).build();
+                algorithm(JWSAlgorithm.EdDSA).keyID(kid).x509CertChain(edCerts).build();
         
         JWK jwk = octetKeyPair;
         
