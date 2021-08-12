@@ -20,6 +20,7 @@ import io.jans.as.model.util.Base64Util;
 import io.jans.eleven.model.JwksRequestParam;
 import io.jans.eleven.model.KeyRequestParam;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,11 +30,13 @@ import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -160,6 +163,7 @@ public abstract class AbstractCryptoProvider {
     private PublicKey processKey(Algorithm requestedAlgorithm, String alias, JSONObject key) throws Exception {
         PublicKey publicKey = null;
         AlgorithmFamily family = null;
+
         if (key.has(JWKParameter.ALGORITHM)) {
             Algorithm algorithm = Algorithm.fromString(key.optString(JWKParameter.ALGORITHM));
 
@@ -171,24 +175,36 @@ public abstract class AbstractCryptoProvider {
         } else if (key.has(JWKParameter.KEY_TYPE)) {
             family = AlgorithmFamily.fromString(key.getString(JWKParameter.KEY_TYPE));
         }
-
-        if (AlgorithmFamily.RSA.equals(family)) {
+        
+        switch(family) {
+        case RSA: {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(
                     new BigInteger(1, Base64Util.base64urldecode(key.getString(JWKParameter.MODULUS))),
                     new BigInteger(1, Base64Util.base64urldecode(key.getString(JWKParameter.EXPONENT))));
             publicKey = keyFactory.generatePublic(pubKeySpec);
-        } else if (AlgorithmFamily.EC.equals(family)) {
+            break;
+        }
+        case EC: {
             EllipticEdvardsCurve curve = EllipticEdvardsCurve.fromString(key.optString(JWKParameter.CURVE));
             AlgorithmParameters parameters = AlgorithmParameters.getInstance(AlgorithmFamily.EC.toString());
             parameters.init(new ECGenParameterSpec(curve.getAlias()));
             ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
-
             publicKey = KeyFactory.getInstance(AlgorithmFamily.EC.toString()).generatePublic(new ECPublicKeySpec(
                     new ECPoint(
                             new BigInteger(1, Base64Util.base64urldecode(key.getString(JWKParameter.X))),
                             new BigInteger(1, Base64Util.base64urldecode(key.getString(JWKParameter.Y)))
                     ), ecParameters));
+            break;
+        }
+        case ED: {
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(Base64Util.base64urldecode(key.getString(JWKParameter.X)));
+            publicKey = KeyFactory.getInstance(key.optString(JWKParameter.ALGORITHM)).generatePublic(publicKeySpec);
+            break;
+        }
+        default: {
+            throw new Exception("Wrong value AlgorithmFamily: " + family.toString());            
+        }
         }
 
         if (key.has(JWKParameter.EXPIRATION_TIME)) {

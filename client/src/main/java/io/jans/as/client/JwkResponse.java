@@ -94,21 +94,15 @@ public class JwkResponse extends BaseResponse {
     
     public List<JSONWebKey> getKeys(Algorithm algorithm) {
         List<JSONWebKey> jsonWebKeys = new ArrayList<JSONWebKey>();
-
-        if (AlgorithmFamily.RSA.equals(algorithm.getFamily())) {
-            for (JSONWebKey jsonWebKey : jwks.getKeys()) {
-                if (jsonWebKey.getAlg().equals(algorithm)) {
-                    jsonWebKeys.add(jsonWebKey);
-                }
-            }
-        } else if (AlgorithmFamily.EC.equals(algorithm.getFamily())) {
+        if(AlgorithmFamily.RSA.equals(algorithm.getFamily()) ||
+                AlgorithmFamily.EC.equals(algorithm.getFamily()) ||
+                AlgorithmFamily.ED.equals(algorithm.getFamily())) {
             for (JSONWebKey jsonWebKey : jwks.getKeys()) {
                 if (jsonWebKey.getAlg().equals(algorithm)) {
                     jsonWebKeys.add(jsonWebKey);
                 }
             }
         }
-
         Collections.sort(jsonWebKeys);
         return jsonWebKeys;
     }    

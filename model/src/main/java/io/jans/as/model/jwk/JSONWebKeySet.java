@@ -60,21 +60,14 @@ public class JSONWebKeySet {
     @Deprecated
     public List<JSONWebKey> getKeys(SignatureAlgorithm algorithm) {
         List<JSONWebKey> jsonWebKeys = new ArrayList<JSONWebKey>();
-
-        if (AlgorithmFamily.RSA.equals(algorithm.getFamily())) {
-            for (JSONWebKey jsonWebKey : keys) {
-                if (jsonWebKey.getAlg().equals(algorithm.getName())) {
-                    jsonWebKeys.add(jsonWebKey);
-                }
-            }
-        } else if (AlgorithmFamily.EC.equals(algorithm.getFamily())) {
+        if (AlgorithmFamily.RSA.equals(algorithm.getFamily()) || AlgorithmFamily.EC.equals(algorithm.getFamily())
+                || AlgorithmFamily.ED.equals(algorithm.getFamily())) {
             for (JSONWebKey jsonWebKey : keys) {
                 if (jsonWebKey.getAlg().equals(algorithm.getName())) {
                     jsonWebKeys.add(jsonWebKey);
                 }
             }
         }
-
         Collections.sort(jsonWebKeys);
         return jsonWebKeys;
     }
@@ -104,14 +97,14 @@ public class JSONWebKeySet {
         } catch (JsonProcessingException e) {
             LOG.error(e.getMessage(), e);
             return null;
-		}
+        }
     }
 
-	private String toPrettyJson(JSONObject jsonObject) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JsonOrgModule());
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
-	}
+    private String toPrettyJson(JSONObject jsonObject) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JsonOrgModule());
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+    }
 
     public static JSONWebKeySet fromJSONObject(JSONObject jwksJSONObject) throws JSONException {
         JSONWebKeySet jwks = new JSONWebKeySet();

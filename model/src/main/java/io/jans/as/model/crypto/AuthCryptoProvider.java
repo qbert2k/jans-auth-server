@@ -32,6 +32,8 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -41,6 +43,7 @@ import org.json.JSONObject;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -151,25 +154,35 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
     @Override
     public JSONObject generateKey(Algorithm algorithm, Long expirationTime, Use use) throws Exception {
-
-        KeyPairGenerator keyGen = null;
-
+        if (algorithm == null) {
+            throw new RuntimeException("The signature algorithm parameter cannot be null");
+        }        
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
         if (signatureAlgorithm == null) {
             signatureAlgorithm = SignatureAlgorithm.RS256;
         }
-
-        if (algorithm == null) {
-            throw new RuntimeException("The signature algorithm parameter cannot be null");
-        } else if (AlgorithmFamily.RSA.equals(algorithm.getFamily())) {
+        KeyPairGenerator keyGen = null;
+        switch(algorithm.getFamily()) {
+        case RSA: {
             keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
-            keyGen.initialize(2048, new SecureRandom());
-        } else if (AlgorithmFamily.EC.equals(algorithm.getFamily())) {
+            keyGen.initialize(2048, new SecureRandom());            
+            break;
+        }
+        case EC: {
             ECGenParameterSpec eccgen = new ECGenParameterSpec(signatureAlgorithm.getCurve().getAlias());
             keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
-            keyGen.initialize(eccgen, new SecureRandom());
-        } else {
+            keyGen.initialize(eccgen, new SecureRandom());            
+            break;
+        }
+        case ED: {
+            EdDSAParameterSpec ecSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
+            keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), "BC");
+            keyGen.initialize(ecSpec, new SecureRandom());
+            break;            
+        }
+        default: {
             throw new RuntimeException("The provided signature algorithm parameter is not supported");
+        }
         }
 
         // Generate the key
@@ -210,7 +223,12 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             jsonObject.put(JWKParameter.CURVE, signatureAlgorithm.getCurve().getName());
             jsonObject.put(JWKParameter.X, Base64Util.base64urlencode(ecPublicKey.getW().getAffineX().toByteArray()));
             jsonObject.put(JWKParameter.Y, Base64Util.base64urlencode(ecPublicKey.getW().getAffineY().toByteArray()));
+        } else if (publicKey instanceof EdDSAPublicKey) {
+            EdDSAPublicKey edDSAPublicKey = (EdDSAPublicKey) publicKey; 
+            jsonObject.put(JWKParameter.CURVE, signatureAlgorithm.getCurve().getName());
+            jsonObject.put(JWKParameter.X, Base64Util.base64urlencode(edDSAPublicKey.getEncoded()));
         }
+        
         JSONArray x5c = new JSONArray();
         x5c.put(Base64.encodeBase64String(cert.getEncoded()));
         jsonObject.put(JWKParameter.CERTIFICATE_CHAIN, x5c);

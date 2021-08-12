@@ -88,10 +88,10 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
         try {
             this.signatureAlgorithm = signatureAlgorithm;
 
-            EdDSAParameterSpec ecSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
+            EdDSAParameterSpec edSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
 
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), DEF_BC);
-            keyGen.initialize(ecSpec, new SecureRandom());
+            keyGen.initialize(edSpec, new SecureRandom());
 
             this.keyPair = keyGen.generateKeyPair();
 
