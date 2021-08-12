@@ -149,9 +149,6 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 jwe.getHeader().setContentType(JwtType.JWT);
             }
 
-            System.out.println(
-                    "jwe.getHeader().toJsonObject() = " + JWEHeader.parse(jwe.getHeader().toJsonObject().toString()));
-
             JWEObject jweObject = new JWEObject(JWEHeader.parse(jwe.getHeader().toJsonObject().toString()),
                     createPayload(jwe));
 

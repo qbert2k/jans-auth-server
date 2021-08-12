@@ -2112,7 +2112,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-//    @Test
+    @Test
     public void authorizationRequestAlgRSA15EncA256CBCPLUSHS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2241,7 +2241,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-//    @Test
+    @Test
     public void authorizationRequestAlgRSAOAEPEncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,

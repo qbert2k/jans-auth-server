@@ -39,7 +39,6 @@ public enum Algorithm {
     PS384("PS384", Use.SIGNATURE, AlgorithmFamily.RSA),
     PS512("PS512", Use.SIGNATURE, AlgorithmFamily.RSA),
 
-
     // Encryption
     RSA1_5("RSA1_5", Use.ENCRYPTION, AlgorithmFamily.RSA),
     RSA_OAEP("RSA-OAEP", Use.ENCRYPTION, AlgorithmFamily.RSA),
@@ -48,7 +47,10 @@ public enum Algorithm {
     ECDH_ES("ECDH-ES", Use.ENCRYPTION, AlgorithmFamily.EC),
     ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", Use.ENCRYPTION, AlgorithmFamily.EC),
     ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", Use.ENCRYPTION, AlgorithmFamily.EC),
-    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC);
+    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC),
+    
+    ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED),
+    ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED);
 
 /*
  
