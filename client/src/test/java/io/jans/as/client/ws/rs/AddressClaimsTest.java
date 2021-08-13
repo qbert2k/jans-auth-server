@@ -64,7 +64,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestDefault(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -181,7 +181,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    @Test
+    //@Test
     public void authorizationRequestHS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -299,7 +299,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    @Test
+    //@Test
     public void authorizationRequestHS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -417,7 +417,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    @Test
+    //@Test
     public void authorizationRequestHS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -535,7 +535,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestRS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -657,7 +657,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS384_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestRS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -779,7 +779,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS512_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestRS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1023,7 +1023,7 @@ public class AddressClaimsTest extends BaseTest {
     
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestES256K(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1145,7 +1145,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES384_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestES384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1267,7 +1267,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES512_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestES512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1389,7 +1389,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS256_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestPS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1511,7 +1511,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS384_keyId", "clientJwksUri" })
-    @Test
+    //@Test
     public void authorizationRequestPS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1633,7 +1633,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS512_keyId", "clientJwksUri" })
-    @Test
+    // @Test
     public void authorizationRequestPS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1754,7 +1754,7 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
-    @Test
+    //    @Test
     public void authorizationRequestAlgA128KWEncA128GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestAlgA128KWEncA128GCM");
@@ -1868,7 +1868,7 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
-    @Test
+    //    @Test
     public void authorizationRequestAlgA256KWEncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestAlgA256KWEncA256GCM");
@@ -1983,7 +1983,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    @Test
+//    @Test
     public void authorizationRequestAlgRSA15EncA128CBCPLUSHS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2112,7 +2112,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    @Test
+    // @Test
     public void authorizationRequestAlgRSA15EncA256CBCPLUSHS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2241,7 +2241,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    @Test
+//    @Test
     public void authorizationRequestAlgRSAOAEPEncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,

@@ -13,6 +13,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
@@ -895,6 +896,11 @@ public class CrossEncryptionTest {
 
                     @Override
                     public PrivateKey getPrivateKey(String keyId) throws Exception {
+                        throw new UnsupportedOperationException("Method not implemented.");
+                    }
+                    
+                    @Override
+                    public PublicKey getPublicKey(String keyId) {
                         throw new UnsupportedOperationException("Method not implemented.");
                     }
                 });

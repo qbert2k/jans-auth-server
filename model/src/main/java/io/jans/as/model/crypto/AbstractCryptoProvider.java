@@ -17,10 +17,10 @@ import io.jans.as.model.jwk.JSONWebKeySet;
 import io.jans.as.model.jwk.JWKParameter;
 import io.jans.as.model.jwk.Use;
 import io.jans.as.model.util.Base64Util;
+import io.jans.as.model.util.Util;
 import io.jans.eleven.model.JwksRequestParam;
 import io.jans.eleven.model.KeyRequestParam;
 import org.apache.log4j.Logger;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,9 +28,9 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
@@ -73,6 +73,8 @@ public abstract class AbstractCryptoProvider {
     }
 
     public abstract PrivateKey getPrivateKey(String keyId) throws Exception;
+    
+    public abstract PublicKey getPublicKey(String alias) throws Exception;
 
     public String getKeyId(JSONWebKeySet jsonWebKeySet, Algorithm algorithm, Use use) throws Exception {
         if (algorithm == null || AlgorithmFamily.HMAC.equals(algorithm.getFamily())) {
@@ -125,6 +127,17 @@ public abstract class AbstractCryptoProvider {
                     LOG.debug("Key generation for " + alg + " is skipped because it's not allowed by keyAlgsAllowedForGeneration configuration property.");
                     continue;
                 }
+/*                
+                System.out.println("----------------------------");                
+                System.out.println("alg = " + alg);
+                System.out.println("expiration = " + expiration);                
+                System.out.println("alg.getUse() = " + alg.getUse());
+                System.out.println("----------------------------");
+                
+                if(alg == Algorithm.ECDH_ES) {
+                    int n = 0;
+                }
+*/                
                 keys.put(cryptoProvider.generateKey(alg, expiration, alg.getUse()));
             } catch (Exception ex) {
                 LOG.error("Algorithm: " + alg + ex.getMessage(), ex);

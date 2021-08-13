@@ -14,6 +14,7 @@ import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKey;
 import io.jans.as.model.jwk.JSONWebKeySet;
 import io.jans.as.model.jwk.Use;
+import io.jans.as.model.util.Util;
 import io.jans.as.server.model.config.ConfigurationFactory;
 import io.jans.service.cdi.util.CdiUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.msgpack.core.Preconditions;
 
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 
 /**
  * @author Yuriy Zabrovarnyy
@@ -125,4 +127,18 @@ public class ServerCryptoProvider extends AbstractCryptoProvider {
 
         return privateKey;
     }
+    
+    @Override
+    public PublicKey getPublicKey(String keyId) throws Exception {
+        PublicKey publicKey = cryptoProvider.getPublicKey(keyId);
+
+        if (publicKey == null) {
+            final AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
+            if (StringUtils.isNotBlank(appConfiguration.getStaticDecryptionKid())) {
+                publicKey = cryptoProvider.getPublicKey(appConfiguration.getStaticDecryptionKid());
+            }
+        }
+
+        return publicKey;
+    }    
 }

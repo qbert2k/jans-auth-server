@@ -156,9 +156,13 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
     public JSONObject generateKey(Algorithm algorithm, Long expirationTime, Use use) throws Exception {
         if (algorithm == null) {
             throw new RuntimeException("The signature algorithm parameter cannot be null");
-        }        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
+        }
+        SignatureAlgorithm signatureAlgorithm = null;
+        if(algorithm.getUse() == Use.SIGNATURE) {
+            signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
+        }
         if (signatureAlgorithm == null) {
+            algorithm = Algorithm.RS256;             
             signatureAlgorithm = SignatureAlgorithm.RS256;
         }
         KeyPairGenerator keyGen = null;
@@ -175,9 +179,9 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             break;
         }
         case ED: {
-            EdDSAParameterSpec ecSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
+            EdDSAParameterSpec edSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
             keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), "BC");
-            keyGen.initialize(ecSpec, new SecureRandom());
+            keyGen.initialize(edSpec, new SecureRandom());
             break;            
         }
         default: {
@@ -205,6 +209,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
         FileOutputStream stream = new FileOutputStream(keyStoreFile);
         keyStore.store(stream, keyStoreSecret.toCharArray());
+        stream.close();
 
         PublicKey publicKey = keyPair.getPublic();
 
@@ -358,6 +363,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         return true;
     }
 
+    @Override
     public PublicKey getPublicKey(String alias) {
         PublicKey publicKey = null;
 
@@ -413,6 +419,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         return selectedKid;
     }
 
+    @Override    
     public PrivateKey getPrivateKey(String alias)
             throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         if (Util.isNullOrEmpty(alias)) {

@@ -11,6 +11,9 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -23,6 +26,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
+import io.jans.as.model.util.Util;
 import io.jans.as.server.ConfigurableTest;
 import io.jans.as.server.model.config.ConfigurationFactory;
 
@@ -37,6 +41,9 @@ public class CryptoProviderTest extends ConfigurableTest {
 
 	@Inject
 	private AbstractCryptoProvider cryptoProvider;
+	
+//	@Inject
+//    private AuthCryptoProvider cryptoProvider;	
 
 	private final String SIGNING_INPUT = "Signing Input";
 	private final String SHARED_SECRET = "secret";
@@ -53,11 +60,19 @@ public class CryptoProviderTest extends ConfigurableTest {
 	private static String rs512Signature;
 	private static String es256Key;
 	private static String es256Signature;
+    private static String es256KKey;
+    private static String es256KSignature;
 	private static String es384Key;
 	private static String es384Signature;
 	private static String es512Key;
 	private static String es512Signature;
 
+    private static String ed25519Key;
+    private static String ed25519Signature;
+
+    private static String ed448Key;
+    private static String ed448Signature;
+    
 	@Test
 	public void configuration() {
 		try {
@@ -266,6 +281,32 @@ public class CryptoProviderTest extends ConfigurableTest {
 			fail(e.getMessage(), e);
 		}
 	}
+	
+    @Test(dependsOnMethods = {"testSignES256"})
+    public void testCheckES256Keys() {
+        try {
+            // check if key is the point of the secp256r1
+            
+            PrivateKey privateKey = cryptoProvider.getPrivateKey(es256Key);
+            PublicKey publicKey = cryptoProvider.getPublicKey(es256Key);            
+            
+            SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(Algorithm.ES256.getParamName());
+            
+            Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");            
+            signer.initSign(privateKey);
+            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+
+            byte[] signature = signer.sign();
+
+            signer.initVerify(publicKey);
+            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            boolean result = signer.verify(signature);
+            
+            assertTrue(result);            
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }    	
 
 	@Test(dependsOnMethods = {"testGenerateKeyES256"})
 	public void testSignES256() {
@@ -287,6 +328,63 @@ public class CryptoProviderTest extends ConfigurableTest {
 			fail(e.getMessage(), e);
 		}
 	}
+
+    @Test(dependsOnMethods = {"configuration"})
+    public void testGenerateKeyES256K() {
+        try {
+            JSONObject response = cryptoProvider.generateKey(Algorithm.ES256K, expirationTime);
+            es256KKey = response.optString(KEY_ID);
+         } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+    
+    @Test(dependsOnMethods = {"testSignES256K"})
+    public void testCheckES256KKeys() {
+        try {
+            // check if key is the point of the secp256k1
+            
+            PrivateKey privateKey = cryptoProvider.getPrivateKey(es256KKey);
+            PublicKey publicKey = cryptoProvider.getPublicKey(es256KKey);            
+            
+            SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(Algorithm.ES256K.getParamName());
+            
+            Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");            
+            signer.initSign(privateKey);
+            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+
+            byte[] signature = signer.sign();
+
+            signer.initVerify(publicKey);
+            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            boolean result = signer.verify(signature);
+            
+            assertTrue(result);            
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }        
+
+    @Test(dependsOnMethods = {"testGenerateKeyES256K"})
+    public void testSignES256K() {
+        try {
+            es256KSignature = cryptoProvider.sign(SIGNING_INPUT, es256KKey, null, SignatureAlgorithm.ES256K);
+            assertNotNull(es256KSignature);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    @Test(dependsOnMethods = {"testSignES256K"})
+    public void testVerifyES256K() {
+        try {
+            boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, es256KSignature, es256KKey, null,
+                    null, SignatureAlgorithm.ES256K);
+            assertTrue(signatureVerified);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }	
 
 	@Test(dependsOnMethods = {"testVerifyES256"})
 	public void testDeleteKeyES256() {
@@ -376,4 +474,97 @@ public class CryptoProviderTest extends ConfigurableTest {
 			fail(e.getMessage(), e);
 		}
 	}
+	
+	
+	
+	
+
+    @Test(dependsOnMethods = {"configuration"})
+    public void testGenerateKeyED25519() {
+        try {
+            JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
+            ed25519Key = response.optString(KEY_ID);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+    @Test(dependsOnMethods = {"testGenerateKeyED25519"})
+    public void testSignED25519() {
+        try {
+            ed25519Signature = cryptoProvider.sign(SIGNING_INPUT, ed25519Key, null, SignatureAlgorithm.ED25519);
+            assertNotNull(ed25519Signature);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+//    @Test(dependsOnMethods = {"testSignED25519"})
+    public void testVerifyED25519() {
+        try {
+            boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed25519Signature, ed25519Key, null,
+                    null, SignatureAlgorithm.ED25519);
+            assertTrue(signatureVerified);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+//    @Test(dependsOnMethods = {"testVerifyED25519"})
+    public void testDeleteKeyED25519() {
+        try {
+            cryptoProvider.deleteKey(ed25519Key);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }	
+	
+
+    
+
+//    @Test(dependsOnMethods = {"configuration"})
+    public void testGenerateKeyED448() {
+        try {
+            JSONObject response = cryptoProvider.generateKey(Algorithm.ED448, expirationTime);
+            ed448Key = response.optString(KEY_ID);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+//   @Test(dependsOnMethods = {"testGenerateKeyED448"})
+    public void testSignED448() {
+        try {
+            ed448Signature = cryptoProvider.sign(SIGNING_INPUT, ed448Key, null, SignatureAlgorithm.ED448);
+            assertNotNull(ed448Signature);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+//    @Test(dependsOnMethods = {"testSignED448"})
+    public void testVerifyED448() {
+        try {
+            boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed448Signature, ed448Key, null,
+                    null, SignatureAlgorithm.ED448);
+            assertTrue(signatureVerified);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }
+
+//    @Test(dependsOnMethods = {"testVerifyED448"})
+    public void testDeleteKeyED448() {
+        try {
+            cryptoProvider.deleteKey(ed448Key);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }   
+    
+    
+    
+	
+	
+	
 }
