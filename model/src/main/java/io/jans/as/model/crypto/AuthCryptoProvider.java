@@ -33,6 +33,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -71,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -111,7 +113,8 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             this.keyStoreSecret = keyStoreSecret;
             this.dnName = dnName;
 
-            keyStore = KeyStore.getInstance("JKS");
+            //keyStore = KeyStore.getInstance("JKS");
+            keyStore = KeyStore.getInstance("PKCS12");
             try {
                 File f = new File(keyStoreFile);
                 if (!f.exists()) {
@@ -131,7 +134,8 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
     public void load(String keyStoreSecret) {
         this.keyStoreSecret = keyStoreSecret;
         try(InputStream is = new FileInputStream(keyStoreFile)) {
-            keyStore = KeyStore.getInstance("JKS");
+            // keyStore = KeyStore.getInstance("JKS");
+            keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(is, keyStoreSecret.toCharArray());
             LOG.debug("Loaded keys from JKS.");
             LOG.trace("Loaded keys:"+ getKeys());
@@ -200,6 +204,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
         String alias = UUID.randomUUID().toString() + getKidSuffix(use, algorithm);
         keyStore.setKeyEntry(alias, pk, keyStoreSecret.toCharArray(), chain);
+//        keyStore.setKeyEntry(alias, pk.getEncoded(), chain);
 
         final String oldAliasByAlgorithm = getAliasByAlgorithmForDeletion(algorithm, alias, use);
         if (StringUtils.isNotBlank(oldAliasByAlgorithm)) {
@@ -462,8 +467,8 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         purposes.add(KeyPurposeId.id_kp_clientAuth);
         purposes.add(KeyPurposeId.anyExtendedKeyUsage);
 
-        ASN1ObjectIdentifier extendedKeyUsage = new ASN1ObjectIdentifier("2.5.29.37").intern();
-        builder.addExtension(extendedKeyUsage, false, new DERSequence(purposes));
+//        ASN1ObjectIdentifier extendedKeyUsage = new ASN1ObjectIdentifier("2.5.29.37").intern();
+//        builder.addExtension(extendedKeyUsage, false, new DERSequence(purposes));
 
         ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(privateKey);
         X509CertificateHolder holder = builder.build(signer);
