@@ -467,8 +467,8 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         purposes.add(KeyPurposeId.id_kp_clientAuth);
         purposes.add(KeyPurposeId.anyExtendedKeyUsage);
 
-//        ASN1ObjectIdentifier extendedKeyUsage = new ASN1ObjectIdentifier("2.5.29.37").intern();
-//        builder.addExtension(extendedKeyUsage, false, new DERSequence(purposes));
+        ASN1ObjectIdentifier extendedKeyUsage = new ASN1ObjectIdentifier("2.5.29.37").intern();
+        builder.addExtension(extendedKeyUsage, false, new DERSequence(purposes));
 
         ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(privateKey);
         X509CertificateHolder holder = builder.build(signer);

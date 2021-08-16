@@ -520,179 +520,18 @@ public class CryptoProviderTest extends ConfigurableTest {
 			fail(e.getMessage(), e);
 		}
 	}
-	
-	
-	
-	
 
     @Test(dependsOnMethods = {"configuration"})
     public void testGenerateKeyED25519() {
-        
-        Algorithm algorithm = Algorithm.ED25519;
-//        Algorithm algorithm = Algorithm.ES256;
-        
-        String keyStoreFile = "./conf/keystore.1.jks";
-        String keyStoreSecret = "secret";    
-        Use use = Use.SIGNATURE;
-        String signingInput = "Some Message";
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
-        
-        String dnName ="CN=Jans Auth CA Certificates";
-        
         try {
-//            KeyStore keyStore = KeyStore.getInstance("JKS");
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            File f = new File(keyStoreFile);
-            if (!f.exists()) {
-                keyStore.load(null, keyStoreSecret.toCharArray());
-                FileOutputStream fos = new FileOutputStream(keyStoreFile);
-                keyStore.store(fos, keyStoreSecret.toCharArray());
-                fos.close();
-            }
-            InputStream is = new FileInputStream(keyStoreFile);
-            keyStore.load(is, keyStoreSecret.toCharArray());
-           
-/*            
-            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());            
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
-            keyGen.initialize(ecSpec, new SecureRandom());
-*/
-            EdDSAParameterSpec edSpec = new EdDSAParameterSpec(signatureAlgorithm.getName());
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm.getName(), "BC");
-//            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EDDSA", "BC");            
-            keyGen.initialize(edSpec, new SecureRandom());
-
-            // Generate the key
-            KeyPair keyPair = keyGen.generateKeyPair();
-            PrivateKey pk = keyPair.getPrivate();
-
-            // Java API requires a certificate chain
-            X509Certificate cert = generateV3Certificate(keyPair, dnName, signatureAlgorithm.getAlgorithm(), expirationTime);
-            X509Certificate[] chain = new X509Certificate[1];
-            chain[0] = cert;
-
-            String alias = UUID.randomUUID().toString() + getKidSuffix(use, algorithm);
-            keyStore.setKeyEntry(alias, pk, keyStoreSecret.toCharArray(), chain);
-            
-            FileOutputStream fos = new FileOutputStream(keyStoreFile);
-            keyStore.store(fos, keyStoreSecret.toCharArray());
-            fos.close();
-            
-/*            
-            //KeyStore keyStore1 = KeyStore.getInstance("JKS");
-            KeyStore keyStore1 = KeyStore.getInstance("PKCS12");
-            f = new File(keyStoreFile);
-            if (!f.exists()) {
-                keyStore1.load(null, keyStoreSecret.toCharArray());
-                fos = new FileOutputStream(keyStoreFile);
-                keyStore1.store(fos, keyStoreSecret.toCharArray());
-                fos.close();
-            }
-            is = new FileInputStream(keyStoreFile);
-            keyStore1.load(is, keyStoreSecret.toCharArray());
-*/            
-            
-//            Entry entry = keyStore.getEntry(alias, new KeyStore.PasswordProtection(keyStoreSecret.toCharArray()));
-            
-            Key key = keyStore.getKey(alias, keyStoreSecret.toCharArray());
-            PrivateKey privateKey = (PrivateKey) key;
-
-            Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
-            signer.initSign(privateKey);
-            signer.update(signingInput.getBytes());
-
-            byte[] signature = signer.sign();
-
-//            return Base64Util.base64urlencode(signature);        
-            
-            fos = new FileOutputStream(keyStoreFile);
-            keyStore.store(fos, keyStoreSecret.toCharArray());
-            fos.close();
-            
-            PublicKey publicKey = null;
-
-            java.security.cert.Certificate certificate = keyStore.getCertificate(alias);
-            publicKey = certificate.getPublicKey();
-            
-            Signature verifier = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
-            verifier.initVerify(publicKey);
-            verifier.update(signingInput.getBytes());
-            
-            boolean verifyRes = verifier.verify(signature);
-            
-            verifyRes = verifyRes;
-            
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (OperatorCreationException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }    
-        
-        try {
-//            JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
-//            ed25519Key = response.optString(KEY_ID);
+            JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
+            ed25519Key = response.optString(KEY_ID);
         } catch (Exception e) {
             fail(e.getMessage(), e);
         }
     }
-    
-    public X509Certificate generateV3Certificate(KeyPair keyPair, String issuer, String signatureAlgorithm, Long expirationTime) throws CertIOException, OperatorCreationException, CertificateException {
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
 
-        // Signers name
-        X500Name issuerName = new X500Name(issuer);
-
-        // Subjects name - the same as we are self signed.
-        X500Name subjectName = new X500Name(issuer);
-
-        // Serial
-        BigInteger serial = new BigInteger(256, new SecureRandom());
-
-        // Not before
-        Date notBefore = new Date(System.currentTimeMillis() - 10000);
-        Date notAfter = new Date(expirationTime);
-
-        // Create the certificate - version 3
-        JcaX509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(issuerName, serial, notBefore, notAfter, subjectName, publicKey);
-
-        ASN1EncodableVector purposes = new ASN1EncodableVector();
-        purposes.add(KeyPurposeId.id_kp_serverAuth);
-        purposes.add(KeyPurposeId.id_kp_clientAuth);
-        purposes.add(KeyPurposeId.anyExtendedKeyUsage);
-
-        ASN1ObjectIdentifier extendedKeyUsage = new ASN1ObjectIdentifier("2.5.29.37").intern();
-        builder.addExtension(extendedKeyUsage, false, new DERSequence(purposes));
-
-        ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(privateKey);
-        X509CertificateHolder holder = builder.build(signer);
-        X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(holder);
-
-        return cert;
-    }
-    
-    private static String getKidSuffix(Use use, Algorithm algorithm) {
-        return "_" + use.getParamName().toLowerCase() + "_" + algorithm.getParamName().toLowerCase();
-    }
-
-//    @Test(dependsOnMethods = {"testGenerateKeyED25519"})
+    @Test(dependsOnMethods = {"testGenerateKeyED25519"})
     public void testSignED25519() {
         try {
             ed25519Signature = cryptoProvider.sign(SIGNING_INPUT, ed25519Key, null, SignatureAlgorithm.ED25519);
@@ -702,7 +541,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testSignED25519"})
+    @Test(dependsOnMethods = {"testSignED25519"})
     public void testVerifyED25519() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed25519Signature, ed25519Key, null,
@@ -713,7 +552,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testVerifyED25519"})
+    @Test(dependsOnMethods = {"testVerifyED25519"})
     public void testDeleteKeyED25519() {
         try {
             cryptoProvider.deleteKey(ed25519Key);
@@ -721,11 +560,8 @@ public class CryptoProviderTest extends ConfigurableTest {
             fail(e.getMessage(), e);
         }
     }	
-	
-
     
-
-//    @Test(dependsOnMethods = {"configuration"})
+    @Test(dependsOnMethods = {"configuration"})
     public void testGenerateKeyED448() {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED448, expirationTime);
@@ -735,7 +571,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//   @Test(dependsOnMethods = {"testGenerateKeyED448"})
+   @Test(dependsOnMethods = {"testGenerateKeyED448"})
     public void testSignED448() {
         try {
             ed448Signature = cryptoProvider.sign(SIGNING_INPUT, ed448Key, null, SignatureAlgorithm.ED448);
@@ -745,7 +581,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testSignED448"})
+    @Test(dependsOnMethods = {"testSignED448"})
     public void testVerifyED448() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed448Signature, ed448Key, null,
@@ -756,7 +592,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testVerifyED448"})
+    @Test(dependsOnMethods = {"testVerifyED448"})
     public void testDeleteKeyED448() {
         try {
             cryptoProvider.deleteKey(ed448Key);
@@ -764,10 +600,5 @@ public class CryptoProviderTest extends ConfigurableTest {
             fail(e.getMessage(), e);
         }
     }   
-    
-    
-    
-	
-	
 	
 }
