@@ -211,7 +211,8 @@ public abstract class AbstractCryptoProvider {
             break;
         }
         case ED: {
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(Base64Util.base64urldecode(key.getString(JWKParameter.X)));
+//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(Base64Util.base64urldecode(key.getString(JWKParameter.X)));
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(key.getString(JWKParameter.X).getBytes());            
             publicKey = KeyFactory.getInstance(key.optString(JWKParameter.ALGORITHM)).generatePublic(publicKeySpec);
             break;
         }

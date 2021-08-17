@@ -11,66 +11,21 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStore.Entry;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
-import java.security.SignatureException;
-import java.security.UnrecoverableEntryException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.cert.CertIOException;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.crypto.impl.ECDSA;
-
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
-import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jwk.Use;
-import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.Util;
 import io.jans.as.server.ConfigurableTest;
 import io.jans.as.server.model.config.ConfigurationFactory;
@@ -86,9 +41,6 @@ public class CryptoProviderTest extends ConfigurableTest {
 
 	@Inject
 	private AbstractCryptoProvider cryptoProvider;
-	
-//	@Inject
-//    private AuthCryptoProvider cryptoProvider;	
 
 	private final String SIGNING_INPUT = "Signing Input";
 	private final String SHARED_SECRET = "secret";
@@ -389,7 +341,6 @@ public class CryptoProviderTest extends ConfigurableTest {
     public void testCheckES256KKeys() {
         try {
             // check if key is the point of the secp256k1
-            
             PrivateKey privateKey = cryptoProvider.getPrivateKey(es256KKey);
             PublicKey publicKey = cryptoProvider.getPublicKey(es256KKey);            
             
