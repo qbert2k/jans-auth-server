@@ -58,7 +58,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * PKCS8EncodedKeySpec allows to get encoded array (byte[] getEncoded()); 
      */
     public PKCS8EncodedKeySpec getPrivateKeySpec() {
-        return new PKCS8EncodedKeySpec(dEncoded);
+        return new PKCS8EncodedKeySpec(this.dEncoded);
     }
     
     /**
@@ -69,7 +69,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * X509EncodedKeySpec allows to get encoded array (byte[]);
      */
     public X509EncodedKeySpec getPublicKeySpec() {
-        if(xEncoded == null)
+        if(this.xEncoded == null)
             return null;
         else
             return new X509EncodedKeySpec(this.xEncoded);
@@ -82,9 +82,17 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @throws IOException
      */
     public byte[] getPrivateKeyDecoded() throws IOException {
-        PrivateKeyInfo pki = PrivateKeyInfo.getInstance(new PKCS8EncodedKeySpec(dEncoded).getEncoded());
+        PrivateKeyInfo pki = PrivateKeyInfo.getInstance(new PKCS8EncodedKeySpec(this.dEncoded).getEncoded());
         return ASN1OctetString.getInstance(pki.parsePrivateKey()).getOctets();        
-    }      
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public byte[] getPrivateKeyEncoded() {
+        return this.dEncoded;
+    }
 
     /**
      * get original array (decoded) of the public key (ED25519 - 32 byte, ED448 - 56 bytes);
@@ -93,9 +101,17 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @throws IOException
      */
     public byte[] getPublicKeyDecoded() throws IOException {
-        SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(xEncoded);
+        SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
         return subjPubKeyInfo.getPublicKeyData().getOctets();       
-    }      
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public byte[] getPublicKeyEncoded() {
+        return this.xEncoded;
+    }
 
     /**
      * 
@@ -148,11 +164,13 @@ public class EDDSAPrivateKey extends PrivateKey {
         }
         EDDSAPrivateKey objTyped = (EDDSAPrivateKey) obj;
 
-        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded))
+        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded)) {
             return false;
+        }
 
-        if(!Arrays.equals(this.dEncoded, objTyped.dEncoded))
+        if(!Arrays.equals(this.dEncoded, objTyped.dEncoded)) {
             return false;
+        }
 
         String thisKeyId = getKeyId();
         String objKeyId = objTyped.getKeyId();

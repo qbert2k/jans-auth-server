@@ -51,6 +51,7 @@ public enum Algorithm {
     
     ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED),
     ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED);
+//    EdDSA("EdDSA", Use.SIGNATURE, AlgorithmFamily.ED);    
 
 /*
  
@@ -192,6 +193,9 @@ com.nimbusds.jose
             for (Algorithm algorithm : Algorithm.values()) {
                 if (param.equals(algorithm.paramName)) {
                     return algorithm;
+                }
+                if(param.equalsIgnoreCase("EDDSA")) {
+                    return ED25519;
                 }
             }
         }

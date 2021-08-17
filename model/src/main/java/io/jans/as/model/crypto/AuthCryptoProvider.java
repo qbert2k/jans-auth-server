@@ -286,7 +286,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             mac.init(secretKey);
             byte[] sig = mac.doFinal(signingInput.getBytes());
             return Base64Util.base64urlencode(sig);
-        } else { // EC or RSA
+        } else { // EC, ED or RSA
             PrivateKey privateKey = getPrivateKey(alias);
             if (privateKey == null) {
                 final String error = "Failed to find private key by kid: " + alias +
@@ -322,7 +322,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         } else if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
             String expectedSignature = sign(signingInput, null, sharedSecret, signatureAlgorithm);
             return expectedSignature.equals(encodedSignature);
-        } else { // EC or RSA
+        } else { // EC, ED or RSA
             PublicKey publicKey = null;
 
             try {

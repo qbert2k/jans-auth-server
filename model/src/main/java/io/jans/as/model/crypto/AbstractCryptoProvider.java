@@ -127,17 +127,6 @@ public abstract class AbstractCryptoProvider {
                     LOG.debug("Key generation for " + alg + " is skipped because it's not allowed by keyAlgsAllowedForGeneration configuration property.");
                     continue;
                 }
-/*                
-                System.out.println("----------------------------");                
-                System.out.println("alg = " + alg);
-                System.out.println("expiration = " + expiration);                
-                System.out.println("alg.getUse() = " + alg.getUse());
-                System.out.println("----------------------------");
-                
-                if(alg == Algorithm.ECDH_ES) {
-                    int n = 0;
-                }
-*/                
                 keys.put(cryptoProvider.generateKey(alg, expiration, alg.getUse()));
             } catch (Exception ex) {
                 LOG.error("Algorithm: " + alg + ex.getMessage(), ex);
@@ -211,8 +200,7 @@ public abstract class AbstractCryptoProvider {
             break;
         }
         case ED: {
-//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(Base64Util.base64urldecode(key.getString(JWKParameter.X)));
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(key.getString(JWKParameter.X).getBytes());            
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(Base64Util.base64urldecode(key.getString(JWKParameter.X)));
             publicKey = KeyFactory.getInstance(key.optString(JWKParameter.ALGORITHM)).generatePublic(publicKeySpec);
             break;
         }

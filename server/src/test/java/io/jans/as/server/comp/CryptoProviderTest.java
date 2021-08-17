@@ -19,13 +19,17 @@ import java.util.TimeZone;
 
 import javax.inject.Inject;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
+import io.jans.as.model.jwk.JWKParameter;
+import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.Util;
 import io.jans.as.server.ConfigurableTest;
 import io.jans.as.server.model.config.ConfigurationFactory;
@@ -66,9 +70,11 @@ public class CryptoProviderTest extends ConfigurableTest {
 
     private static String ed25519Key;
     private static String ed25519Signature;
+    private static JSONObject ed25519Jwks;
 
     private static String ed448Key;
     private static String ed448Signature;
+    private static JSONObject ed448Jwks;    
     
 	@Test
 	public void configuration() {
@@ -477,6 +483,38 @@ public class CryptoProviderTest extends ConfigurableTest {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
             ed25519Key = response.optString(KEY_ID);
+            
+            JSONArray keys = new JSONArray();
+            keys.put(response); 
+            
+            ed25519Jwks = new JSONObject();
+            ed25519Jwks.put(JWKParameter.JSON_WEB_KEY_SET, keys);
+
+            System.out.println("ed25519Jwks.toString() = " + ed25519Jwks.toString());
+            
+            String x_1 = "zLrCbb0ayFsRCd79x3CsNsvjdDGPm6tvH3eWOPQ9C1c";
+            String x_2 = "MCowBQYDK2VwAyEA8us3NqpE5QXmNPv8KL9l3Gut7Fh9ENYsINPGfnyOx-w";
+            
+            byte[] x_1_array = Base64Util.base64urldecode(x_1);
+            byte[] x_2_array = Base64Util.base64urldecode(x_2);
+            
+            EDDSAPublicKey edDSAPublicKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, x_2_array);
+            
+            byte[] edDSAPublicKeyDecoded = edDSAPublicKey.getPublicKeyDecoded();
+            
+            x_1_array = x_1_array;
+            
+
+//            String signatureWrong = Base64Util.base64urlencode(signatureArray);            
+            
+            
+/*            
+            "x"       "zLrCbb0ayFsRCd79x3CsNsvjdDGPm6tvH3eWOPQ9C1c"
+
+            "x"    "MCowBQYDK2VwAyEA8us3NqpE5QXmNPv8KL9l3Gut7Fh9ENYsINPGfnyOx-w",
+*/
+            
+            
         } catch (Exception e) {
             fail(e.getMessage(), e);
         }
@@ -503,6 +541,17 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
+    @Test(dependsOnMethods = {"testSignED25519"})
+    public void testVerifyED25519Jwks() {
+        try {
+            boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed25519Signature, ed25519Key, ed25519Jwks,
+                    null, SignatureAlgorithm.ED25519);
+            assertTrue(signatureVerified);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }    
+
     @Test(dependsOnMethods = {"testVerifyED25519"})
     public void testDeleteKeyED25519() {
         try {
@@ -517,6 +566,14 @@ public class CryptoProviderTest extends ConfigurableTest {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED448, expirationTime);
             ed448Key = response.optString(KEY_ID);
+            
+            JSONArray keys = new JSONArray();
+            keys.put(response); 
+            
+            ed448Jwks = new JSONObject();
+            ed448Jwks.put(JWKParameter.JSON_WEB_KEY_SET, keys);
+
+            System.out.println("ed448Jwks.toString() = " + ed448Jwks.toString());
         } catch (Exception e) {
             fail(e.getMessage(), e);
         }
@@ -542,6 +599,17 @@ public class CryptoProviderTest extends ConfigurableTest {
             fail(e.getMessage(), e);
         }
     }
+    
+    @Test(dependsOnMethods = {"testSignED448"})
+    public void testVerifyED448Jwks() {
+        try {
+            boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed448Signature, ed448Key, ed448Jwks,
+                    null, SignatureAlgorithm.ED448);
+            assertTrue(signatureVerified);
+        } catch (Exception e) {
+            fail(e.getMessage(), e);
+        }
+    }    
 
     @Test(dependsOnMethods = {"testVerifyED448"})
     public void testDeleteKeyED448() {

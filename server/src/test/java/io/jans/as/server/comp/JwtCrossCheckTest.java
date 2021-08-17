@@ -326,8 +326,11 @@ public class JwtCrossCheckTest extends BaseTest {
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED25519, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
         
-        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+//        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
+//        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+
+        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());
         
         List<Base64> edCerts = new ArrayList<Base64>();
         edCerts.add(Base64.encode(certificate.getEncoded()));
@@ -377,8 +380,11 @@ public class JwtCrossCheckTest extends BaseTest {
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED448, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
         
-        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+//        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
+//        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
+        
+        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());        
         
         List<Base64> edCerts = new ArrayList<Base64>();
         edCerts.add(Base64.encode(certificate.getEncoded()));        

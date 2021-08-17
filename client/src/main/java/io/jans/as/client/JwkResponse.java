@@ -19,6 +19,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKey;
 import io.jans.as.model.jwk.JSONWebKeySet;
+import io.jans.as.model.util.Base64Util;
 
 /**
  * Represents a JSON Web Key (JWK) received from the authorization server.
@@ -81,7 +82,7 @@ public class JwkResponse extends BaseResponse {
             case OKP:
                 if (AlgorithmFamily.ED.equals(JSONWebKey.getAlg().getFamily())) {
                     publicKey = new EDDSAPublicKey(SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()),
-                            JSONWebKey.getX().getBytes());
+                            Base64Util.base64urldecode(JSONWebKey.getX()));                       
                 }
                 break;
             default:

@@ -61,8 +61,21 @@ public class EDDSAPublicKey extends PublicKey {
      * @throws IOException
      */
     public byte[] getPublicKeyDecoded() throws IOException {
-        SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(xEncoded);
-        return subjPubKeyInfo.getPublicKeyData().getOctets();
+        if(this.xEncoded == null) {
+            return null;
+        }
+        else {
+            SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
+            return subjPubKeyInfo.getPublicKeyData().getOctets();
+        }
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public byte[] getPublicKeyEncoded() {
+        return this.xEncoded; 
     }
 
     /**
@@ -117,9 +130,9 @@ public class EDDSAPublicKey extends PublicKey {
         }
         EDDSAPublicKey objTyped = (EDDSAPublicKey) obj;
 
-        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded))
+        if(!Arrays.equals(this.xEncoded, objTyped.xEncoded)) {
             return false;
-        
+        }
 
         String thisKeyId = getKeyId();
         String objKeyId = objTyped.getKeyId();
