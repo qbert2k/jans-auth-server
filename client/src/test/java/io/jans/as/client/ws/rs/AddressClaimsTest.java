@@ -1025,7 +1025,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
-//    @Test
+    @Test
     public void authorizationRequestES256K(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {

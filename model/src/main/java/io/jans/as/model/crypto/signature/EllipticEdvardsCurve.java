@@ -55,7 +55,7 @@ public enum EllipticEdvardsCurve {
     public static EllipticEdvardsCurve fromString(String param) {
         if (param != null) {
             for (EllipticEdvardsCurve ec : EllipticEdvardsCurve.values()) {
-                if (param.equals(ec.name) || param.equalsIgnoreCase(ec.name())) {
+                if (param.equalsIgnoreCase(ec.getName()) || param.equalsIgnoreCase(ec.getAlias())) {
                     return ec;
                 }
             }
