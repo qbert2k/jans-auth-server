@@ -39,11 +39,13 @@ import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jws.ECDSASigner;
+import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.HMACSigner;
 import io.jans.as.model.jws.PlainTextSignature;
 import io.jans.as.model.jws.RSASigner;
@@ -63,16 +65,14 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
     public static final String ACR_VALUE = "basic";
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponseJson(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponseJson(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponseJson");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -81,19 +81,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.NONE);
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.NONE);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = newRegisterClient(registerRequest);
         RegisterResponse registerResponse = registerClient.exec();
@@ -116,27 +107,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.NONE, clientSecret, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.NONE, clientSecret, cryptoProvider);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -147,8 +142,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -202,16 +197,14 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponsAlgNone(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponsAlgNone(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgNoneUserInfoSignedResponsAlgNone");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -221,19 +214,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.NONE);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.NONE);
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.NONE);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = newRegisterClient(registerRequest);
         RegisterResponse registerResponse = registerClient.exec();
@@ -256,27 +240,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.NONE, clientSecret, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.NONE, clientSecret, cryptoProvider);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -287,8 +275,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -342,16 +330,14 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgHS256UserInfoSignedResponseAlgHS256(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgHS256UserInfoSignedResponseAlgHS256(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgHS256UserInfoSignedResponseAlgHS256");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -361,19 +347,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.HS256);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.HS256);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.HS256);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -397,27 +374,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -428,8 +409,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -484,16 +465,14 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgHS384UserInfoSignedResponseAlgHS384(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgHS384UserInfoSignedResponseAlgHS384(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgHS384UserInfoSignedResponseAlgHS384");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -503,19 +482,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.HS384);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.HS384);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.HS384);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -539,27 +509,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.HS384, clientSecret, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS384, clientSecret, cryptoProvider);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -570,8 +544,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -626,16 +600,14 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgHS512UserInfoSignedResponseAlgHS512(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgHS512UserInfoSignedResponseAlgHS512(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgHS512UserInfoSignedResponseAlgHS512");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -645,19 +617,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.HS512);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.HS512);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.HS512);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -681,27 +644,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.HS512, clientSecret, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS512, clientSecret, cryptoProvider);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -712,8 +679,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -768,18 +735,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS256_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS256_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgRS256UserInfoSignedResponseAlgRS256(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgRS256UserInfoSignedResponseAlgRS256(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgRS256UserInfoSignedResponseAlgRS256");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -790,19 +755,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.RS256);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS256);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.RS256);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -825,28 +781,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.RS256, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -857,8 +817,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -887,8 +847,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
 
@@ -917,18 +876,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS384_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS384_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgRS384UserInfoSignedResponseAlgRS384(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgRS384UserInfoSignedResponseAlgRS384(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgRS384UserInfoSignedResponseAlgRS384");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -939,19 +896,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.RS384);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS384);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.RS384);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -974,28 +922,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.RS384, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS384, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1006,8 +958,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1036,8 +988,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
 
@@ -1066,18 +1017,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS512_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "RS512_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgRS512UserInfoSignedResponseAlgRS512(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgRS512UserInfoSignedResponseAlgRS512(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgRS512UserInfoSignedResponseAlgRS512");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1088,19 +1037,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.RS512);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.RS512);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.RS512);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1123,28 +1063,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.RS512, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1155,8 +1099,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1185,8 +1129,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
 
@@ -1215,18 +1158,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES256_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES256_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgES256UserInfoSignedResponseAlgES256(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgES256UserInfoSignedResponseAlgES256(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgES256UserInfoSignedResponseAlgES256");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1237,19 +1178,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES256);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES256);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES256);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1272,28 +1204,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.ES256, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1304,8 +1240,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1334,8 +1270,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
 
@@ -1364,18 +1299,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES384_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES256K_keyId",
+            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgES384UserInfoSignedResponseAlgES384(
+    public void requestClaimsIndividuallyRequestObjectSigningAlgES256KUserInfoSignedResponseAlgES256K(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectSigningAlgES384UserInfoSignedResponseAlgES384");
+        showTitle("requestClaimsIndividuallyRequestObjectSigningAlgES256KUserInfoSignedResponseAlgES256K");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1383,22 +1316,13 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setResponseTypes(responseTypes);
         registerRequest.setJwksUri(clientJwksUri);
         registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
-        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES384);
-        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES384);
-        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES384);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1421,28 +1345,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.ES384, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES256K, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1453,8 +1381,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1483,8 +1411,148 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NICKNAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.GIVEN_NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.FAMILY_NAME));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL_VERIFIED));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.PICTURE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ZONEINFO));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.LOCALE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_REGION));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES384_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
+    @Test
+    public void requestClaimsIndividuallyRequestObjectSigningAlgES384UserInfoSignedResponseAlgES384(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
+            final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientJwksUri) throws Exception {
+        showTitle("requestClaimsIndividuallyRequestObjectSigningAlgES384UserInfoSignedResponseAlgES384");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES384);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES384);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES384);
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "clientinfo");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES384, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.getIdTokenMember().setMaxAge(86400);
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NICKNAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.GIVEN_NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
 
@@ -1513,18 +1581,16 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES512_keyId",
-            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ES512_keyId", "dnName",
+            "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
-    public void requestClaimsIndividuallyRequestObjectSigningAlgES512UserInfoSignedResponseAlgES512(
-            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+    public void requestClaimsIndividuallyRequestObjectSigningAlgES512UserInfoSignedResponseAlgES512(final String userId,
+            final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientJwksUri) throws Exception {
         showTitle("requestClaimsIndividuallyRequestObjectSigningAlgES512UserInfoSignedResponseAlgES512");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1535,19 +1601,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES512);
         registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES512);
         registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES512);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1570,28 +1627,32 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest, SignatureAlgorithm.ES512, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1602,8 +1663,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1632,8 +1693,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
 
@@ -1662,16 +1722,297 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ED25519_keyId",
+            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
+    @Test
+    public void requestClaimsIndividuallyRequestObjectSigningAlgED25519UserInfoSignedResponseAlgED25519(
+            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+            final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientJwksUri) throws Exception {
+        showTitle("requestClaimsIndividuallyRequestObjectSigningAlgED25519UserInfoSignedResponseAlgED25519");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "clientinfo");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ED25519, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.getIdTokenMember().setMaxAge(86400);
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NICKNAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.GIVEN_NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NICKNAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.GIVEN_NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.FAMILY_NAME));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL_VERIFIED));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.PICTURE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ZONEINFO));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.LOCALE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_REGION));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ED448_keyId",
+            "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
+    @Test
+    public void requestClaimsIndividuallyRequestObjectSigningAlgED448UserInfoSignedResponseAlgED448(
+            final String userId, final String userSecret, final String redirectUris, final String redirectUri,
+            final String sectorIdentifierUri, final String keyId, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientJwksUri) throws Exception {
+        showTitle("requestClaimsIndividuallyRequestObjectSigningAlgED448UserInfoSignedResponseAlgED448");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ED448);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "clientinfo");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ED448, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
+        jwtAuthorizationRequest.getIdTokenMember().setMaxAge(86400);
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.NICKNAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.GIVEN_NAME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
+        assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.NICKNAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.GIVEN_NAME));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.FAMILY_NAME));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL));
+        assertNull(userInfoResponse.getClaim(JwtClaimName.EMAIL_VERIFIED));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.PICTURE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ZONEINFO));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.LOCALE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_REGION));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectEncryptionAlgA128KWEncA128GCMUserInfoEncryptedResponseAlgA128KWEncA128GCM(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectEncryptionAlgA128KWEncA128GCMUserInfoEncryptedResponseAlgA128KWEncA128GCM");
+        showTitle(
+                "requestClaimsIndividuallyRequestObjectEncryptionAlgA128KWEncA128GCMUserInfoEncryptedResponseAlgA128KWEncA128GCM");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1684,19 +2025,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A128GCM);
         registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.A128KW);
         registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A128GCM);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1718,30 +2050,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest,
-                KeyEncryptionAlgorithm.A128KW,
-                BlockEncryptionAlgorithm.A128GCM,
-                clientSecret);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.A128KW, BlockEncryptionAlgorithm.A128GCM, clientSecret);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1752,8 +2085,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1805,16 +2138,15 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectEncryptionAlgA256KWEncA256GCMUserInfoEncryptedResponseAlgA256KWEncA256GCM(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectEncryptionAlgA256KWEncA256GCMUserInfoEncryptedResponseAlgA256KWEncA256GCM");
+        showTitle(
+                "requestClaimsIndividuallyRequestObjectEncryptionAlgA256KWEncA256GCMUserInfoEncryptedResponseAlgA256KWEncA256GCM");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1827,19 +2159,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256GCM);
         registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.A256KW);
         registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256GCM);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -1861,30 +2184,31 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest,
-                KeyEncryptionAlgorithm.A256KW,
-                BlockEncryptionAlgorithm.A256GCM,
-                clientSecret);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.A256KW, BlockEncryptionAlgorithm.A256GCM, clientSecret);
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -1895,8 +2219,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1948,18 +2272,17 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName", "keyStoreFile",
-            "keyStoreSecret", "RSA1_5_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName",
+            "keyStoreFile", "keyStoreSecret", "RSA1_5_keyId", "clientJwksUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA128CBC_PLUS_HS256UserInfoEncryptedResponseAlgRSA1_5EncA128CBC_PLUS_HS256(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA128CBC_PLUS_HS256UserInfoEncryptedResponseAlgRSA1_5EncA128CBC_PLUS_HS256");
+        showTitle(
+                "requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA128CBC_PLUS_HS256UserInfoEncryptedResponseAlgRSA1_5EncA128CBC_PLUS_HS256");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -1973,19 +2296,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A128CBC_PLUS_HS256);
         registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA1_5);
         registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A128CBC_PLUS_HS256);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -2016,7 +2330,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
@@ -2025,19 +2340,22 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -2048,8 +2366,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2103,18 +2421,17 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName", "keyStoreFile",
-            "keyStoreSecret", "RSA1_5_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName",
+            "keyStoreFile", "keyStoreSecret", "RSA1_5_keyId", "clientJwksUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA256CBC_PLUS_HS512UserInfoEncryptedResponseAlgRSA1_5EncA256CBC_PLUS_HS512(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA256CBC_PLUS_HS512UserInfoEncryptedResponseAlgRSA1_5EncA256CBC_PLUS_HS512");
+        showTitle(
+                "requestClaimsIndividuallyRequestObjectEncryptionAlgRSA1_5EncA256CBC_PLUS_HS512UserInfoEncryptedResponseAlgRSA1_5EncA256CBC_PLUS_HS512");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -2128,19 +2445,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
         registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA1_5);
         registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -2171,7 +2479,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
@@ -2180,19 +2489,22 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -2203,8 +2515,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2258,18 +2570,17 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({"userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName", "keyStoreFile",
-            "keyStoreSecret", "RSA_OAEP_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "dnName",
+            "keyStoreFile", "keyStoreSecret", "RSA_OAEP_keyId", "clientJwksUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectEncryptionAlgRSA_OAEPEncA256GCMUserInfoEncryptedResponseAlgRSA_OAEPEncA256GCM(
             final String userId, final String userSecret, final String redirectUris, final String redirectUri,
             final String sectorIdentifierUri, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri) throws Exception {
-        showTitle("requestClaimsIndividuallyRequestObjectEncryptionAlgRSA_OAEPEncA256GCMUserInfoEncryptedResponseAlgRSA_OAEPEncA256GCM");
+        showTitle(
+                "requestClaimsIndividuallyRequestObjectEncryptionAlgRSA_OAEPEncA256GCMUserInfoEncryptedResponseAlgRSA_OAEPEncA256GCM");
 
-        List<ResponseType> responseTypes = Arrays.asList(
-                ResponseType.TOKEN,
-                ResponseType.ID_TOKEN);
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
 
         // 1. Register client
         RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
@@ -2283,19 +2594,10 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256GCM);
         registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
         registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256GCM);
-        registerRequest.setClaims(Arrays.asList(
-                JwtClaimName.NAME,
-                JwtClaimName.NICKNAME,
-                JwtClaimName.GIVEN_NAME,
-                JwtClaimName.FAMILY_NAME,
-                JwtClaimName.PICTURE,
-                JwtClaimName.ZONEINFO,
-                JwtClaimName.LOCALE,
-                JwtClaimName.ADDRESS_STREET_ADDRESS,
-                JwtClaimName.ADDRESS_LOCALITY,
-                JwtClaimName.ADDRESS_REGION,
-                JwtClaimName.ADDRESS_POSTAL_CODE,
-                JwtClaimName.ADDRESS_COUNTRY));
+        registerRequest.setClaims(Arrays.asList(JwtClaimName.NAME, JwtClaimName.NICKNAME, JwtClaimName.GIVEN_NAME,
+                JwtClaimName.FAMILY_NAME, JwtClaimName.PICTURE, JwtClaimName.ZONEINFO, JwtClaimName.LOCALE,
+                JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION,
+                JwtClaimName.ADDRESS_POSTAL_CODE, JwtClaimName.ADDRESS_COUNTRY));
 
         RegisterClient registerClient = new RegisterClient(registrationEndpoint);
         registerClient.setRequest(registerRequest);
@@ -2326,7 +2628,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
@@ -2335,19 +2638,22 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NAME, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.FAMILY_NAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.EMAIL_VERIFIED, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.PICTURE, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ZONEINFO, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.LOCALE, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_LOCALITY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_REGION, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_POSTAL_CODE, ClaimValue.createNull()));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createNull()));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createNull()));
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE, ClaimValue.createValueList(new String[]{ACR_VALUE})));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE,
+                ClaimValue.createValueList(new String[] { ACR_VALUE })));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NAME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.NICKNAME, ClaimValue.createEssential(false)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.GIVEN_NAME, ClaimValue.createEssential(false)));
@@ -2358,8 +2664,8 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
         authorizationRequest.setRequest(authJwt);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
