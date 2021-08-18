@@ -40,11 +40,13 @@ import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jws.ECDSASigner;
+import io.jans.as.model.jws.EDDSASigner;
 import io.jans.as.model.jws.HMACSigner;
 import io.jans.as.model.jws.PlainTextSignature;
 import io.jans.as.model.jws.RSASigner;
@@ -64,11 +66,10 @@ import io.jans.as.model.util.Util;
  */
 public class MultivaluedClaims extends BaseTest {
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimNone(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimNone(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimNone");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -101,14 +102,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -151,11 +153,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimHS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimHS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimHS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -189,14 +190,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -238,11 +240,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimHS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimHS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimHS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -276,14 +277,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -325,11 +327,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimHS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimHS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimHS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -363,14 +364,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -412,11 +414,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimRS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimRS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimRS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -448,14 +449,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -480,8 +482,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
 
@@ -501,11 +502,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimRS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimRS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimRS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -538,14 +538,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -570,8 +571,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
 
@@ -591,11 +591,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimRS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimRS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimRS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -628,14 +627,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -660,8 +660,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
 
@@ -681,11 +680,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimES256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimES256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimES256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -718,14 +716,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -750,8 +749,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
 
@@ -771,11 +769,102 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimES384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimES256K(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestWithMultivaluedClaimES256K");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        List<String> scopes = Arrays.asList("openid", "test");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        System.out.println("es256k: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestWithMultivaluedClaimES384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimES384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -808,14 +897,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -840,8 +930,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
 
@@ -861,11 +950,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimES512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimES512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimES512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -898,14 +986,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -930,8 +1019,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
 
@@ -951,11 +1039,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimPS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimPS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimPS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -988,14 +1075,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1020,9 +1108,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
 
@@ -1042,11 +1128,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimPS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimPS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimPS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -1079,14 +1164,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1111,9 +1197,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
 
@@ -1133,11 +1217,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimPS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimPS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimPS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -1170,14 +1253,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1202,9 +1286,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
 
@@ -1224,10 +1306,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimAlgA128KWEncA128GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
+    public void authorizationRequestWithMultivaluedClaimAlgA128KWEncA128GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimAlgA128KWEncA128GCM");
 
@@ -1264,14 +1346,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1310,10 +1393,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimAlgA256KWEncA256GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
+    public void authorizationRequestWithMultivaluedClaimAlgA256KWEncA256GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimAlgA256KWEncA256GCM");
 
@@ -1350,14 +1433,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1396,13 +1480,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "clientJwksUri", "RSA1_5_keyId", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "RSA1_5_keyId",
+            "keyStoreFile", "keyStoreSecret", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String clientJwksUri, final String keyId, final String keyStoreFile, final String keyStoreSecret,
+    public void authorizationRequestWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String clientJwksUri,
+            final String keyId, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256");
 
@@ -1439,14 +1522,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1488,13 +1572,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "clientJwksUri", "RSA1_5_keyId", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "RSA1_5_keyId",
+            "keyStoreFile", "keyStoreSecret", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String clientJwksUri, final String keyId, final String keyStoreFile, final String keyStoreSecret,
+    public void authorizationRequestWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String clientJwksUri,
+            final String keyId, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512");
 
@@ -1531,14 +1614,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1580,13 +1664,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "clientJwksUri", "RSA_OAEP_keyId", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "RSA_OAEP_keyId",
+            "keyStoreFile", "keyStoreSecret", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestWithMultivaluedClaimAlgRSAOAEPEncA256GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String clientJwksUri, final String keyId, final String keyStoreFile, final String keyStoreSecret,
+    public void authorizationRequestWithMultivaluedClaimAlgRSAOAEPEncA256GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String clientJwksUri,
+            final String keyId, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestWithMultivaluedClaimAlgRSAOAEPEncA256GCM");
 
@@ -1623,14 +1706,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1672,11 +1756,194 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimNone(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestWithMultivaluedClaimED25519(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestWithMultivaluedClaimED25519");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        List<String> scopes = Arrays.asList("openid", "test");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        System.out.println("ed25519: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestWithMultivaluedClaimED448(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestWithMultivaluedClaimED448");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        List<String> scopes = Arrays.asList("openid", "test");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        System.out.println("ed448: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestObjectWithMultivaluedClaimNone(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimNone");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -1712,11 +1979,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.NONE, null, cryptoProvider);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.NONE, null, cryptoProvider);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -1725,8 +1995,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1767,12 +2037,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimHS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimHS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimHS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -1809,11 +2079,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -1822,8 +2095,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1865,12 +2138,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimHS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimHS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimHS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -1907,11 +2180,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.HS384, clientSecret, cryptoProvider);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS384, clientSecret, cryptoProvider);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -1920,8 +2196,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -1963,12 +2239,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimHS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimHS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimHS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2005,11 +2281,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.HS512, clientSecret, cryptoProvider);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.HS512, clientSecret, cryptoProvider);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2018,8 +2297,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2061,13 +2340,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "RS256_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimRS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimRS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimRS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2104,12 +2383,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.RS256, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2118,8 +2400,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2144,8 +2426,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
 
@@ -2165,13 +2446,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "RS384_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "RS384_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimRS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimRS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimRS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2208,12 +2489,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.RS384, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS384, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2222,8 +2506,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2248,8 +2532,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
 
@@ -2269,13 +2552,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "RS512_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "RS512_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimRS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimRS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimRS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2312,12 +2595,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.RS512, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.RS512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2326,8 +2612,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2352,8 +2638,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
 
@@ -2373,13 +2658,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ES256_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ES256_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimES256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimES256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimES256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2416,12 +2701,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.ES256, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2430,8 +2718,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2456,8 +2744,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
 
@@ -2477,13 +2764,119 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ES384_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimES384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimES256K(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
+        showTitle("authorizationRequestObjectWithMultivaluedClaimES256K");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ES256K);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setClaims(Arrays.asList("member_of"));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES256K, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ES384_keyId", "clientJwksUri" })
+    @Test
+    public void authorizationRequestObjectWithMultivaluedClaimES384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimES384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2520,12 +2913,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.ES384, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES384, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2534,8 +2930,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2560,8 +2956,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
 
@@ -2581,13 +2976,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ES512_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ES512_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimES512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimES512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimES512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2624,12 +3019,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.ES512, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ES512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2638,8 +3036,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2664,8 +3062,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
+        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
 
@@ -2685,13 +3082,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "PS256_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "PS256_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimPS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimPS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimPS256");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2728,12 +3125,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.PS256, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.PS256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2742,8 +3142,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2768,8 +3168,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
 
@@ -2789,13 +3188,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "PS384_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "PS384_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimPS384(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimPS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimPS384");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2832,12 +3231,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.PS384, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.PS384, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2846,8 +3248,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2872,8 +3274,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
 
@@ -2893,13 +3294,13 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "PS512_keyId", "clientJwksUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "PS512_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimPS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret,
-            final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
+    public void authorizationRequestObjectWithMultivaluedClaimPS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimPS512");
 
         List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
@@ -2936,12 +3337,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest, SignatureAlgorithm.PS512, cryptoProvider);
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.PS512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(keyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -2950,8 +3354,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -2976,8 +3380,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
+        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
 
@@ -2996,11 +3399,229 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(userInfoResponse.getClaim("member_of"));
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
-
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ED25519_keyId", "clientJwksUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimAlgA128KWEncA128GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
+    public void authorizationRequestObjectWithMultivaluedClaimED25519(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
+        showTitle("authorizationRequestObjectWithMultivaluedClaimED25519");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ED25519);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setClaims(Arrays.asList("member_of"));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ED25519, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        
+        System.out.println("ed25519: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
+        
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    } 
+    
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "sectorIdentifierUri", "ED448_keyId", "clientJwksUri" })
+    @Test
+    public void authorizationRequestObjectWithMultivaluedClaimED448(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String sectorIdentifierUri, final String keyId,
+            final String clientJwksUri) throws Exception {
+        showTitle("authorizationRequestObjectWithMultivaluedClaimED448");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.setUserInfoSignedResponseAlg(SignatureAlgorithm.ED448);
+        registerRequest.setRequestObjectSigningAlg(SignatureAlgorithm.ED448);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setClaims(Arrays.asList("member_of"));
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Request authorization
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                SignatureAlgorithm.ED448, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(keyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt();
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 3. Validate id_token
+        Jwt jwt = Jwt.parse(idToken);
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwt.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
+        assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
+
+        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
+                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
+        
+        System.out.println("ed448: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
+        
+        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
+
+        assertTrue(ecdsaSigner.validate(jwt));
+
+        // 4. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setJwksUri(jwksUri);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim("member_of"));
+        assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
+    }    
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestObjectWithMultivaluedClaimAlgA128KWEncA128GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimAlgA128KWEncA128GCM");
 
@@ -3039,15 +3660,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest,
-                KeyEncryptionAlgorithm.A128KW,
-                BlockEncryptionAlgorithm.A128GCM,
-                clientSecret);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.A128KW, BlockEncryptionAlgorithm.A128GCM, clientSecret);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -3056,8 +3676,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -3096,10 +3716,10 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimAlgA256KWEncA256GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
+    public void authorizationRequestObjectWithMultivaluedClaimAlgA256KWEncA256GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimAlgA256KWEncA256GCM");
 
@@ -3138,15 +3758,14 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
-        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(
-                authorizationRequest,
-                KeyEncryptionAlgorithm.A256KW,
-                BlockEncryptionAlgorithm.A256GCM,
-                clientSecret);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.A256KW, BlockEncryptionAlgorithm.A256GCM, clientSecret);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt();
@@ -3155,8 +3774,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -3195,13 +3814,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "dnName", "keyStoreFile", "keyStoreSecret", "RSA1_5_keyId",
-            "clientJwksUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
+    public void authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
+            final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
             final String clientJwksUri, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA128CBCPLUSHS256");
 
@@ -3249,13 +3867,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
                 KeyEncryptionAlgorithm.RSA1_5, BlockEncryptionAlgorithm.A128CBC_PLUS_HS256, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(serverKeyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
@@ -3264,8 +3884,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -3306,13 +3926,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "dnName", "keyStoreFile", "keyStoreSecret", "RSA1_5_keyId",
-            "clientJwksUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
+    public void authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
+            final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
             final String clientJwksUri, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimAlgRSA15EncA256CBCPLUSHS512");
 
@@ -3360,13 +3979,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
                 KeyEncryptionAlgorithm.RSA1_5, BlockEncryptionAlgorithm.A256CBC_PLUS_HS512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(serverKeyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
@@ -3375,8 +3996,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
@@ -3417,13 +4038,12 @@ public class MultivaluedClaims extends BaseTest {
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
 
-    @Parameters({"userId", "userSecret", "redirectUri", "redirectUris",
-            "dnName", "keyStoreFile", "keyStoreSecret", "RSA_OAEP_keyId",
-            "clientJwksUri", "sectorIdentifierUri"})
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequestObjectWithMultivaluedClaimAlgRSAOAEPEncA256GCM(
-            final String userId, final String userSecret, final String redirectUri, final String redirectUris,
-            final String dnName, final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
+    public void authorizationRequestObjectWithMultivaluedClaimAlgRSAOAEPEncA256GCM(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
+            final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
             final String clientJwksUri, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestObjectWithMultivaluedClaimAlgRSAOAEPEncA256GCM");
 
@@ -3471,13 +4091,15 @@ public class MultivaluedClaims extends BaseTest {
         String nonce = UUID.randomUUID().toString();
         String state = UUID.randomUUID().toString();
 
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
                 KeyEncryptionAlgorithm.RSA_OAEP, BlockEncryptionAlgorithm.A256GCM, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(serverKeyId);
-        jwtAuthorizationRequest.addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
@@ -3486,8 +4108,8 @@ public class MultivaluedClaims extends BaseTest {
         AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
         authorizeClient.setRequest(authorizationRequest);
 
-        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(
-                authorizationEndpoint, authorizationRequest, userId, userSecret);
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
 
         assertNotNull(authorizationResponse.getLocation(), "The location is null");
         assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
