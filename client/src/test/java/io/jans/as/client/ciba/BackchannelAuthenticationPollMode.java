@@ -1621,7 +1621,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
                 BackchannelTokenDeliveryMode.POLL.getValue());
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
-                AsymmetricSignatureAlgorithm.ES256K.getValue());
+                AsymmetricSignatureAlgorithm.ED25519.getValue());
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
                 Boolean.toString(true));
 

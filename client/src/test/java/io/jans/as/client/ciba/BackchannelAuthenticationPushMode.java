@@ -1568,7 +1568,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
                 BackchannelTokenDeliveryMode.PUSH.getValue());
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
-                AsymmetricSignatureAlgorithm.ES256K.getValue());
+                AsymmetricSignatureAlgorithm.ED25519.getValue());
         assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
                 Boolean.toString(true));
 
@@ -1608,7 +1608,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
 
     @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode", "ED448_keyId",
             "dnName", "keyStoreFile", "keyStoreSecret" })
-    @Test(dependsOnMethods = "idTokenHintED25519")
+    @Test(dependsOnMethods = "idTokenHintED448")
     public void backchannelTokenDeliveryModePushIdTokenHintED448(final String clientJwksUri,
             final String backchannelClientNotificationEndpoint, final String backchannelUserCode, final String keyId,
             final String dnName, final String keyStoreFile, final String keyStoreSecret) throws Exception {
