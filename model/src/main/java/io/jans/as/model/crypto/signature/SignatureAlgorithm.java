@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.nimbusds.jose.JWSAlgorithm;
 
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jwk.Use;
 import io.jans.as.model.jwt.JwtType;
 
 /**

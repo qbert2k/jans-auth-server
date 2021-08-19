@@ -28,11 +28,16 @@ public enum  AsymmetricSignatureAlgorithm implements HasParamName, AttributeEnum
     RS384("RS384", AlgorithmFamily.RSA, "SHA384WITHRSA"),
     RS512("RS512", AlgorithmFamily.RSA, "SHA512WITHRSA"),
     ES256("ES256", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256),
+    ES256K("ES256K", AlgorithmFamily.EC, "SHA256WITHECDSA", EllipticEdvardsCurve.P_256K),    
     ES384("ES384", AlgorithmFamily.EC, "SHA384WITHECDSA", EllipticEdvardsCurve.P_384),
     ES512("ES512", AlgorithmFamily.EC, "SHA512WITHECDSA", EllipticEdvardsCurve.P_521),
     PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1"),
     PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1"),
-    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1");
+    PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1"),
+    
+    ED25519("Ed25519",  AlgorithmFamily.ED, "Ed25519",  EllipticEdvardsCurve.ED_25519),
+    ED448("Ed448",      AlgorithmFamily.ED, "Ed448",    EllipticEdvardsCurve.ED_448),
+    EDDSA("EdDSA",      AlgorithmFamily.ED, "Ed25519",  EllipticEdvardsCurve.ED_25519);    
 
     private final String name;
     private final AlgorithmFamily family;
