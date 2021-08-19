@@ -7,7 +7,7 @@
     </listeners>
 
     <!-- Address claims test -->
-<!--
+
     <test name="Address claims test (HTTP)" enabled="true">
         <classes>
             <class name="io.jans.as.client.ws.rs.AddressClaimsTest"/>
@@ -31,14 +31,12 @@
             <class name="io.jans.as.client.interop.UsesAsymmetricIdTokenSignatures"/>
         </classes>
     </test>
--->
-<!--
+
     <test name="Multivalued claims" enabled="true">
         <classes>
             <class name="io.jans.as.client.ws.rs.MultivaluedClaims"/>
         </classes>
     </test>
--->
 
     <test name="CIBA Ping Mode" enabled="true">
         <classes>
@@ -51,6 +49,7 @@
             <class name="io.jans.as.client.ciba.BackchannelAuthenticationPollMode"/>
         </classes>
     </test>
+
     <test name="CIBA Push Mode" enabled="true">
         <classes>
             <class name="io.jans.as.client.ciba.BackchannelAuthenticationPushMode"/>
