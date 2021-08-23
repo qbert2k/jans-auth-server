@@ -6,26 +6,30 @@
 
 package io.jans.as.server.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-
 import com.google.common.collect.Lists;
-
+import io.jans.as.common.model.common.User;
+import io.jans.as.common.service.AttributeService;
 import io.jans.as.model.config.StaticConfiguration;
 import io.jans.as.model.configuration.AppConfiguration;
+import io.jans.as.model.exception.InvalidClaimException;
+import io.jans.as.model.json.JsonApplier;
 import io.jans.as.persistence.model.Scope;
+import io.jans.model.GluuAttribute;
+import io.jans.model.attribute.AttributeDataType;
 import io.jans.orm.PersistenceEntryManager;
 import io.jans.orm.search.filter.Filter;
 import io.jans.service.BaseCacheService;
 import io.jans.service.CacheService;
 import io.jans.service.LocalCacheService;
 import io.jans.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.slf4j.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * @author Javier Rojas Blum Date: 07.05.2012
@@ -51,6 +55,12 @@ public class ScopeService {
 
     @Inject
     private StaticConfiguration staticConfiguration;
+
+    @Inject
+    private AttributeService attributeService;
+
+    @Inject
+    private PersistenceEntryManager entryManager;
 
     /**
      * returns a list of all scopes
@@ -233,6 +243,73 @@ public class ScopeService {
     	}
     	
     	return cacheService;
+    }
+
+    public Map<String, Object> getClaims(User user, Scope scope) throws InvalidClaimException, ParseException {
+        Map<String, Object> claims = new HashMap<String, Object>();
+
+        if (scope == null) {
+            log.trace("Scope is null.");
+            return claims;
+        }
+
+        final List<String> scopeClaims = scope.getClaims();
+        if (scopeClaims == null) {
+            log.trace("No claims set for scope: " + scope.getId());
+            return claims;
+        }
+
+        for (String claimDn : scopeClaims) {
+            GluuAttribute gluuAttribute = attributeService.getAttributeByDn(claimDn);
+
+            String claimName = gluuAttribute.getClaimName();
+            String ldapName = gluuAttribute.getName();
+            Object attribute = null;
+
+            if (StringUtils.isBlank(claimName)) {
+                log.error("Failed to get claim because claim name is not set for attribute, id: " + gluuAttribute.getDn());
+                continue;
+            }
+            if (StringUtils.isBlank(ldapName)) {
+                log.error("Failed to get claim because name is not set for attribute, id: " + gluuAttribute.getDn());
+                continue;
+            }
+
+
+            if (ldapName.equals("uid")) {
+                attribute = user.getUserId();
+            } else if (ldapName.equals("updatedAt")) {
+                attribute = user.getUpdatedAt();
+            } else  if (ldapName.equals("createdAt")) {
+                attribute = user.getCreatedAt();
+            } else if (AttributeDataType.BOOLEAN.equals(gluuAttribute.getDataType())) {
+                final Object value = user.getAttribute(gluuAttribute.getName(), true, gluuAttribute.getOxMultiValuedAttribute());
+                if (value instanceof String) {
+                    attribute = Boolean.parseBoolean(String.valueOf(value));
+                } else {
+                    attribute = value;
+                }
+            } else if (AttributeDataType.DATE.equals(gluuAttribute.getDataType())) {
+                Object value = user.getAttribute(gluuAttribute.getName(), true, gluuAttribute.getOxMultiValuedAttribute());
+                if (value instanceof Date) {
+                    attribute = value;
+                } else if (value != null) {
+                    attribute = entryManager.decodeTime(user.getDn(), value.toString());
+                }
+            } else {
+                attribute = user.getAttribute(gluuAttribute.getName(), true, gluuAttribute.getOxMultiValuedAttribute());
+            }
+
+            if (attribute != null) {
+                if (attribute instanceof JSONArray) {
+                    claims.put(claimName, JsonApplier.getStringList((JSONArray) attribute));
+                } else {
+                    claims.put(claimName, attribute);
+                }
+            }
+        }
+
+        return claims;
     }
 
 }
