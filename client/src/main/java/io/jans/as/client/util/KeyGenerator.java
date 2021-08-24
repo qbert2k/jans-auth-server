@@ -92,6 +92,7 @@ public class KeyGenerator {
 
             Option signingKeysOption = new Option(SIGNING_KEYS, true,
                     "Signature keys to generate. (RS256 RS384 RS512 ES256 ES256K ES384 ES512 PS256 PS384 PS512 Ed25519 Ed448).");
+//                    "Signature keys to generate. (RS256 RS384 RS512 ES256 ES256K ES384 ES512 PS256 PS384 PS512 ED25519 ED448).");
             signingKeysOption.setArgs(Option.UNLIMITED_VALUES);
 
             Option encryptionKeysOption = new Option(ENCRYPTION_KEYS, true,
