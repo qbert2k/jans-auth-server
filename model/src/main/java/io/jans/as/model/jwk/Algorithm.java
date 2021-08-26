@@ -11,10 +11,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.nimbusds.jose.JWSAlgorithm;
 
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
-import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.util.StringUtils;
 
 /**
