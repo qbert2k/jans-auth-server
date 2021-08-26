@@ -43,6 +43,7 @@ import io.jans.as.model.jwk.JSONWebKey;
 import io.jans.as.model.jwk.JSONWebKeySet;
 import io.jans.as.model.jwk.KeyType;
 import io.jans.as.model.jwk.Use;
+import io.jans.as.model.util.JwkUtil;
 import io.jans.as.model.util.SecurityProviderUtility;
 import io.jans.as.model.util.StringUtils;
 import io.jans.util.StringHelper;
@@ -92,7 +93,6 @@ public class KeyGenerator {
 
             Option signingKeysOption = new Option(SIGNING_KEYS, true,
                     "Signature keys to generate. (RS256 RS384 RS512 ES256 ES256K ES384 ES512 PS256 PS384 PS512 Ed25519 Ed448).");
-//                    "Signature keys to generate. (RS256 RS384 RS512 ES256 ES256K ES384 ES512 PS256 PS384 PS512 ED25519 ED448).");
             signingKeysOption.setArgs(Option.UNLIMITED_VALUES);
 
             Option encryptionKeysOption = new Option(ENCRYPTION_KEYS, true,
@@ -186,14 +186,14 @@ public class KeyGenerator {
 			calendar.add(Calendar.HOUR, expiration_hours);
 
 			for (Algorithm algorithm : signatureAlgorithms) {
-				SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.name());
+				SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
 				JSONObject result = cryptoProvider.generateKey(algorithm, calendar.getTimeInMillis(), Use.SIGNATURE);
 
 				JSONWebKey key = new JSONWebKey();
 				key.setKid(result.getString(KEY_ID));
 				key.setUse(Use.SIGNATURE);
 				key.setAlg(algorithm);
-				key.setKty(KeyType.fromString(signatureAlgorithm.getFamily().toString()));
+				key.setKty(JwkUtil.getKeyTypeFromAlgFamily(signatureAlgorithm.getFamily()));
 				key.setExp(result.optLong(EXPIRATION_TIME));
 				key.setCrv(signatureAlgorithm.getCurve());
 				key.setN(result.optString(MODULUS));

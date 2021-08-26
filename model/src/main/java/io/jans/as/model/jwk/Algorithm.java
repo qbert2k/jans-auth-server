@@ -194,7 +194,7 @@ com.nimbusds.jose
                 if (param.equals(algorithm.paramName)) {
                     return algorithm;
                 }
-                if(param.equalsIgnoreCase("EDDSA")) {
+                if(param.equalsIgnoreCase("EdDSA")) {
                     return ED25519;
                 }
             }

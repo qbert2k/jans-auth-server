@@ -18,7 +18,7 @@ public enum KeyEncryptionAlgorithm {
 
     RSA1_5("RSA1_5", "RSA", "RSA/ECB/PKCS1Padding"),
     RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
-    RSA_OAEP_256("RSA-OAEP-256"),
+    RSA_OAEP_256("RSA-OAEP-256", "RSA", "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"),
 
     ECDH_ES("ECDH-ES"),
     ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW"),

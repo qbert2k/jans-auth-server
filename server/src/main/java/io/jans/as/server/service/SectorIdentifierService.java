@@ -59,6 +59,7 @@ public class SectorIdentifierService {
      * @return Sector identifier
      */
     public SectorIdentifier getSectorIdentifierById(String jsId) {
+        log.info("getSectorIdentifierById(): jsId = " + jsId);        
         SectorIdentifier result = null;
         try {
             result = ldapEntryManager.find(SectorIdentifier.class, getDnForSectorIdentifier(jsId));
