@@ -1722,7 +1722,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ED25519_keyId",
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "Ed25519_keyId",
             "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectSigningAlgED25519UserInfoSignedResponseAlgED25519(
@@ -1863,7 +1863,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
     }
 
-    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "ED448_keyId",
+    @Parameters({ "userId", "userSecret", "redirectUris", "redirectUri", "sectorIdentifierUri", "Ed448_keyId",
             "dnName", "keyStoreFile", "keyStoreSecret", "clientJwksUri" })
     @Test
     public void requestClaimsIndividuallyRequestObjectSigningAlgED448UserInfoSignedResponseAlgED448(

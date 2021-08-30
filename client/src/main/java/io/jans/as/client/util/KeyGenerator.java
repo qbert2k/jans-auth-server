@@ -199,9 +199,9 @@ public class KeyGenerator {
 			FileOutputStream fosTestPropFile = null;			
 			boolean genTestPropFile = (testPropFile != null);
 			
-			fosTestPropFile = new FileOutputStream(testPropFile);
-			
-			// String getKeyNameFromAlgorithm(Algorithm algorithm)			
+			if(genTestPropFile) {
+	            fosTestPropFile = new FileOutputStream(testPropFile);
+			}
 
 			for (Algorithm algorithm : signatureAlgorithms) {
 				SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());

@@ -2371,7 +2371,7 @@ public class AddressClaimsTest extends BaseTest {
     }
     
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ED25519_keyId", "clientJwksUri" })
+            "sectorIdentifierUri", "Ed25519_keyId", "clientJwksUri" })
     @Test
     public void authorizationRequestED25519(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
@@ -2493,7 +2493,7 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ED448_keyId", "clientJwksUri" })
+            "sectorIdentifierUri", "Ed448_keyId", "clientJwksUri" })
     @Test
     public void authorizationRequestED448(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,

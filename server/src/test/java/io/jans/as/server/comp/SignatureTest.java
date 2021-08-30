@@ -1385,7 +1385,7 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })        
     @Test
     public void readED25519Keys(final String dnName,
             final String keyStoreFile,
@@ -1543,7 +1543,7 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED448_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed448_keyId" })        
     @Test
     public void readED448Keys(final String dnName,
             final String keyStoreFile,

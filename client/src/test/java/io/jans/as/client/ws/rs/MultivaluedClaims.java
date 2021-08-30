@@ -3401,7 +3401,7 @@ public class MultivaluedClaims extends BaseTest {
     }
     
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ED25519_keyId", "clientJwksUri" })
+            "sectorIdentifierUri", "Ed25519_keyId", "clientJwksUri" })
     @Test
     public void authorizationRequestObjectWithMultivaluedClaimED25519(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
@@ -3510,7 +3510,7 @@ public class MultivaluedClaims extends BaseTest {
     } 
     
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
-            "sectorIdentifierUri", "ED448_keyId", "clientJwksUri" })
+            "sectorIdentifierUri", "Ed448_keyId", "clientJwksUri" })
     @Test
     public void authorizationRequestObjectWithMultivaluedClaimED448(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,

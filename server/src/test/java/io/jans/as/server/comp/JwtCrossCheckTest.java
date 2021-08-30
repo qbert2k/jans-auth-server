@@ -302,7 +302,7 @@ public class JwtCrossCheckTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })    
     @Test
     public void loadJWK_ED25519Test(final String dnName,
             final String keyStoreFile,
@@ -356,7 +356,7 @@ public class JwtCrossCheckTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED448_keyId" })    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed448_keyId" })    
     @Test
     public void loadJWK_ED448Test(final String dnName,
             final String keyStoreFile,
@@ -536,7 +536,7 @@ public class JwtCrossCheckTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ED25519_keyId" })
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
     @Test
     public void edDsaCrossCheck(final String dnName,
                                 final String keyStoreFile,

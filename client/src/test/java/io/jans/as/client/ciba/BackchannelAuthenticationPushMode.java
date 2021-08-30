@@ -1530,7 +1530,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
                                                                      // modes.
     }
 
-    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode", "ED25519_keyId",
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode", "Ed25519_keyId",
             "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test(dependsOnMethods = "idTokenHintED25519")
     public void backchannelTokenDeliveryModePushIdTokenHintED25519(final String clientJwksUri,
@@ -1606,7 +1606,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
                                                                      // modes.
     }
 
-    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode", "ED448_keyId",
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode", "Ed448_keyId",
             "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test(dependsOnMethods = "idTokenHintED448")
     public void backchannelTokenDeliveryModePushIdTokenHintED448(final String clientJwksUri,
@@ -4467,7 +4467,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         loginHintTokenPS512 = jwt.toString();
     }
 
-    @Parameters({ "ED25519_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
+    @Parameters({ "Ed25519_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenED25519(final String keyId, final String userEmail, final String dnName,
             final String keyStoreFile, final String keyStoreSecret) throws Exception {
@@ -4489,7 +4489,7 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         loginHintTokenED25519 = jwt.toString();
     }
 
-    @Parameters({ "ED448_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
+    @Parameters({ "Ed448_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenED448(final String keyId, final String userEmail, final String dnName,
             final String keyStoreFile, final String keyStoreSecret) throws Exception {
