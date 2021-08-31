@@ -98,17 +98,14 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
             switch (keyEncryptionAlgorithm) {
             case A128KW:
             case A128GCMKW:
-            case PBES2_HS256_PLUS_A128KW:
                 keyLength = 16;
                 break;
             case A192KW:
             case A192GCMKW:
-            case PBES2_HS384_PLUS_A192KW:
                 keyLength = 24;
                 break;
             case A256KW:
             case A256GCMKW:
-            case PBES2_HS512_PLUS_A256KW:
                 keyLength = 32;
                 break;
             default:

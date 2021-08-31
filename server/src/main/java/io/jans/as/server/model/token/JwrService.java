@@ -101,22 +101,36 @@ public class JwrService {
         KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(jwe.getHeader().getClaimAsString(ALGORITHM));
         final BlockEncryptionAlgorithm encryptionMethod = jwe.getHeader().getEncryptionMethod();
 
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5) {
+        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW
+                ) {
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(client.getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
                     Algorithm.fromString(keyEncryptionAlgorithm.getName()),
                     Use.ENCRYPTION);
             PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
             jwe.getHeader().setKeyId(keyId);
-
             if (publicKey == null) {
                 throw new InvalidJweException("The public key is not valid");
             }
-
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, publicKey);
             return jweEncrypter.encrypt(jwe);
-        }
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW) {
+        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW 
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW 
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
+                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW
+                ) {
             byte[] sharedSymmetricKey = clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8);
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, sharedSymmetricKey);
             return jweEncrypter.encrypt(jwe);

@@ -205,7 +205,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
             String alias = UUID.randomUUID().toString() + getKidSuffix(use, algorithm);
             keyStore.setKeyEntry(alias, pk, keyStoreSecret.toCharArray(), chain);
-//            keyStore.setKeyEntry(alias, pk.getEncoded(), chain);
 
             final String oldAliasByAlgorithm = getAliasByAlgorithmForDeletion(algorithm, alias, use);
             if (StringUtils.isNotBlank(oldAliasByAlgorithm)) {
@@ -269,15 +268,12 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             PrivateKey pk = keyPair.getPrivate();
 
             // Java API requires a certificate chain
-            // X509Certificate cert = generateV3Certificate(keyPair, dnName, keyEncryptionAlgorithm.getName(), expirationTime);
-            // "SHA256WITHRSA"
             X509Certificate cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);
             X509Certificate[] chain = new X509Certificate[1];
             chain[0] = cert;
 
             String alias = UUID.randomUUID().toString() + getKidSuffix(use, algorithm);
             keyStore.setKeyEntry(alias, pk, keyStoreSecret.toCharArray(), chain);
-//            keyStore.setKeyEntry(alias, pk.getEncoded(), chain);
 
             final String oldAliasByAlgorithm = getAliasByAlgorithmForDeletion(algorithm, alias, use);
             if (StringUtils.isNotBlank(oldAliasByAlgorithm)) {
@@ -572,7 +568,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
         return null;
     }
-
 
     private void checkKeyExpiration(String alias) {
         try {

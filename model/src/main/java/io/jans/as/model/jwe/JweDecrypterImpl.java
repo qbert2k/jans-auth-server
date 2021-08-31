@@ -14,17 +14,12 @@ import java.util.Arrays;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEObject;
-import com.nimbusds.jose.crypto.DirectDecrypter;
-import com.nimbusds.jose.crypto.PasswordBasedDecrypter;
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.SignedJWT;
 
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.RSAPrivateKey;
 import io.jans.as.model.exception.InvalidJweException;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwt.Jwt;
@@ -45,7 +40,6 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
     private String sharedSymmetricPassword;
 
     private PrivateKey privateKey;
-    private RSAPrivateKey rsaPrivateKey;
 
     public JweDecrypterImpl(byte[] sharedSymmetricKey) {
         if (sharedSymmetricKey != null) {
@@ -55,10 +49,6 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
 
     public JweDecrypterImpl(String sharedSymmetricPassword) {
         this.sharedSymmetricPassword = sharedSymmetricPassword;
-    }
-
-    public JweDecrypterImpl(RSAPrivateKey rsaPrivateKey) {
-        this.rsaPrivateKey = rsaPrivateKey;
     }
 
     public JweDecrypterImpl(PrivateKey privateKey) {
@@ -119,17 +109,14 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                 switch (keyEncryptionAlgorithm) {
                 case A128KW:
                 case A128GCMKW:
-                case PBES2_HS256_PLUS_A128KW:
                     keyLength = 16;
                     break;
                 case A192KW:
                 case A192GCMKW:
-                case PBES2_HS384_PLUS_A192KW:
                     keyLength = 24;
                     break;
                 case A256KW:
                 case A256GCMKW:
-                case PBES2_HS512_PLUS_A256KW:
                     keyLength = 32;
                     break;
                 default:
