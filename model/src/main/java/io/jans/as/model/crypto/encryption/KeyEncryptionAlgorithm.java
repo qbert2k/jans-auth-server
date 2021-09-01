@@ -64,7 +64,7 @@ public enum KeyEncryptionAlgorithm {
     
     private KeyEncryptionAlgorithm(String name, String family, EllipticEdvardsCurve curve) {
         this.name = name;
-        this.family = null;
+        this.family = family;
         this.algorithm = null;
         this.curve = curve;
         this.alg = Algorithm.fromString(name);

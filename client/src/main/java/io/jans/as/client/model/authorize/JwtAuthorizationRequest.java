@@ -9,6 +9,7 @@ package io.jans.as.client.model.authorize;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
 
 import io.jans.as.client.AuthorizationRequest;
 import io.jans.as.client.util.ClientUtil;
@@ -31,6 +34,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwe.JweEncrypterImpl;
+import io.jans.as.model.jwk.JWKParameter;
 import io.jans.as.model.jwt.JwtClaims;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtType;
@@ -43,6 +47,7 @@ import io.jans.as.model.util.Util;
  */
 public class JwtAuthorizationRequest {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(JwtAuthorizationRequest.class);
 
     // Header
@@ -430,12 +435,28 @@ public class JwtAuthorizationRequest {
 
     public String getEncodedJwt(JSONObject jwks) throws Exception {
         String encodedJwt = null;
-
         if (keyEncryptionAlgorithm != null && blockEncryptionAlgorithm != null) {
-            JweEncrypterImpl jweEncrypter;
+            JweEncrypterImpl jweEncrypter = null;
             if (cryptoProvider != null && jwks != null) {
                 PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
-                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+                if(publicKey instanceof ECPublicKey) {
+                    JSONArray webKeys = jwks.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
+                    JSONObject key = null;                     
+                    for (int i = 0; i < webKeys.length(); i++) {
+                        key = webKeys.getJSONObject(i);
+                        if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
+                            JWK jwk = JWK.parse(key.toString());
+                            ECKey ecPublicKey = (ECKey) (JWK.parse(key.toString()));
+                            jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
+                            break;
+                        }
+                    }
+                    if(jweEncrypter == null) {
+                        throw new InvalidJwtException("jweEncrypter was not created.");
+                    }
+                } else {
+                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+                }
             } else {
                 jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
             }
@@ -468,7 +489,6 @@ public class JwtAuthorizationRequest {
 
             encodedJwt = encodedHeader + "." + encodedPayload + "." + encodedSignature;
         }
-
         return encodedJwt;
     }
 

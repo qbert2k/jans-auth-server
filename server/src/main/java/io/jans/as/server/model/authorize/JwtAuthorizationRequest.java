@@ -97,6 +97,7 @@ public class JwtAuthorizationRequest {
     private String payload;
     private JSONObject jsonPayload;
 
+    @SuppressWarnings("unused")
     private AppConfiguration appConfiguration;
 
     public JwtAuthorizationRequest(AppConfiguration appConfiguration, AbstractCryptoProvider cryptoProvider, String encodedJwt, Client client) throws InvalidJwtException {
@@ -130,7 +131,6 @@ public class JwtAuthorizationRequest {
                     if (privateKey == null && StringUtils.isNotBlank(appConfiguration.getStaticDecryptionKid())) {
                         privateKey = cryptoProvider.getPrivateKey(appConfiguration.getStaticDecryptionKid());
                     }
-
                     jweDecrypter = new JweDecrypterImpl(privateKey);
                 } else {
                     ClientService clientService = CdiUtil.bean(ClientService.class);

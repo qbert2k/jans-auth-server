@@ -86,20 +86,20 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
 
             final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
             Key encriptionKey = null;
-            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW) {
+            if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.ECDH_ES.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
                 encriptionKey = privateKey;
-            } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
+            } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.A192KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.A128GCMKW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.A192GCMKW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.A256GCMKW.equals(keyEncryptionAlgorithm)) {
                 if (sharedSymmetricKey == null) {
                     throw new InvalidJweException("The shared symmetric key is null");
                 }
@@ -130,20 +130,20 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
                 }
                 encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, keyLength, "AES");
-            } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
+            } else if (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
                 encriptionKey = new SecretKeySpec(sharedSymmetricPassword.getBytes(), 0,
                         sharedSymmetricPassword.length(), "AES");
-            } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR) {
+            } else if (KeyEncryptionAlgorithm.DIR.equals(keyEncryptionAlgorithm)) {
                 encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "AES");
             } else {
                 throw new InvalidJweException("The key encryption algorithm is not supported");
             }
 
-            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
+            if (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                    || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
 
                 JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
                 decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
