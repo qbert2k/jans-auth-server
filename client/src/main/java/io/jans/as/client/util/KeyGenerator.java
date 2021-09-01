@@ -38,6 +38,7 @@ import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.ElevenCryptoProvider;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKey;
@@ -101,7 +102,7 @@ public class KeyGenerator {
             signingKeysOption.setArgs(Option.UNLIMITED_VALUES);
 
             Option encryptionKeysOption = new Option(ENCRYPTION_KEYS, true,
-                    "Encryption keys to generate (RSA_OAEP RSA1_5).");
+                    "Encryption keys to generate (RSA1_5 RSA-OAEP ECDH-ES).");
             encryptionKeysOption.setArgs(Option.UNLIMITED_VALUES);
 
             options.addOption(signingKeysOption);
@@ -242,6 +243,7 @@ public class KeyGenerator {
 			    key.setAlg(algorithm);
 			    key.setKty(KeyType.fromString(encryptionAlgorithm.getFamily()));
 			    key.setExp(result.optLong(EXPIRATION_TIME));
+                key.setCrv(encryptionAlgorithm.getCurve());			    
 			    key.setN(result.optString(MODULUS));
 			    key.setE(result.optString(EXPONENT));
 			    key.setX(result.optString(X));
@@ -273,7 +275,13 @@ public class KeyGenerator {
 		 */
 		private static String getKeyNameFromAlgorithm(Algorithm algorithm) {
 		    String keyNamePrefix = null;
-		    if(Algorithm.RSA_OAEP.equals(algorithm) || Algorithm.RSA_OAEP_256.equals(algorithm)) {
+		    if(Algorithm.RSA_OAEP.equals(algorithm) 
+		            || Algorithm.RSA_OAEP_256.equals(algorithm) 
+		            || Algorithm.ECDH_ES.equals(algorithm) 
+		            || Algorithm.ECDH_ES_PLUS_A128KW.equals(algorithm)
+		            || Algorithm.ECDH_ES_PLUS_A192KW.equals(algorithm)
+		            || Algorithm.ECDH_ES_PLUS_A256KW.equals(algorithm)
+		            ) {
 		        keyNamePrefix = algorithm.name();		        
 		    }
 		    else {
@@ -281,12 +289,12 @@ public class KeyGenerator {
 		    }
 		    return keyNamePrefix + KEY_NAME_SUFFIX;
 		}
-
+		
         private void help() {
             HelpFormatter formatter = new HelpFormatter();
 
             formatter.printHelp(
-                    "KeyGenerator -sig_keys alg ... -enc_keys alg ... -expiration n_days [-expiration_hours n_hours] [-ox11 url] [-keystore path -keypasswd secret -dnname dn_name]",
+                    "KeyGenerator -sig_keys alg ... -enc_keys alg ... -expiration n_days [-expiration_hours n_hours] [-ox11 url] [-keystore path -keypasswd secret -dnname dn_name] [-test_prop_file prop_file_path]",
                     options);
             System.exit(0);
         }

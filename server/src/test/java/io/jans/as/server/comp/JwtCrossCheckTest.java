@@ -325,9 +325,6 @@ public class JwtCrossCheckTest extends BaseTest {
         
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED25519, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
-        
-//        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-//        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
 
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
         Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());
@@ -379,9 +376,6 @@ public class JwtCrossCheckTest extends BaseTest {
         
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED448, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
-        
-//        Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyDecoded());
-//        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyDecoded());
         
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
         Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());        
@@ -545,6 +539,24 @@ public class JwtCrossCheckTest extends BaseTest {
         showTitle("edDsaCrossCheck");        
         crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.EDDSA, kid);
     }
+    
+    /**
+     * 
+     * @param dnName
+     * @param keyStoreFile
+     * @param keyStoreSecret
+     * @param kid
+     * @throws Exception
+     */
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
+    //  @Test
+    public void ed25519CrossCheck(final String dnName,
+                                final String keyStoreFile,
+                                final String keyStoreSecret,
+                                final String kid) throws Exception {
+        showTitle("ed25519CrossCheck");        
+        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ED25519, kid);
+    }
 
     /**
      * 
@@ -577,27 +589,38 @@ public class JwtCrossCheckTest extends BaseTest {
         JWSVerifier nimbusVerifier = null;
         AbstractJwsSigner oxauthVerifier = null;
         switch (signatureAlgorithm.getFamily()) {
-            case EC:
+            case EC: {
                 final ECKey ecKey = ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 final ECPublicKey ecPublicKey = ecKey.toECPublicKey();
                 nimbusVerifier = new ECDSAVerifier(ecKey);
                 oxauthVerifier = new ECDSASigner(jwt.getHeader().getSignatureAlgorithm(), new ECDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY()));
                 break;
-            case ED:
-                Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
-                BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
-                BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
-                EDDSAPublicKey edPubKey = new EDDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), bcEdPubKey.getEncoded());
-                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(edPubKey.getPublicKeyDecoded())).build();
-                nimbusVerifier = new Ed25519Verifier(okp);
-                oxauthVerifier = new EDDSASigner(jwt.getHeader().getSignatureAlgorithm(), new EDDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), bcEdPubKey.getEncoded()));
+            }
+            case ED: {
+                switch(signatureAlgorithm) {
+                case EDDSA:                    
+                case ED25519: {
+                    Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                    BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+                    BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+                    EDDSAPublicKey edPubKey = new EDDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), bcEdPubKey.getEncoded());
+                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(edPubKey.getPublicKeyDecoded())).build();
+                    nimbusVerifier = new Ed25519Verifier(okp);
+                    oxauthVerifier = new EDDSASigner(jwt.getHeader().getSignatureAlgorithm(), new EDDSAPublicKey(jwt.getHeader().getSignatureAlgorithm(), bcEdPubKey.getEncoded()));
+                    break;
+                }
+                default:
+                    throw new SignatureException(String.format("wrong type of the SignatureAlgorithm: %s", signatureAlgorithm.toString()));
+                }                
                 break;
-            case RSA:
+            }
+            case RSA: {
                 RSAKey rsaKey = RSAKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                 final java.security.interfaces.RSAPublicKey rsaPublicKey = rsaKey.toRSAPublicKey();
                 nimbusVerifier = new RSASSAVerifier(rsaKey);
                 oxauthVerifier = new RSASigner(signatureAlgorithm, new RSAPublicKey(rsaPublicKey.getModulus(), rsaPublicKey.getPublicExponent()));
                 break;
+            }
             default:
                 throw new SignatureException(String.format("wrong type of the Algorithm Family: %s", signatureAlgorithm.getFamily().toString()));
         }
@@ -629,20 +652,31 @@ public class JwtCrossCheckTest extends BaseTest {
         final AlgorithmFamily family = signatureAlgorithm.getFamily();
         JWSSigner signer = null;
         switch (family) {
-            case RSA:
+            case RSA: {
                 signer = new RSASSASigner(RSAKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray()));
                 break;
-            case EC:
+            }
+            case EC: {
                 signer = new com.nimbusds.jose.crypto.ECDSASigner(ECKey.load(cryptoProvider.getKeyStore(), kid, cryptoProvider.getKeyStoreSecret().toCharArray()));
                 break;
-            case ED:
-                Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
-                BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
-                BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
-                EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(signatureAlgorithm, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());                
-                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(edPrivKey.getPublicKeyDecoded())).d(Base64URL.encode(edPrivKey.getPrivateKeyDecoded())).build();
-                signer = new Ed25519Signer(okp);                
+            }
+            case ED: {
+                switch(signatureAlgorithm) {
+                case EDDSA:                    
+                case ED25519: {
+                    Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
+                    BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
+                    BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
+                    EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(signatureAlgorithm, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());                
+                    OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(edPrivKey.getPublicKeyDecoded())).d(Base64URL.encode(edPrivKey.getPrivateKeyDecoded())).build();
+                    signer = new Ed25519Signer(okp);                
+                    break;
+                }
+                default:
+                    throw new SignatureException(String.format("wrong type of the SignatureAlgorithm: %s", signatureAlgorithm.toString()));
+                }
                 break;
+            }
             default:
                 throw new SignatureException(String.format("wrong type of the Algorithm Family: %s", family.toString()));
         }

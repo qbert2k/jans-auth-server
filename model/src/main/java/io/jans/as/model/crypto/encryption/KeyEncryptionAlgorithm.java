@@ -9,6 +9,7 @@ package io.jans.as.model.crypto.encryption;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.jwk.Algorithm;
 
 /**
@@ -20,10 +21,10 @@ public enum KeyEncryptionAlgorithm {
     RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
     RSA_OAEP_256("RSA-OAEP-256", "RSA", "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"),
 
-    ECDH_ES("ECDH-ES"),
-    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW"),
-    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW"),
-    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW"),
+    ECDH_ES("ECDH-ES", "EC", EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", "EC", EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", "EC", EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", "EC", EllipticEdvardsCurve.P_256),
 
     A128KW("A128KW"),
     A192KW("A192KW"),
@@ -43,11 +44,13 @@ public enum KeyEncryptionAlgorithm {
     private final String family;
     private final String algorithm;
     private final Algorithm alg;
+    private final EllipticEdvardsCurve curve;    
 
     private KeyEncryptionAlgorithm(String name) {
         this.name = name;
         this.family = null;
         this.algorithm = null;
+        this.curve = null;
         this.alg = Algorithm.fromString(name);
     }
 
@@ -55,8 +58,17 @@ public enum KeyEncryptionAlgorithm {
         this.name = name;
         this.family = family;
         this.algorithm = algorithm;
+        this.curve = null;        
         this.alg = Algorithm.fromString(name);
     }
+    
+    private KeyEncryptionAlgorithm(String name, String family, EllipticEdvardsCurve curve) {
+        this.name = name;
+        this.family = null;
+        this.algorithm = null;
+        this.curve = curve;
+        this.alg = Algorithm.fromString(name);
+    }    
 
     public Algorithm getAlg() {
         return alg;
@@ -73,6 +85,10 @@ public enum KeyEncryptionAlgorithm {
     public String getAlgorithm() {
         return algorithm;
     }
+    
+    public EllipticEdvardsCurve getCurve() {
+        return curve;
+    }    
 
     @JsonCreator
     public static KeyEncryptionAlgorithm fromName(String name) {

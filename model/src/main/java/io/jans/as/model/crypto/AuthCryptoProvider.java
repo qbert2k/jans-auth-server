@@ -7,7 +7,6 @@
 package io.jans.as.model.crypto;
 
 import com.google.common.collect.Lists;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.impl.ECDSA;
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
@@ -124,6 +123,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 }
                 final InputStream is = new FileInputStream(keyStoreFile);
                 keyStore.load(is, keyStoreSecret.toCharArray());
+                is.close();
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
             }
@@ -258,6 +258,14 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 keyGen.initialize(2048, new SecureRandom());            
                 break;
             }
+            case EC: {
+                //ECGenParameterSpec eccgen = new ECGenParameterSpec("curve25519");
+                //ECGenParameterSpec eccgen = new ECGenParameterSpec("curve448");
+                ECGenParameterSpec eccgen = new ECGenParameterSpec(keyEncryptionAlgorithm.getCurve().getAlias());
+                keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
+                keyGen.initialize(eccgen, new SecureRandom());                   
+                break;
+            }
             default: {
                 throw new RuntimeException("The provided key encryption algorithm parameter is not supported");
             }
@@ -268,7 +276,15 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             PrivateKey pk = keyPair.getPrivate();
 
             // Java API requires a certificate chain
-            X509Certificate cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);
+            X509Certificate cert = null;
+            
+            if(algorithm.getFamily().equals(AlgorithmFamily.RSA)) {
+                cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);                
+            }
+            else if(algorithm.getFamily().equals(AlgorithmFamily.EC)) {
+                cert = generateV3Certificate(keyPair, dnName, "SHA256WITHECDSA", expirationTime);                
+            }
+            
             X509Certificate[] chain = new X509Certificate[1];
             chain[0] = cert;
 
@@ -297,6 +313,14 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
                 jsonObject.put(JWKParameter.MODULUS, Base64Util.base64urlencodeUnsignedBigInt(rsaPublicKey.getModulus()));
                 jsonObject.put(JWKParameter.EXPONENT, Base64Util.base64urlencodeUnsignedBigInt(rsaPublicKey.getPublicExponent()));
+            }
+            else if (publicKey instanceof ECPublicKey) {
+                ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
+                //jsonObject.put(JWKParameter.CURVE, "curve25519");
+                //jsonObject.put(JWKParameter.CURVE, "curve448");
+                jsonObject.put(JWKParameter.CURVE, keyEncryptionAlgorithm.getCurve().getAlias());
+                jsonObject.put(JWKParameter.X, Base64Util.base64urlencode(ecPublicKey.getW().getAffineX().toByteArray()));
+                jsonObject.put(JWKParameter.Y, Base64Util.base64urlencode(ecPublicKey.getW().getAffineY().toByteArray()));
             }
             
             JSONArray x5c = new JSONArray();
@@ -368,7 +392,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
             byte[] signature = signer.sign();
             if (AlgorithmFamily.EC.equals(signatureAlgorithm.getFamily())) {
-            	int signatureLenght = ECDSA.getSignatureByteArrayLength(JWSAlgorithm.parse(signatureAlgorithm.getName()));
+            	int signatureLenght = ECDSA.getSignatureByteArrayLength(signatureAlgorithm.getJwsAlgorithm());
                 signature = ECDSA.transcodeSignatureToConcat(signature, signatureLenght);
             }
 
@@ -429,6 +453,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         keyStore.deleteEntry(alias);
         FileOutputStream stream = new FileOutputStream(keyStoreFile);
         keyStore.store(stream, keyStoreSecret.toCharArray());
+        stream.close();
         return true;
     }
 
