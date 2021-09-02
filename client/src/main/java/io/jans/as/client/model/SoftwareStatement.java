@@ -23,6 +23,7 @@ import io.jans.as.model.util.Util;
  */
 public class SoftwareStatement {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(JwtState.class);
 
     // Header

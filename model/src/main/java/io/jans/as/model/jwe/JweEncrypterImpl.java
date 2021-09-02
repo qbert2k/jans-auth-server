@@ -76,21 +76,22 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
 
     public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException, NoSuchAlgorithmException {
         final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256) {
+        if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm)) {
             return new RSAEncrypter(new RSAKey.Builder((RSAPublicKey) publicKey).build());
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW) {
+        } else if (KeyEncryptionAlgorithm.ECDH_ES.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
+//            return new ECDHEncrypter(new ECKey.Builder(   (ECPublicKey) publicKey).build());            
             return new ECDHEncrypter(new ECKey.Builder(ecKey).build());
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
+        } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A128GCMKW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A192GCMKW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A256GCMKW.equals(keyEncryptionAlgorithm)) {
             if (sharedSymmetricKey == null) {
                 throw new InvalidJweException("The shared symmetric key is null");
             }
@@ -118,11 +119,11 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
             }
             return new AESEncrypter(sharedSymmetricKey);
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
+        } else if (KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
             return new PasswordBasedEncrypter(sharedSymmetricPassword, 16, 8192);
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR) {
+        } else if (KeyEncryptionAlgorithm.DIR.equals(keyEncryptionAlgorithm)) {
             return new DirectEncrypter(sharedSymmetricKey);
         } else {
             throw new InvalidJweException("The key encryption algorithm is not supported");

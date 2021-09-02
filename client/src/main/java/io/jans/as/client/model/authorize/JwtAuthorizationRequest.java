@@ -441,18 +441,19 @@ public class JwtAuthorizationRequest {
                 PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
                 if(publicKey instanceof ECPublicKey) {
                     JSONArray webKeys = jwks.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
-                    JSONObject key = null;                     
+                    JSONObject key = null;
+                    ECKey ecPublicKey = null;
                     for (int i = 0; i < webKeys.length(); i++) {
                         key = webKeys.getJSONObject(i);
                         if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
-                            JWK jwk = JWK.parse(key.toString());
-                            ECKey ecPublicKey = (ECKey) (JWK.parse(key.toString()));
-                            jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
+                            ecPublicKey = (ECKey) (JWK.parse(key.toString()));
                             break;
                         }
                     }
-                    if(jweEncrypter == null) {
-                        throw new InvalidJwtException("jweEncrypter was not created.");
+                    if(ecPublicKey != null) {
+                        jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
+                    } else {
+                        throw new InvalidJwtException("jweEncrypter was not created.");                        
                     }
                 } else {
                     jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);

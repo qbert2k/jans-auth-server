@@ -7,6 +7,9 @@
 package io.jans.as.server.model.token;
 
 import com.google.common.base.Function;
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+
 import io.jans.as.common.model.registration.Client;
 import io.jans.as.model.config.WebKeysConfiguration;
 import io.jans.as.model.configuration.AppConfiguration;
@@ -19,6 +22,7 @@ import io.jans.as.model.jwe.JweEncrypter;
 import io.jans.as.model.jwe.JweEncrypterImpl;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKeySet;
+import io.jans.as.model.jwk.JWKParameter;
 import io.jans.as.model.jwk.Use;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtType;
@@ -29,6 +33,7 @@ import io.jans.as.server.service.ClientService;
 import io.jans.as.server.service.SectorIdentifierService;
 import io.jans.as.server.service.ServerCryptoProvider;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
@@ -63,6 +68,7 @@ public class JwrService {
     @Inject
     private WebKeysConfiguration webKeysConfiguration;
 
+    @SuppressWarnings("unused")
     @Inject
     private SectorIdentifierService sectorIdentifierService;
 
@@ -101,13 +107,9 @@ public class JwrService {
         KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(jwe.getHeader().getClaimAsString(ALGORITHM));
         final BlockEncryptionAlgorithm encryptionMethod = jwe.getHeader().getEncryptionMethod();
 
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW
+        if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm)  
+                || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm) 
                 ) {
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(client.getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
@@ -120,22 +122,45 @@ public class JwrService {
             }
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, publicKey);
             return jweEncrypter.encrypt(jwe);
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW 
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW 
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW
+        } else if(KeyEncryptionAlgorithm.ECDH_ES.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
+            JweEncrypter jweEncrypter = null;             
+            JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(client.getJwksUri());
+            String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
+                    Use.ENCRYPTION);
+            JSONArray webKeys = jsonWebKeys.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
+            JSONObject key = null;
+            ECKey ecPublicKey = null;             
+            for (int i = 0; i < webKeys.length(); i++) {
+                key = webKeys.getJSONObject(i);
+                if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
+                    ecPublicKey = (ECKey) (JWK.parse(key.toString()));
+                    break;
+                }
+            }
+            if(ecPublicKey == null) {
+                throw new InvalidJweException("jweEncrypter was not created.");
+            }
+            jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, ecPublicKey);
+            return jweEncrypter.encrypt(jwe);            
+        } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm)  
+                || KeyEncryptionAlgorithm.A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A128GCMKW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A192GCMKW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.A256GCMKW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.DIR.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm)  
+                || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
+                || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm) 
                 ) {
             byte[] sharedSymmetricKey = clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8);
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, sharedSymmetricKey);
             return jweEncrypter.encrypt(jwe);
         }
-
         throw new IllegalArgumentException("Unsupported encryption algorithm: " + keyEncryptionAlgorithm);
     }
 

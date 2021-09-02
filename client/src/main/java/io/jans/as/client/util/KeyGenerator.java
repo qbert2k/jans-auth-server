@@ -38,7 +38,6 @@ import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.ElevenCryptoProvider;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKey;

@@ -66,7 +66,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestDefault(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -183,7 +183,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -301,7 +301,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -419,7 +419,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -537,7 +537,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -659,7 +659,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -781,7 +781,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -903,7 +903,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1025,7 +1025,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES256K(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1147,7 +1147,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1269,7 +1269,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1391,7 +1391,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1513,7 +1513,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1635,7 +1635,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1756,7 +1756,7 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestAlgA128KWEncA128GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestAlgA128KWEncA128GCM");
@@ -1870,7 +1870,7 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestAlgA256KWEncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequestAlgA256KWEncA256GCM");
@@ -1985,7 +1985,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestAlgRSA15EncA128CBCPLUSHS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2114,7 +2114,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestAlgRSA15EncA256CBCPLUSHS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2243,7 +2243,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestAlgRSAOAEPEncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2300,6 +2300,393 @@ public class AddressClaimsTest extends BaseTest {
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
                 KeyEncryptionAlgorithm.RSA_OAEP, BlockEncryptionAlgorithm.A256GCM, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 4. Validate id_token
+        PrivateKey privateKey = cryptoProvider.getPrivateKey(clientKeyId);
+
+        Jwe jwe = Jwe.parse(idToken, privateKey, null);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+
+        // 5. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setPrivateKey(privateKey);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ISSUER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.AUDIENCE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
+                .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
+                        JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestAlgRSAOAEPEncA128CBC_HS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestAlgRSAOAEPEncA128CBC_HS256");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.RSA_OAEP);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.RSA_OAEP, BlockEncryptionAlgorithm.A128CBC_HS256, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 4. Validate id_token
+        PrivateKey privateKey = cryptoProvider.getPrivateKey(clientKeyId);
+
+        Jwe jwe = Jwe.parse(idToken, privateKey, null);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+
+        // 5. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setPrivateKey(privateKey);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ISSUER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.AUDIENCE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
+                .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
+                        JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestAlgRSAOAEPEncA192CBC_HS384(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestAlgRSAOAEPEncA192CBC_HS384");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A192CBC_HS384);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A192CBC_HS384);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A192CBC_HS384);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.RSA_OAEP);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.RSA_OAEP, BlockEncryptionAlgorithm.A192CBC_HS384, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 4. Validate id_token
+        PrivateKey privateKey = cryptoProvider.getPrivateKey(clientKeyId);
+
+        Jwe jwe = Jwe.parse(idToken, privateKey, null);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+
+        // 5. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setPrivateKey(privateKey);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ISSUER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.AUDIENCE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
+                .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
+                        JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestAlgRSAOAEPEncA256CBC_HS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestAlgRSAOAEPEncA256CBC_HS512");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_HS512);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_HS512);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.RSA_OAEP);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256CBC_HS512);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.RSA_OAEP);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.RSA_OAEP, BlockEncryptionAlgorithm.A256CBC_HS512, cryptoProvider);
         jwtAuthorizationRequest.setKeyId(serverKeyId);
         jwtAuthorizationRequest
                 .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
@@ -2498,10 +2885,268 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "ECDH_ES_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestAlgECDH_ESEncA256GCM(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestAlgECDH_ESEncA256GCM");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A256GCM);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256GCM);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256GCM);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.ECDH_ES);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.ECDH_ES, BlockEncryptionAlgorithm.A256GCM, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 4. Validate id_token
+        PrivateKey privateKey = cryptoProvider.getPrivateKey(clientKeyId);
+
+        Jwe jwe = Jwe.parse(idToken, privateKey, null);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+
+        // 5. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setPrivateKey(privateKey);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ISSUER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.AUDIENCE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
+                .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
+                        JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "ECDH_ES_PLUS_A128KW_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequestAlgECDH_ES_PLUS_A128KWEncA128CBC_HS256(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequestAlgECDH_ES_PLUS_A128KWEncA128CBC_HS256");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A128CBC_HS256);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.ECDH_ES_PLUS_A128KW);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, BlockEncryptionAlgorithm.A128CBC_HS256, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+        authorizationRequest.setRequest(authJwt);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+        String accessToken = authorizationResponse.getAccessToken();
+
+        // 4. Validate id_token
+        PrivateKey privateKey = cryptoProvider.getPrivateKey(clientKeyId);
+
+        Jwe jwe = Jwe.parse(idToken, privateKey, null);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
+        assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+
+        // 5. Request user info
+        UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
+        UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
+        userInfoClient.setRequest(userInfoRequest);
+        userInfoClient.setPrivateKey(privateKey);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
+
+        showClient(userInfoClient);
+        assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ISSUER));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.AUDIENCE));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_STREET_ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS_COUNTRY));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS));
+        assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
+                .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
+                        JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
+    }
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed25519_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestED25519(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -2623,7 +3268,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed448_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestED448(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -2742,5 +3387,5 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
+
 }
