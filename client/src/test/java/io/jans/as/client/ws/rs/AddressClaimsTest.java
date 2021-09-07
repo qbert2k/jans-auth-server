@@ -38,15 +38,10 @@ import io.jans.as.model.common.ResponseType;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jws.ECDSASigner;
-import io.jans.as.model.jws.EDDSASigner;
-import io.jans.as.model.jws.HMACSigner;
 import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.JwtVerifyer;
 import io.jans.as.model.jwt.Jwt;
@@ -182,7 +177,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -216,7 +211,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Request authorization
-        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);        
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -301,7 +296,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -335,6 +330,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -393,9 +389,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS384, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -419,7 +415,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -453,6 +449,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);        
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -511,9 +508,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS512, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -537,7 +534,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -571,6 +568,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -630,6 +628,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));
 
         RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
                 jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
@@ -659,7 +660,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -693,6 +694,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);  
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -752,12 +754,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -781,7 +780,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -815,6 +814,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -874,12 +874,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -903,7 +900,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256_keyId", "clientJwksUri" })
-//    @Test
+    @Test
     public void authorizationRequestES256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -937,6 +934,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -996,12 +994,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1025,7 +1020,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES256K(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1059,6 +1054,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1118,12 +1114,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1147,7 +1140,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1181,6 +1174,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1240,12 +1234,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1269,7 +1260,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1303,6 +1294,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1362,13 +1354,10 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
-
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
+        
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1391,7 +1380,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1425,6 +1414,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1484,12 +1474,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1513,7 +1500,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1547,6 +1534,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1606,12 +1594,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1635,7 +1620,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1669,6 +1654,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -1728,12 +1714,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1757,7 +1740,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
         "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA128KW_EncA128GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -1879,7 +1862,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
         "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA256KW_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris,
             final String dnName, final String keyStoreFile, final String keyStoreSecret,
@@ -2134,7 +2117,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSA15_EncA256CBCPLUSHS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2266,7 +2249,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2398,7 +2381,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA128CBC_HS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2530,7 +2513,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA192CBC_HS384(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2662,7 +2645,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA256CBC_HS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2794,7 +2777,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_keyId", "clientJwksUri", "sectorIdentifierUri" })
-//    @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_EncA128CBC_HS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3224,6 +3207,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -3283,12 +3267,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3312,7 +3293,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed448_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestED448(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -3346,6 +3327,7 @@ public class AddressClaimsTest extends BaseTest {
         String clientId = registerResponse.getClientId();
 
         // 2. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
         List<String> scopes = Arrays.asList("openid", "address");
@@ -3405,12 +3387,9 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_COUNTRY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        assertTrue(jweVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);

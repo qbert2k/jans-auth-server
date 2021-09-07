@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.jans.as.model.crypto.AbstractCryptoProvider;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
 import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
@@ -62,18 +63,26 @@ public class JwtVerifyer {
         boolean verifyingRes = false;
         
         String signKeyId = jwt.getHeader().getKeyId();
-        if(signKeyId == null) {
-            throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
-        }
         
         SignatureAlgorithm signatureAlgorithm = jwt.getHeader().getSignatureAlgorithm();
         if(signatureAlgorithm == null) {
             throw new InvalidJwtException("JwtVerifyer: signatureAlgorithm == null (signatureAlgorithm  isn't defined)");
         }
         
-        PublicKey publicKey = cryptoProvider.getPublicKey(signKeyId, jwks, null);
-        if(publicKey == null) {
-            throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");            
+        AlgorithmFamily algFamily = signatureAlgorithm.getFamily();
+        
+        PublicKey publicKey = null;         
+        if(AlgorithmFamily.RSA.equals(algFamily)
+                || AlgorithmFamily.EC.equals(algFamily)
+                || AlgorithmFamily.ED.equals(algFamily)
+                ) {
+            if(signKeyId == null) {
+                throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
+            }
+            publicKey = cryptoProvider.getPublicKey(signKeyId, jwks, null);
+            if(publicKey == null) {
+                throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");            
+            }            
         }
         
         JwsSigner signer = null;
