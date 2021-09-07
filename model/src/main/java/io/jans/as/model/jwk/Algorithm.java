@@ -11,8 +11,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.nimbusds.jose.JWSAlgorithm;
 
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
+import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -48,7 +50,21 @@ public enum Algorithm {
     ECDH_ES("ECDH-ES", Use.ENCRYPTION, AlgorithmFamily.EC),
     ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", Use.ENCRYPTION, AlgorithmFamily.EC),
     ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", Use.ENCRYPTION, AlgorithmFamily.EC),
-    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC);
+    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", Use.ENCRYPTION, AlgorithmFamily.EC),
+    
+    A128KW("A128KW", Use.ENCRYPTION, AlgorithmFamily.AES),
+    A192KW("A192KW", Use.ENCRYPTION, AlgorithmFamily.AES),
+    A256KW("A256KW", Use.ENCRYPTION, AlgorithmFamily.AES),
+    
+    A128GCMKW("A128GCMKW", Use.ENCRYPTION, AlgorithmFamily.AES),
+    A192GCMKW("A192GCMKW", Use.ENCRYPTION, AlgorithmFamily.AES),
+    A256GCMKW("A256GCMKW", Use.ENCRYPTION, AlgorithmFamily.AES),
+
+    PBES2_HS256_PLUS_A128KW("PBES2-HS256+A128KW", Use.ENCRYPTION, AlgorithmFamily.PASSW),
+    PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW", Use.ENCRYPTION, AlgorithmFamily.PASSW),
+    PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW", Use.ENCRYPTION, AlgorithmFamily.PASSW);
+
+//    DIR("dir"); - ?        
 
     private final String paramName;
     private final Use use;

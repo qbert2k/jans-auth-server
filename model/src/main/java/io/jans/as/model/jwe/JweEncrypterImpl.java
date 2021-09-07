@@ -84,7 +84,6 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
                 || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
                 || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
-//            return new ECDHEncrypter(new ECKey.Builder(   (ECPublicKey) publicKey).build());            
             return new ECDHEncrypter(new ECKey.Builder(ecKey).build());
         } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm) 
                 || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 

@@ -17,7 +17,6 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -104,10 +103,9 @@ public class CrossEncryptionTest {
     private final String encryptedRsa2Jwe = "eyJraWQiOiIxIiwidHlwIjoiSldUIiwiZW5jIjoiQTEyOENCQytIUzI1NiIsImFsZyI6IlJTQTFfNSJ9.jzdQDZMZJEBb1v-N2DcSg1k0j8wPMGLhWRhIsFvEpS5A7JyKfEY2fkptWDStB_sEl4uZKODuN6WCmNO6ESetYJq0a2BIS_M5MurXPXLEXZey96PJK1h9EWl-Mi-HgEYGS_56EFag3n-87JEPbyG-v65sk7Z6sHm4ti0azf5WPUqskhBEe1YgdgPaZKfLq-hWJ11teFt3vD-xxYNXOmbrGV3RrV-BEtzh69O87Ik_kkhCsc_Jlul2AxXDBJAhJhy_2bVPuXS1WUoEJ6UuWEj-us20OS2H2BuTU8Xh7k9TtHbsx_XF7qe7Syey3A1ET_7T-r922OZJDmHoJlCrEqp3rQ.0UKKw6CuiHOFMHbcENGo4w.7RYTtNPmdCFcsu2yDzjMggMUBe1eUgPLmz84O6QACAJjT4wJ8vTHZwMSUvJoCEv9yQYoMSy5cHXO2JiLGQ3U0CTIAiuF_viMbQPudADJENQ.poaAuMG83LFk2oCREptmamh6uQvbiy2WCqB6WSKzdWk";
 
     private final String ec1PrvJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"d\":\"870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE\", \"use\":\"enc\", \"kid\":\"3\" }";
+    private final String ec1PubJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"use\":\"enc\", \"kid\":\"3\" }";
+    
     private final String ec2PrvJwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MBiqPPePV0UDsvPS6PC9tC6ZikJP3o4sRFnlIQTX5Mw\", \"y\":\"AJLmKWvp8GCEnuFtodk0feyeW2FS4T_Ok9zGc1xVVMrU\", \"d\":\"PwBwLX_3nQozA0t2DKDH0K28re9O2cvxOZkS212zfYk\", \"use\":\"enc\", \"kid\":\"3\" }";
-
-    private final String ecPub1JwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\", \"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\", \"use\":\"enc\", \"kid\":\"3\" }";
-    private final String ecPub2JwkJson = "{ \"kty\":\"EC\", \"crv\":\"P-256\", \"x\":\"MBiqPPePV0UDsvPS6PC9tC6ZikJP3o4sRFnlIQTX5Mw\", \"y\":\"AJLmKWvp8GCEnuFtodk0feyeW2FS4T_Ok9zGc1xVVMrU\", \"use\":\"enc\", \"kid\":\"3\" }";
     
     private final String encryptedEc2Jwe = "eyJlcGsiOnsia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsIngiOiJRc0FEbjZtalBRWW0zRnJWaHZqbi1Gc0s5dlpOLTlMaWg3eFY1blVtQTRvIiwieSI6IlVsWnBIT3dfbUl6TWdhUllXQmNlaVQ4Yl9NM2VnS0s4ODdtX2xXcE42OW8ifSwia2lkIjoiMSIsInR5cCI6IkpXVCIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJhbGciOiJFQ0RILUVTIn0..4y_NFicmz3pAjzpKo0RFGw._BRu1vhk5WiAGQUZ51v2ykC6nDpBGCG2NWwfJNePt_krLcYJ3Paqa67nuRN8f8Yfzify1q5v3oTBsaAJRu9zx5oocCI6oiWQewgFlz-CThc.mc-8GKaH105ZY2Syi8gLoQ";
 
@@ -201,13 +199,13 @@ public class CrossEncryptionTest {
                     encryptedRsa2Jwe, null), };
 
     KeyEncryptionAlgorithmSuite[] keyEncrAlgorithmsECDH = {
-            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES, ec1PrvJwkJson, ec2PrvJwkJson, ecPub1JwkJson,
+            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES, ec1PrvJwkJson, ec2PrvJwkJson, ec1PubJwkJson,
                     encryptedEc2Jwe, blockEncryptionAlgorithms_ECDH_ES),
-            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, ec1PrvJwkJson, ec2PrvJwkJson, ecPub1JwkJson,
+            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW, ec1PrvJwkJson, ec2PrvJwkJson, ec1PubJwkJson,
                     encryptedEc2Jwe, null),
-            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, ec1PrvJwkJson, ec2PrvJwkJson, ecPub1JwkJson,
+            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW, ec1PrvJwkJson, ec2PrvJwkJson, ec1PubJwkJson,
                     encryptedEc2Jwe, null),
-            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, ec1PrvJwkJson, ec2PrvJwkJson, ecPub1JwkJson,
+            new KeyEncryptionAlgorithmSuite(KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW, ec1PrvJwkJson, ec2PrvJwkJson, ec1PubJwkJson,
                     encryptedEc2Jwe, null) };
 
     KeyEncryptionAlgorithmSuite[] keyEncrAlgorithmsAES = {
@@ -428,6 +426,9 @@ public class CrossEncryptionTest {
                 System.out
                         .println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  keyEncrAlgorithmECDH.keyData2 = "
                                 + keyEncrAlgorithmECDH.keyData2);
+                System.out
+                        .println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  keyEncrAlgorithmECDH.keyData3 = "
+                                + keyEncrAlgorithmECDH.keyData3);
                 try {
                     ECKey ecPublicKey = (ECKey) (JWK.parse(keyEncrAlgorithmECDH.keyData3));
 

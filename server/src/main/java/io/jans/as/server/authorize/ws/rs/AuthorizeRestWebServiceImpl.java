@@ -725,7 +725,7 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
                     redirectUriResponse.getRedirectUri().setSharedSecret(sharedSecret);
                     redirectUriResponse.getRedirectUri().setJsonWebKeys(jsonWebKeys);
                 } else {
-                    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;
+                    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES384;
                     if (client.getAttributes().getAuthorizationSignedResponseAlg() != null) {
                         signatureAlgorithm = SignatureAlgorithm.fromString(client.getAttributes().getAuthorizationSignedResponseAlg());
                     }

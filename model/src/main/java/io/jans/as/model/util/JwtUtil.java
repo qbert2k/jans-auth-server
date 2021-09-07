@@ -10,10 +10,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule;
 import io.jans.as.model.crypto.Certificate;
 import io.jans.as.model.crypto.signature.ECDSAPublicKey;
+import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.util.StringHelper;
+
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.openssl.PEMParser;
 import org.jboss.resteasy.client.ClientExecutor;
@@ -140,7 +142,9 @@ public class JwtUtil {
                 jsonPublicKey = jsonKeyValue.getJSONObject(PUBLIC_KEY);
             }
 
-            if (signatureAlgorithm == SignatureAlgorithm.RS256 || signatureAlgorithm == SignatureAlgorithm.RS384 || signatureAlgorithm == SignatureAlgorithm.RS512) {
+            if (SignatureAlgorithm.RS256.equals(signatureAlgorithm)  
+                    || SignatureAlgorithm.RS384.equals(signatureAlgorithm) 
+                    || SignatureAlgorithm.RS512.equals(signatureAlgorithm)) {
                 //String alg = jsonKeyValue.getString(ALGORITHM);
                 //String use = jsonKeyValue.getString(KEY_USE);
                 String exp = jsonPublicKey.getString(EXPONENT);
@@ -150,7 +154,10 @@ public class JwtUtil {
                 BigInteger modulus = new BigInteger(1, Base64Util.base64urldecode(mod));
 
                 publicKey = new RSAPublicKey(modulus, publicExponent);
-            } else if (signatureAlgorithm == SignatureAlgorithm.ES256 || signatureAlgorithm == SignatureAlgorithm.ES384 || signatureAlgorithm == SignatureAlgorithm.ES512) {
+            } else if (SignatureAlgorithm.ES256.equals(signatureAlgorithm)  
+                    || SignatureAlgorithm.ES256K.equals(signatureAlgorithm)
+                    || SignatureAlgorithm.ES384.equals(signatureAlgorithm) 
+                    || SignatureAlgorithm.ES512.equals(signatureAlgorithm)) {
                 //String alg = jsonKeyValue.getString(ALGORITHM);
                 //String use = jsonKeyValue.getString(KEY_USE);
                 //String crv = jsonKeyValue.getString(CURVE);
@@ -161,6 +168,14 @@ public class JwtUtil {
                 BigInteger y = new BigInteger(1, Base64Util.base64urldecode(yy));
 
                 publicKey = new ECDSAPublicKey(signatureAlgorithm, x, y);
+            } else if (SignatureAlgorithm.ED25519.equals(signatureAlgorithm)
+                    || SignatureAlgorithm.ED448.equals(signatureAlgorithm)) {
+                
+                String xx = jsonPublicKey.getString(X);
+                
+                BigInteger x = new BigInteger(1, Base64Util.base64urldecode(xx));                
+                
+                publicKey = new EDDSAPublicKey(signatureAlgorithm, x.toByteArray());                
             }
 
             if (publicKey != null && jsonKeyValue.has(CERTIFICATE_CHAIN)) {

@@ -14,7 +14,6 @@ import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JSONWebKey;
 import io.jans.as.model.jwk.JSONWebKeySet;
 import io.jans.as.model.jwk.Use;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.model.config.ConfigurationFactory;
 import io.jans.service.cdi.util.CdiUtil;
 import org.apache.commons.lang3.StringUtils;

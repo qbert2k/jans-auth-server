@@ -167,8 +167,8 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         case SIGNATURE: {
             SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
             if (signatureAlgorithm == null) {
-                algorithm = Algorithm.RS256;             
-                signatureAlgorithm = SignatureAlgorithm.RS256;
+                algorithm = Algorithm.ES384;             
+                signatureAlgorithm = SignatureAlgorithm.ES384;
             }
             KeyPairGenerator keyGen = null;
             switch(algorithm.getFamily()) {

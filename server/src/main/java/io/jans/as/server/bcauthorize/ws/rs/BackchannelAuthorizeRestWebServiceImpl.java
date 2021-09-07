@@ -235,21 +235,33 @@ public class BackchannelAuthorizeRestWebServiceImpl implements BackchannelAuthor
                     builder.entity(errorResponseFactory.getErrorAsJson(UNKNOWN_USER_ID));
                     return builder.build();
                 }
-
+                
                 boolean validSignature = false;
-                if (algorithm.getFamily() == AlgorithmFamily.RSA) {
+                
+                switch(algorithm.getFamily()) {
+                case RSA: {
                     RSAPublicKey publicKey = JwkClient.getRSAPublicKey(client.getJwksUri(), keyId);
                     RSASigner rsaSigner = new RSASigner(algorithm, publicKey);
-                    validSignature = rsaSigner.validate(jwt);
-                } else if (algorithm.getFamily() == AlgorithmFamily.EC) {
+                    validSignature = rsaSigner.validate(jwt);                    
+                    break;
+                }
+                case EC: {
                     ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(client.getJwksUri(), keyId);
                     ECDSASigner ecdsaSigner = new ECDSASigner(algorithm, publicKey);
-                    validSignature = ecdsaSigner.validate(jwt);
-                } else if (algorithm.getFamily() == AlgorithmFamily.ED) {
+                    validSignature = ecdsaSigner.validate(jwt);                    
+                    break;
+                }
+                case ED: {
                     EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(client.getJwksUri(), keyId);
                     EDDSASigner ecdsaSigner = new EDDSASigner(algorithm, publicKey);
-                    validSignature = ecdsaSigner.validate(jwt);
+                    validSignature = ecdsaSigner.validate(jwt);                    
+                    break;
                 }
+                default: {
+                    break;                    
+                }
+                }
+                
                 if (!validSignature) {
                     builder = Response.status(Response.Status.BAD_REQUEST.getStatusCode()); // 400
                     builder.entity(errorResponseFactory.getErrorAsJson(UNKNOWN_USER_ID));

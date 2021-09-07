@@ -239,9 +239,8 @@ public class RedirectUri {
             return getJweResponse();
         } else {
             if (signatureAlgorithm == null) {
-                signatureAlgorithm = SignatureAlgorithm.RS256;
+                signatureAlgorithm = SignatureAlgorithm.ES384;
             }
-
             return getJwtResponse();
         }
     }

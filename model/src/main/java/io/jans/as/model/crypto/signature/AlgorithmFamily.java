@@ -17,7 +17,9 @@ public enum AlgorithmFamily {
     HMAC("HMAC"),
     RSA("RSA"),
     EC("EC"),
-    ED("ED");
+    ED("ED"),
+    AES("AES"),
+    PASSW("PASSW");
 
     private final String value;
 
