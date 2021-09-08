@@ -319,6 +319,7 @@ public class CrossEncryptionTest {
     public void encryptWithGluu_RSA_decryptByAll() {
         for (KeyEncryptionAlgorithmSuite keyEncrAlgorithmRSA : keyEncrAlgorithmsRSA) {
             for (BlockEncryptionAlgorithm blckEncrAlgorithm : blockEncryptionAlgorithms) {
+                System.out.println("-----------------");
                 System.out.println(
                         "Gluu encrypted (encryptWithGluu_RSA_decryptByAll):  blckEncrAlgorithm = " + blckEncrAlgorithm);
                 System.out
@@ -401,6 +402,7 @@ public class CrossEncryptionTest {
                             + e.getMessage());
                     assertTrue(false);
                 }
+                System.out.println("-----------------");                
             }
         }
     }
@@ -415,6 +417,7 @@ public class CrossEncryptionTest {
                 blckEncrAlgorithms = blockEncryptionAlgorithms;
             }
             for (BlockEncryptionAlgorithm blckEncrAlgorithm : blckEncrAlgorithms) {
+                System.out.println("-----------------");
                 System.out.println("Gluu encrypted (encryptWithGluu_ECDH_decryptByAll):  blckEncrAlgorithm = "
                         + blckEncrAlgorithm);
                 System.out.println(
@@ -501,6 +504,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
+                System.out.println("-----------------");                
             }
         }
     }
@@ -510,6 +514,7 @@ public class CrossEncryptionTest {
             throws ParseException, JOSEException, InvalidJweException, InvalidJwtException, IOException {
         for (KeyEncryptionAlgorithmSuite keyEncrAlgorithmAES : keyEncrAlgorithmsAES) {
             for (BlockEncryptionAlgorithm blckEncrAlgorithm : blockEncryptionAlgorithms) {
+                System.out.println("-----------------");
                 System.out.println(
                         "Gluu encrypted (encryptWithGluu_AES_decryptByAll):  blckEncrAlgorithm = " + blckEncrAlgorithm);
                 System.out
@@ -587,6 +592,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
+                System.out.println("-----------------");                
             }
         }
     }
@@ -595,6 +601,7 @@ public class CrossEncryptionTest {
     public void encryptWithGluu_Password_decryptByAll() {
         for (KeyEncryptionAlgorithmSuite keyEncrAlgorithmPassw : keyEncrAlgorithmsPassw) {
             for (BlockEncryptionAlgorithm blckEncrAlgorithm : blockEncryptionAlgorithms) {
+                System.out.println("-----------------");
                 System.out.println("Gluu encrypted (encryptWithGluu_Password_decryptByAll):  blckEncrAlgorithm = "
                         + blckEncrAlgorithm);
                 System.out.println(
@@ -667,6 +674,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
+                System.out.println("-----------------");                
             }
         }
     }

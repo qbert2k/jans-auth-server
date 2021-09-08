@@ -22,7 +22,7 @@ import io.jans.as.model.jwt.JwtType;
  */
 public enum SignatureAlgorithm {
 
-    NONE("none"),
+    NONE("none", AlgorithmFamily.NONE, null, null),
     
     HS256("HS256", AlgorithmFamily.HMAC, "HMACSHA256", JWSAlgorithm.HS256),
     HS384("HS384", AlgorithmFamily.HMAC, "HMACSHA384", JWSAlgorithm.HS384),

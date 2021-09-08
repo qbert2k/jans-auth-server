@@ -60,8 +60,6 @@ public class JwtVerifyer {
             throw new InvalidJwtException("JwtVerifyer: jwt == null (jwt isn't defined)");
         }
         
-        boolean verifyingRes = false;
-        
         String signKeyId = jwt.getHeader().getKeyId();
         
         SignatureAlgorithm signatureAlgorithm = jwt.getHeader().getSignatureAlgorithm();
@@ -88,6 +86,9 @@ public class JwtVerifyer {
         JwsSigner signer = null;
         
         switch(signatureAlgorithm.getFamily()) {
+        case NONE: {
+            return true;
+        }
         case HMAC: {
             if(clientSecret == null) {
                 throw new InvalidJwtException("JwtVerifyer: clientSecret == null (clientSecret isn't  defined)");                
@@ -122,9 +123,7 @@ public class JwtVerifyer {
             throw new InvalidJwtException("JwtVerifyer: signer == null (signer isn't  defined)");            
         }
         
-        verifyingRes = signer.validate(jwt);               
-                
-        return verifyingRes;
+        return signer.validate(jwt);               
     }
 
     /**

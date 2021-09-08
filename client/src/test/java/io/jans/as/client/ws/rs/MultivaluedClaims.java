@@ -39,20 +39,14 @@ import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
-import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jws.ECDSASigner;
-import io.jans.as.model.jws.EDDSASigner;
-import io.jans.as.model.jws.HMACSigner;
 import io.jans.as.model.jws.PlainTextSignature;
-import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
+import io.jans.as.model.jwt.JwtVerifyer;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -222,9 +216,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS256, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -309,9 +303,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS384, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -396,9 +390,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS512, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -481,12 +475,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -570,12 +561,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -659,12 +647,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -748,12 +733,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -837,15 +819,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        System.out.println("es256k: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -929,12 +905,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1018,12 +991,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1107,12 +1077,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1196,12 +1163,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1285,12 +1249,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1378,6 +1339,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1465,6 +1429,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1557,6 +1524,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1649,6 +1619,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1741,6 +1714,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1824,15 +1800,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        System.out.println("ed25519: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -1916,15 +1886,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        System.out.println("ed448: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2120,9 +2084,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS256, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2221,9 +2185,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS384, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2322,9 +2286,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS512, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2425,12 +2389,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2531,12 +2492,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2637,12 +2595,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2743,12 +2698,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2849,12 +2801,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -2955,12 +2904,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3061,12 +3007,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3167,12 +3110,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3273,12 +3213,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3379,12 +3316,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3485,15 +3419,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         
-        System.out.println("ed25519: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3594,15 +3522,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
         
-        System.out.println("ed448: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3701,6 +3623,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3799,6 +3724,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -3911,6 +3839,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -4023,6 +3954,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
@@ -4135,6 +4069,9 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);

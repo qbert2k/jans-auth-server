@@ -34,7 +34,6 @@ import io.jans.as.client.BackchannelAuthenticationClient;
 import io.jans.as.client.BackchannelAuthenticationRequest;
 import io.jans.as.client.BackchannelAuthenticationResponse;
 import io.jans.as.client.BaseTest;
-import io.jans.as.client.JwkClient;
 import io.jans.as.client.RegisterClient;
 import io.jans.as.client.RegisterRequest;
 import io.jans.as.client.RegisterResponse;
@@ -47,18 +46,14 @@ import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.crypto.signature.AsymmetricSignatureAlgorithm;
-import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
-import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
-import io.jans.as.model.jws.ECDSASigner;
-import io.jans.as.model.jws.EDDSASigner;
-import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
+import io.jans.as.model.jwt.JwtVerifyer;
 import io.jans.as.model.register.ApplicationType;
+import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -3061,12 +3056,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintRS256 = idToken;
     }
@@ -3135,12 +3128,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintRS384 = idToken;
     }
@@ -3209,12 +3200,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintRS512 = idToken;
     }
@@ -3283,12 +3272,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintES256 = idToken;
     }
@@ -3357,12 +3344,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintES256K = idToken;
     }
@@ -3431,12 +3416,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintES384 = idToken;
     }
@@ -3505,12 +3488,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintES512 = idToken;
     }
@@ -3579,12 +3560,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintPS256 = idToken;
     }
@@ -3653,12 +3632,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintPS384 = idToken;
     }
@@ -3727,12 +3704,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.PS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         idTokenHintPS512 = idToken;
     }
@@ -3802,6 +3777,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         idTokenHintAlgA128KWEncA128GCM = idToken;
     }
@@ -3871,6 +3850,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgA256KWEncA256GCM = idToken;
     }
@@ -3946,6 +3929,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA128CBCPLUSHS256 = idToken;
     }
@@ -4021,6 +4008,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA256CBCPLUSHS512 = idToken;
     }
@@ -4095,6 +4086,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSAOAEPEncA256GCM = idToken;
     }
@@ -4163,12 +4158,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner eddsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-
-        assertTrue(eddsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED25519 = idToken;
     }
@@ -4237,12 +4230,10 @@ public class BackchannelAuthenticationPushMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner eddsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-
-        assertTrue(eddsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED448 = idToken;
     }

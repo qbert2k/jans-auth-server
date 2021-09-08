@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @version February 12, 2019
  */
 public enum AlgorithmFamily {
+    NONE("none"),
     HMAC("HMAC"),
     RSA("RSA"),
     EC("EC"),

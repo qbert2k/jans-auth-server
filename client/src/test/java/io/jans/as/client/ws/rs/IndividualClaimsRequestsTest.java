@@ -38,20 +38,14 @@ import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
-import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jws.ECDSASigner;
-import io.jans.as.model.jws.EDDSASigner;
-import io.jans.as.model.jws.HMACSigner;
 import io.jans.as.model.jws.PlainTextSignature;
-import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
+import io.jans.as.model.jwt.JwtVerifyer;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -438,9 +432,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS256, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -573,9 +567,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS384, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -708,9 +702,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        HMACSigner hmacSigner = new HMACSigner(SignatureAlgorithm.HS512, clientSecret);
-        assertTrue(hmacSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -846,12 +840,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -987,12 +978,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1128,12 +1116,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-
-        assertTrue(rsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1269,12 +1254,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1410,12 +1392,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1551,12 +1530,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1692,12 +1668,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1833,12 +1806,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -1974,12 +1944,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
-
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-
-        assertTrue(ecdsaSigner.validate(jwt));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -2114,6 +2081,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -2248,6 +2218,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -2314,6 +2287,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(registerResponse.getClientSecretExpiresAt());
 
         String clientId = registerResponse.getClientId();
+        @SuppressWarnings("unused")
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Choose encryption key
@@ -2397,6 +2371,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         // 5. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -2463,6 +2440,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(registerResponse.getClientSecretExpiresAt());
 
         String clientId = registerResponse.getClientId();
+        @SuppressWarnings("unused")
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Choose encryption key
@@ -2546,6 +2524,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         // 5. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
@@ -2612,6 +2593,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(registerResponse.getClientSecretExpiresAt());
 
         String clientId = registerResponse.getClientId();
+        @SuppressWarnings("unused")
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Choose encryption key
@@ -2695,6 +2677,9 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.FAMILY_NAME));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
+        
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
 
         // 5. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);

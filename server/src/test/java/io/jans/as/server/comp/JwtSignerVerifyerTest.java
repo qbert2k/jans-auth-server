@@ -84,14 +84,10 @@ public class JwtSignerVerifyerTest extends BaseTest {
     
     @Parameters({ "userSecret", "dnName", "keyStoreFile", "keyStoreSecret"})
     @Test
-    public void signerVerifyerTest(final String userSecret, final String dnName, final String keyStoreFile, final String keyStoreSecret) throws Exception {
-        
-        showTitle("signerVerifyerTest");
-        
+    public void signerVerifyerTest(final String userSecret, final String dnName, final String keyStoreFile, final String keyStoreSecret) {
+        showTitle("signerVerifyerTest suite:");
         for(SignatureAlgorithm signatureAlgorithm : SignatureAlgorithm.values()) {
-            if(SignatureAlgorithm.NONE.equals(signatureAlgorithm)) {
-                continue;
-            }
+            showTitle("signerVerifyerTest suite: signatureAlgorithm = " + signatureAlgorithm);
             try {
                 AppConfiguration appConfiguration = new AppConfiguration();
                 AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);

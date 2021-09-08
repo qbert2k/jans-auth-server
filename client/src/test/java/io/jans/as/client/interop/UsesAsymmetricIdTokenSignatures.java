@@ -20,21 +20,16 @@ import org.testng.annotations.Test;
 import io.jans.as.client.AuthorizationRequest;
 import io.jans.as.client.AuthorizationResponse;
 import io.jans.as.client.BaseTest;
-import io.jans.as.client.JwkClient;
 import io.jans.as.client.RegisterClient;
 import io.jans.as.client.RegisterRequest;
 import io.jans.as.client.RegisterResponse;
 import io.jans.as.model.common.ResponseType;
-import io.jans.as.model.crypto.signature.ECDSAPublicKey;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
-import io.jans.as.model.crypto.signature.RSAPublicKey;
+import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
-import io.jans.as.model.jws.ECDSASigner;
-import io.jans.as.model.jws.EDDSASigner;
-import io.jans.as.model.jws.RSASigner;
 import io.jans.as.model.jwt.Jwt;
-import io.jans.as.model.jwt.JwtHeaderName;
+import io.jans.as.model.jwt.JwtVerifyer;
 import io.jans.as.model.register.ApplicationType;
+import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -93,14 +88,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("rs256: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS256, publicKey);
-        assertTrue(rsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -151,14 +141,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("rs384: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));          
-        
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS384, publicKey);
-        assertTrue(rsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -209,14 +194,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        RSAPublicKey publicKey = JwkClient.getRSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("rs512: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        RSASigner rsaSigner = new RSASigner(SignatureAlgorithm.RS512, publicKey);
-        assertTrue(rsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -267,14 +247,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-
-        System.out.println("es256: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -325,14 +300,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("es256k: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES256K, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -383,14 +353,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("es384: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES384, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -441,14 +406,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        ECDSAPublicKey publicKey = JwkClient.getECDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("es512: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        ECDSASigner ecdsaSigner = new ECDSASigner(SignatureAlgorithm.ES512, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -499,14 +459,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("ed25519: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED25519, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
@@ -557,14 +512,9 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        EDDSAPublicKey publicKey = JwkClient.getEDDSAPublicKey(
-                jwksUri,
-                jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));
-        
-        System.out.println("ed448: key id = " + jwt.getHeader().getClaimAsString(JwtHeaderName.KEY_ID));        
-        
-        EDDSASigner ecdsaSigner = new EDDSASigner(SignatureAlgorithm.ED448, publicKey);
-        assertTrue(ecdsaSigner.validate(jwt));
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
+                JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
 }
