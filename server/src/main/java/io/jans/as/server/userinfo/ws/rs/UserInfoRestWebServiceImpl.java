@@ -71,7 +71,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.text.ParseException;
 import java.util.*;

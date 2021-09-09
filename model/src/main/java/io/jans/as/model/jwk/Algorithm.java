@@ -11,10 +11,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.nimbusds.jose.JWSAlgorithm;
 
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
-import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.util.StringUtils;
 
 /**
@@ -63,8 +61,6 @@ public enum Algorithm {
     PBES2_HS256_PLUS_A128KW("PBES2-HS256+A128KW", Use.ENCRYPTION, AlgorithmFamily.PASSW),
     PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW", Use.ENCRYPTION, AlgorithmFamily.PASSW),
     PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW", Use.ENCRYPTION, AlgorithmFamily.PASSW);
-
-//    DIR("dir"); - ?        
 
     private final String paramName;
     private final Use use;

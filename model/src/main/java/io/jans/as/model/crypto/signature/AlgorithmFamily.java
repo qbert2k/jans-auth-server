@@ -20,7 +20,8 @@ public enum AlgorithmFamily {
     EC("EC"),
     ED("ED"),
     AES("AES"),
-    PASSW("PASSW");
+    PASSW("PASSW"),
+    DIR("DIR");
 
     private final String value;
 

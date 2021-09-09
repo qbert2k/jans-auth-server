@@ -6,21 +6,9 @@
         <listener class-name="io.jans.as.client.RetryListener" />
     </listeners>
 
-    <test name="CIBA Ping Mode" enabled="true">
+    <test name="Address claims test (HTTP)" enabled="true">
         <classes>
-            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPingMode"/>
-        </classes>
-    </test>
-
-    <test name="CIBA Poll Mode" enabled="true">
-        <classes>
-            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPollMode"/>
-        </classes>
-    </test>
-
-    <test name="CIBA Push Mode" enabled="true">
-        <classes>
-            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPushMode"/>
+            <class name="io.jans.as.client.ws.rs.AddressClaimsTest"/>
         </classes>
     </test>
 

@@ -240,7 +240,7 @@ public class KeyGenerator {
 			    key.setKid(result.getString(KEY_ID));
 			    key.setUse(Use.ENCRYPTION);
 			    key.setAlg(algorithm);
-			    key.setKty(KeyType.fromString(encryptionAlgorithm.getFamily()));
+			    key.setKty(KeyType.fromString(encryptionAlgorithm.getFamily().toString()));
 			    key.setExp(result.optLong(EXPIRATION_TIME));
                 key.setCrv(encryptionAlgorithm.getCurve());			    
 			    key.setN(result.optString(MODULUS));

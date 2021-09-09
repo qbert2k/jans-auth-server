@@ -30,6 +30,7 @@ import com.nimbusds.jwt.SignedJWT;
 
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.exception.InvalidJweException;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwt.JwtHeader;
@@ -76,6 +77,127 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
 
     public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException, NoSuchAlgorithmException {
         final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
+        if(keyEncryptionAlgorithm == null) {
+            throw new InvalidJweException("KeyEncryptionAlgorithm isn't defined");
+        }
+        AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
+        switch(algorithmFamily) {
+        case RSA: {
+            return new RSAEncrypter(new RSAKey.Builder((RSAPublicKey) publicKey).build());            
+        }
+        case EC: {
+            return new ECDHEncrypter(new ECKey.Builder(ecKey).build());            
+        }
+        case AES:
+        case DIR: {
+            if (sharedSymmetricKey == null) {
+                throw new InvalidJweException("The shared symmetric key is null");
+            }
+            int keyLength;
+            switch (keyEncryptionAlgorithm) {
+            case A128KW:
+            case A128GCMKW:
+                keyLength = 16;
+                break;
+            case A192KW:
+            case A192GCMKW:
+                keyLength = 24;
+                break;
+            case A256KW:
+            case A256GCMKW:
+                keyLength = 32;
+                break;
+            default:
+                throw new InvalidJweException(String
+                        .format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
+            }
+            if (sharedSymmetricKey.length != keyLength) {
+                MessageDigest sha = MessageDigest.getInstance("SHA-256");
+                sharedSymmetricKey = sha.digest(sharedSymmetricKey);
+                sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
+            }
+            if (AlgorithmFamily.AES.equals(algorithmFamily)) {
+                return new AESEncrypter(sharedSymmetricKey);            
+            }
+            else if(AlgorithmFamily.DIR.equals(algorithmFamily)) {
+                return new DirectEncrypter(sharedSymmetricKey);
+            }
+        }
+        case PASSW: {
+            return new PasswordBasedEncrypter(sharedSymmetricPassword, 16, 8192);            
+        }
+        default: {
+            throw new InvalidJweException("wrong AlgorithmFamily value");
+        }
+        }
+/*        
+    case DIR: {
+        if (sharedSymmetricKey == null) {
+            throw new InvalidJweException("The shared symmetric key is null");
+        }
+        int keyLength;
+        switch (keyEncryptionAlgorithm) {
+        case A128KW:
+        case A128GCMKW:
+            keyLength = 16;
+            break;
+        case A192KW:
+        case A192GCMKW:
+            keyLength = 24;
+            break;
+        case A256KW:
+        case A256GCMKW:
+            keyLength = 32;
+            break;
+        default:
+            throw new InvalidJweException(String
+                    .format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
+        }
+        if (sharedSymmetricKey.length != keyLength) {
+            MessageDigest sha = MessageDigest.getInstance("SHA-256");
+            sharedSymmetricKey = sha.digest(sharedSymmetricKey);
+            sharedSymmetricKey = Arrays.copyOf(sharedSymmetricKey, keyLength);
+        }
+        return new DirectEncrypter(sharedSymmetricKey);            
+    }        
+*/     
+ /* 
+        public enum AlgorithmFamily {
+            NONE("none"),
+            HMAC("HMAC"),
+            RSA("RSA"),
+            EC("EC"),
+            ED("ED"),
+            AES("AES"),
+            PASSW("PASSW"),
+            DIR("DIR");
+        
+        
+        switch(keyEncryptionAlgorithm) {
+        case RSA1_5:
+        case RSA_OAEP:
+        case RSA_OAEP_256: {
+            break;
+        }
+        case ECDH_ES:
+        case ECDH_ES_PLUS_A128KW:
+        case ECDH_ES_PLUS_A192KW:
+        case ECDH_ES_PLUS_A256KW: {
+            break;
+        }
+        case A128KW:
+        case A192KW:
+        case A256KW:
+        case A128GCMKW:
+        case A192GCMKW:
+        case A256GCMKW: {
+            break;
+        }
+        case PBES2_HS256_PLUS_A128KW:
+        case PBES2_HS384_PLUS_A192KW:
+        }
+        
+        
         if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm) 
                 || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm) 
                 || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm)) {
@@ -127,6 +249,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         } else {
             throw new InvalidJweException("The key encryption algorithm is not supported");
         }
+*/        
     }
 
     public static Payload createPayload(Jwe jwe)

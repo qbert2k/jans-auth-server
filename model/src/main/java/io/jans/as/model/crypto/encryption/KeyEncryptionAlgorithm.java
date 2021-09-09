@@ -9,6 +9,7 @@ package io.jans.as.model.crypto.encryption;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.jwk.Algorithm;
 
@@ -17,36 +18,36 @@ import io.jans.as.model.jwk.Algorithm;
  */
 public enum KeyEncryptionAlgorithm {
 
-    RSA1_5("RSA1_5", "RSA", "RSA/ECB/PKCS1Padding"),
-    RSA_OAEP("RSA-OAEP", "RSA", "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
-    RSA_OAEP_256("RSA-OAEP-256", "RSA", "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"),
-
-    ECDH_ES("ECDH-ES", "EC", EllipticEdvardsCurve.P_256),
-    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", "EC", EllipticEdvardsCurve.P_256),
-    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", "EC", EllipticEdvardsCurve.P_256),
-    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", "EC", EllipticEdvardsCurve.P_256),
-
-    A128KW("A128KW"),
-    A192KW("A192KW"),
-    A256KW("A256KW"),
+    RSA1_5("RSA1_5", AlgorithmFamily.RSA, "RSA/ECB/PKCS1Padding"),
+    RSA_OAEP("RSA-OAEP", AlgorithmFamily.RSA, "RSA/ECB/OAEPWithSHA1AndMGF1Padding"),
+    RSA_OAEP_256("RSA-OAEP-256", AlgorithmFamily.RSA, "RSA/ECB/OAEPWithSHA-256AndMGF1Padding"),
     
-    A128GCMKW("A128GCMKW"),
-    A192GCMKW("A192GCMKW"),
-    A256GCMKW("A256GCMKW"),
+    ECDH_ES("ECDH-ES", AlgorithmFamily.EC, EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A128KW("ECDH-ES+A128KW", AlgorithmFamily.EC, EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A192KW("ECDH-ES+A192KW", AlgorithmFamily.EC, EllipticEdvardsCurve.P_256),
+    ECDH_ES_PLUS_A256KW("ECDH-ES+A256KW", AlgorithmFamily.EC, EllipticEdvardsCurve.P_256),
 
-    PBES2_HS256_PLUS_A128KW("PBES2-HS256+A128KW"),
-    PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW"),
-    PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW"),
+    A128KW("A128KW", AlgorithmFamily.AES),
+    A192KW("A192KW", AlgorithmFamily.AES),
+    A256KW("A256KW", AlgorithmFamily.AES),
+    
+    A128GCMKW("A128GCMKW", AlgorithmFamily.AES),
+    A192GCMKW("A192GCMKW", AlgorithmFamily.AES),
+    A256GCMKW("A256GCMKW", AlgorithmFamily.AES),
 
-    DIR("dir");
+    PBES2_HS256_PLUS_A128KW("PBES2-HS256+A128KW", AlgorithmFamily.PASSW),
+    PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW", AlgorithmFamily.PASSW),
+    PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW", AlgorithmFamily.PASSW),
+
+    DIR("DIR", AlgorithmFamily.DIR);
 
     private final String name;
-    private final String family;
     private final String algorithm;
     private final Algorithm alg;
-    private final EllipticEdvardsCurve curve;    
+    private final EllipticEdvardsCurve curve;
+    private final AlgorithmFamily family;
 
-    private KeyEncryptionAlgorithm(String name) {
+    private KeyEncryptionAlgorithm(String name, AlgorithmFamily family) {
         this.name = name;
         this.family = null;
         this.algorithm = null;
@@ -54,7 +55,7 @@ public enum KeyEncryptionAlgorithm {
         this.alg = Algorithm.fromString(name);
     }
 
-    private KeyEncryptionAlgorithm(String name, String family, String algorithm) {
+    private KeyEncryptionAlgorithm(String name, AlgorithmFamily family, String algorithm) {
         this.name = name;
         this.family = family;
         this.algorithm = algorithm;
@@ -62,7 +63,7 @@ public enum KeyEncryptionAlgorithm {
         this.alg = Algorithm.fromString(name);
     }
     
-    private KeyEncryptionAlgorithm(String name, String family, EllipticEdvardsCurve curve) {
+    private KeyEncryptionAlgorithm(String name, AlgorithmFamily family, EllipticEdvardsCurve curve) {
         this.name = name;
         this.family = family;
         this.algorithm = null;
@@ -78,7 +79,7 @@ public enum KeyEncryptionAlgorithm {
         return name;
     }
 
-    public String getFamily() {
+    public AlgorithmFamily getFamily() {
         return family;
     }
 

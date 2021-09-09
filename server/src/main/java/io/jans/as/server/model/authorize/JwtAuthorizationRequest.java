@@ -18,6 +18,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
@@ -127,8 +128,9 @@ public class JwtAuthorizationRequest {
                         jwtHeader.getClaimAsString(JwtHeaderName.ENCRYPTION_METHOD));
 
                 JweDecrypterImpl jweDecrypter = null;
-                if ("RSA".equals(keyEncryptionAlgorithm.getFamily())
-                        || "EC".equals(keyEncryptionAlgorithm.getFamily())                       
+
+                if (AlgorithmFamily.RSA.equals(keyEncryptionAlgorithm.getFamily())
+                        || AlgorithmFamily.EC.equals(keyEncryptionAlgorithm.getFamily())                       
                         ) {
                     PrivateKey privateKey = cryptoProvider.getPrivateKey(keyId);
                     if (privateKey == null && StringUtils.isNotBlank(appConfiguration.getStaticDecryptionKid())) {
