@@ -39,7 +39,7 @@ public enum KeyEncryptionAlgorithm {
     PBES2_HS384_PLUS_A192KW("PBES2-HS384+A192KW", AlgorithmFamily.PASSW),
     PBES2_HS512_PLUS_A256KW("PBES2-HS512+A256KW", AlgorithmFamily.PASSW),
 
-    DIR("DIR", AlgorithmFamily.DIR);
+    DIR("dir", AlgorithmFamily.DIR);
 
     private final String name;
     private final String algorithm;
@@ -49,7 +49,7 @@ public enum KeyEncryptionAlgorithm {
 
     private KeyEncryptionAlgorithm(String name, AlgorithmFamily family) {
         this.name = name;
-        this.family = null;
+        this.family = family;
         this.algorithm = null;
         this.curve = null;
         this.alg = Algorithm.fromString(name);

@@ -18,8 +18,6 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
-import io.jans.as.model.crypto.signature.AlgorithmFamily;
-import io.jans.as.model.crypto.signature.EllipticEdvardsCurve;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
@@ -128,18 +126,27 @@ public class JwtAuthorizationRequest {
                         jwtHeader.getClaimAsString(JwtHeaderName.ENCRYPTION_METHOD));
 
                 JweDecrypterImpl jweDecrypter = null;
-
-                if (AlgorithmFamily.RSA.equals(keyEncryptionAlgorithm.getFamily())
-                        || AlgorithmFamily.EC.equals(keyEncryptionAlgorithm.getFamily())                       
-                        ) {
+                
+                switch(keyEncryptionAlgorithm.getFamily()) {
+                case RSA:
+                case EC: {
                     PrivateKey privateKey = cryptoProvider.getPrivateKey(keyId);
                     if (privateKey == null && StringUtils.isNotBlank(appConfiguration.getStaticDecryptionKid())) {
                         privateKey = cryptoProvider.getPrivateKey(appConfiguration.getStaticDecryptionKid());
                     }
                     jweDecrypter = new JweDecrypterImpl(privateKey);
-                } else {
+                    break;
+                }
+                case AES:
+                case PASSW:
+                case DIR: {
                     ClientService clientService = CdiUtil.bean(ClientService.class);
-                    jweDecrypter = new JweDecrypterImpl(clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8));
+                    jweDecrypter = new JweDecrypterImpl(clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8));                    
+                    break;
+                }
+                default: {
+                    throw new InvalidJwtException("Wrong KeyEncryptionAlgorithm family" + keyEncryptionAlgorithm.getFamily());                    
+                }
                 }
                 
                 jweDecrypter.setKeyEncryptionAlgorithm(keyEncryptionAlgorithm);
