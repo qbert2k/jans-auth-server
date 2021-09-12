@@ -7,6 +7,7 @@
 package io.jans.as.client.ciba;
 
 import static io.jans.as.model.register.RegisterRequestParam.BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG;
+import static io.jans.as.model.register.RegisterRequestParam.BACKCHANNEL_CLIENT_NOTIFICATION_ENDPOINT;
 import static io.jans.as.model.register.RegisterRequestParam.BACKCHANNEL_TOKEN_DELIVERY_MODE;
 import static io.jans.as.model.register.RegisterRequestParam.BACKCHANNEL_USER_CODE_PARAMETER;
 import static org.testng.Assert.assertEquals;
@@ -82,6 +83,10 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
     String idTokenHintAlgRSAOAEPEncA256GCM;
     String idTokenHintED25519;
     String idTokenHintED448;
+    String idTokenHintAlgDirEncA128GCM;
+    String idTokenHintAlgDirEncA256CBC_HS512;
+    String idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM;
+    String idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512;
 
     String loginHintTokenRS256;
     String loginHintTokenRS384;
@@ -509,10 +514,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         String sub = jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER);
 
@@ -1381,6 +1385,280 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
                                                                         // modes.
     }
 
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode" })
+    @Test(dependsOnMethods = "idTokenHintAlgDirEncA128GCM")
+    public void backchannelTokenDeliveryModePingIdTokenHintAlgDirEncA128GCM(final String clientJwksUri,
+            final String backchannelClientNotificationEndpoint, final String backchannelUserCode) {
+        showTitle("backchannelTokenDeliveryModePingIdTokenHintAlgDirEncA128GCM");
+
+        // 1. Dynamic Client Registration
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app", null);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setGrantTypes(Collections.singletonList(GrantType.CIBA));
+
+        registerRequest.setBackchannelTokenDeliveryMode(BackchannelTokenDeliveryMode.POLL);
+        registerRequest.setBackchannelClientNotificationEndpoint(backchannelClientNotificationEndpoint);
+        registerRequest.setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm.ES256);
+        registerRequest.setBackchannelUserCodeParameter(true);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_USER_CODE_PARAMETER.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_CLIENT_NOTIFICATION_ENDPOINT.toString()));
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
+                BackchannelTokenDeliveryMode.POLL.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
+                AsymmetricSignatureAlgorithm.ES256.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
+                Boolean.toString(true));
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Authentication Request
+        String clientNotificationToken = UUID.randomUUID().toString();
+
+        BackchannelAuthenticationRequest backchannelAuthenticationRequest = new BackchannelAuthenticationRequest();
+        backchannelAuthenticationRequest.setScope(Collections.singletonList("openid"));
+        backchannelAuthenticationRequest.setIdTokenHint(idTokenHintAlgDirEncA128GCM);
+        backchannelAuthenticationRequest.setClientNotificationToken(clientNotificationToken);
+        backchannelAuthenticationRequest.setUserCode(backchannelUserCode);
+        backchannelAuthenticationRequest.setRequestedExpiry(1200);
+        backchannelAuthenticationRequest.setAuthUsername(clientId);
+        backchannelAuthenticationRequest.setAuthPassword(clientSecret);
+
+        BackchannelAuthenticationClient backchannelAuthenticationClient = new BackchannelAuthenticationClient(
+                backchannelAuthenticationEndpoint);
+        backchannelAuthenticationClient.setRequest(backchannelAuthenticationRequest);
+        BackchannelAuthenticationResponse backchannelAuthenticationResponse = backchannelAuthenticationClient.exec();
+
+        showClient(backchannelAuthenticationClient);
+        assertEquals(backchannelAuthenticationResponse.getStatus(), 200,
+                "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
+        assertNotNull(backchannelAuthenticationResponse.getAuthReqId());
+        assertNotNull(backchannelAuthenticationResponse.getExpiresIn());
+        assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
+                                                                        // Client is registered to use the Poll or Ping
+                                                                        // modes.
+    }
+
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode" })
+    @Test(dependsOnMethods = "idTokenHintAlgDirEncA256CBC_HS512")
+    public void backchannelTokenDeliveryModePingIdTokenHintAlgDirEncA256CBC_HS512(final String clientJwksUri,
+            final String backchannelClientNotificationEndpoint, final String backchannelUserCode) {
+        showTitle("backchannelTokenDeliveryModePingIdTokenHintAlgDirEncA256CBC_HS512");
+
+        // 1. Dynamic Client Registration
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app", null);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setGrantTypes(Collections.singletonList(GrantType.CIBA));
+
+        registerRequest.setBackchannelTokenDeliveryMode(BackchannelTokenDeliveryMode.POLL);
+        registerRequest.setBackchannelClientNotificationEndpoint(backchannelClientNotificationEndpoint);
+        registerRequest.setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm.ES384);
+        registerRequest.setBackchannelUserCodeParameter(true);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_USER_CODE_PARAMETER.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_CLIENT_NOTIFICATION_ENDPOINT.toString()));
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
+                BackchannelTokenDeliveryMode.POLL.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
+                AsymmetricSignatureAlgorithm.ES384.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
+                Boolean.toString(true));
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Authentication Request
+        String clientNotificationToken = UUID.randomUUID().toString();
+
+        BackchannelAuthenticationRequest backchannelAuthenticationRequest = new BackchannelAuthenticationRequest();
+        backchannelAuthenticationRequest.setScope(Collections.singletonList("openid"));
+        backchannelAuthenticationRequest.setIdTokenHint(idTokenHintAlgDirEncA256CBC_HS512);
+        backchannelAuthenticationRequest.setClientNotificationToken(clientNotificationToken);
+        backchannelAuthenticationRequest.setUserCode(backchannelUserCode);
+        backchannelAuthenticationRequest.setRequestedExpiry(1200);
+        backchannelAuthenticationRequest.setAuthUsername(clientId);
+        backchannelAuthenticationRequest.setAuthPassword(clientSecret);
+
+        BackchannelAuthenticationClient backchannelAuthenticationClient = new BackchannelAuthenticationClient(
+                backchannelAuthenticationEndpoint);
+        backchannelAuthenticationClient.setRequest(backchannelAuthenticationRequest);
+        BackchannelAuthenticationResponse backchannelAuthenticationResponse = backchannelAuthenticationClient.exec();
+
+        showClient(backchannelAuthenticationClient);
+        assertEquals(backchannelAuthenticationResponse.getStatus(), 200,
+                "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
+        assertNotNull(backchannelAuthenticationResponse.getAuthReqId());
+        assertNotNull(backchannelAuthenticationResponse.getExpiresIn());
+        assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
+                                                                        // Client is registered to use the Poll or Ping
+                                                                        // modes.
+    }
+
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode" })
+    @Test(dependsOnMethods = "idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM")
+    public void backchannelTokenDeliveryModePingIdTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM(
+            final String clientJwksUri, final String backchannelClientNotificationEndpoint,
+            final String backchannelUserCode) {
+        showTitle("backchannelTokenDeliveryModePingIdTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM");
+
+        // 1. Dynamic Client Registration
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app", null);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setGrantTypes(Collections.singletonList(GrantType.CIBA));
+
+        registerRequest.setBackchannelTokenDeliveryMode(BackchannelTokenDeliveryMode.POLL);
+        registerRequest.setBackchannelClientNotificationEndpoint(backchannelClientNotificationEndpoint);
+        registerRequest.setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm.ES256);
+        registerRequest.setBackchannelUserCodeParameter(true);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_USER_CODE_PARAMETER.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_CLIENT_NOTIFICATION_ENDPOINT.toString()));
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
+                BackchannelTokenDeliveryMode.POLL.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
+                AsymmetricSignatureAlgorithm.ES256.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
+                Boolean.toString(true));
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Authentication Request
+        String clientNotificationToken = UUID.randomUUID().toString();
+
+        BackchannelAuthenticationRequest backchannelAuthenticationRequest = new BackchannelAuthenticationRequest();
+        backchannelAuthenticationRequest.setScope(Collections.singletonList("openid"));
+        backchannelAuthenticationRequest.setIdTokenHint(idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM);
+        backchannelAuthenticationRequest.setClientNotificationToken(clientNotificationToken);
+        backchannelAuthenticationRequest.setUserCode(backchannelUserCode);
+        backchannelAuthenticationRequest.setRequestedExpiry(1200);
+        backchannelAuthenticationRequest.setAuthUsername(clientId);
+        backchannelAuthenticationRequest.setAuthPassword(clientSecret);
+
+        BackchannelAuthenticationClient backchannelAuthenticationClient = new BackchannelAuthenticationClient(
+                backchannelAuthenticationEndpoint);
+        backchannelAuthenticationClient.setRequest(backchannelAuthenticationRequest);
+        BackchannelAuthenticationResponse backchannelAuthenticationResponse = backchannelAuthenticationClient.exec();
+
+        showClient(backchannelAuthenticationClient);
+        assertEquals(backchannelAuthenticationResponse.getStatus(), 200,
+                "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
+        assertNotNull(backchannelAuthenticationResponse.getAuthReqId());
+        assertNotNull(backchannelAuthenticationResponse.getExpiresIn());
+        assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
+                                                                        // Client is registered to use the Poll or Ping
+                                                                        // modes.
+    }
+
+    @Parameters({ "clientJwksUri", "backchannelClientNotificationEndpoint", "backchannelUserCode" })
+    @Test(dependsOnMethods = "idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512")
+    public void backchannelTokenDeliveryModePingIdTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512(
+            final String clientJwksUri, final String backchannelClientNotificationEndpoint,
+            final String backchannelUserCode) {
+        showTitle("backchannelTokenDeliveryModePingIdTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512");
+
+        // 1. Dynamic Client Registration
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app", null);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setGrantTypes(Collections.singletonList(GrantType.CIBA));
+
+        registerRequest.setBackchannelTokenDeliveryMode(BackchannelTokenDeliveryMode.POLL);
+        registerRequest.setBackchannelClientNotificationEndpoint(backchannelClientNotificationEndpoint);
+        registerRequest.setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm.ES256);
+        registerRequest.setBackchannelUserCodeParameter(true);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_USER_CODE_PARAMETER.toString()));
+        assertTrue(registerResponse.getClaims().containsKey(BACKCHANNEL_CLIENT_NOTIFICATION_ENDPOINT.toString()));
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_TOKEN_DELIVERY_MODE.toString()),
+                BackchannelTokenDeliveryMode.POLL.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_AUTHENTICATION_REQUEST_SIGNING_ALG.toString()),
+                AsymmetricSignatureAlgorithm.ES256.getValue());
+        assertEquals(registerResponse.getClaims().get(BACKCHANNEL_USER_CODE_PARAMETER.toString()),
+                Boolean.toString(true));
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Authentication Request
+        String clientNotificationToken = UUID.randomUUID().toString();
+
+        BackchannelAuthenticationRequest backchannelAuthenticationRequest = new BackchannelAuthenticationRequest();
+        backchannelAuthenticationRequest.setScope(Collections.singletonList("openid"));
+        backchannelAuthenticationRequest.setIdTokenHint(idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512);
+        backchannelAuthenticationRequest.setClientNotificationToken(clientNotificationToken);
+        backchannelAuthenticationRequest.setUserCode(backchannelUserCode);
+        backchannelAuthenticationRequest.setRequestedExpiry(1200);
+        backchannelAuthenticationRequest.setAuthUsername(clientId);
+        backchannelAuthenticationRequest.setAuthPassword(clientSecret);
+
+        BackchannelAuthenticationClient backchannelAuthenticationClient = new BackchannelAuthenticationClient(
+                backchannelAuthenticationEndpoint);
+        backchannelAuthenticationClient.setRequest(backchannelAuthenticationRequest);
+        BackchannelAuthenticationResponse backchannelAuthenticationResponse = backchannelAuthenticationClient.exec();
+
+        showClient(backchannelAuthenticationClient);
+        assertEquals(backchannelAuthenticationResponse.getStatus(), 200,
+                "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
+        assertNotNull(backchannelAuthenticationResponse.getAuthReqId());
+        assertNotNull(backchannelAuthenticationResponse.getExpiresIn());
+        assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
+                                                                        // Client is registered to use the Poll or Ping
+                                                                        // modes.
+    }
+
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "idTokenHintAlgRSA15EncA128CBCPLUSHS256")
     public void backchannelTokenDeliveryModePollIdTokenHintAlgRSA15EncA128CBCPLUSHS256(final String clientJwksUri,
@@ -1724,7 +2002,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
     }
-    
+
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "loginHintTokenRS256")
     public void backchannelTokenDeliveryModePollLoginHintTokenRS256(final String clientJwksUri,
@@ -1988,7 +2266,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
     }
-    
+
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "loginHintTokenES256K")
     public void backchannelTokenDeliveryModePollLoginHintTokenES256K(final String clientJwksUri,
@@ -2053,7 +2331,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
-    }    
+    }
 
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "loginHintTokenES384")
@@ -2384,7 +2662,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
     }
-    
+
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "loginHintTokenED25519")
     public void backchannelTokenDeliveryModePollLoginHintTokenED25519(final String clientJwksUri,
@@ -2450,7 +2728,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
     }
-    
+
     @Parameters({ "clientJwksUri", "backchannelUserCode" })
     @Test(dependsOnMethods = "loginHintTokenED448")
     public void backchannelTokenDeliveryModePollLoginHintTokenED448(final String clientJwksUri,
@@ -2515,7 +2793,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(backchannelAuthenticationResponse.getInterval()); // This parameter will only be present if the
                                                                         // Client is registered to use the Poll or Ping
                                                                         // modes.
-    }    
+    }
 
     @Parameters({ "clientJwksUri" })
     @Test
@@ -3005,10 +3283,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS256 = idToken;
     }
@@ -3077,10 +3354,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS384 = idToken;
     }
@@ -3149,10 +3425,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS512 = idToken;
     }
@@ -3221,10 +3496,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES256 = idToken;
     }
@@ -3293,10 +3567,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES256K = idToken;
     }
@@ -3365,10 +3638,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES384 = idToken;
     }
@@ -3437,10 +3709,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES512 = idToken;
     }
@@ -3509,10 +3780,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS256 = idToken;
     }
@@ -3581,10 +3851,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS384 = idToken;
     }
@@ -3653,10 +3922,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS512 = idToken;
     }
@@ -3726,10 +3994,9 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgA128KWEncA128GCM = idToken;
     }
@@ -3799,12 +4066,299 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgA256KWEncA256GCM = idToken;
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void idTokenHintAlgDirEncA128GCM(final String userId, final String userSecret, final String redirectUri,
+            final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("idTokenHintAlgDirEncA128GCM");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.DIR);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A128GCM);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Request authorization
+        List<String> scopes = Collections.singletonList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+
+        // 3. Validate id_token
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
+
+        idTokenHintAlgDirEncA128GCM = idToken;
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void idTokenHintAlgDirEncA256CBC_HS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("idTokenHintAlgDirEncA256CBC_HS512");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.DIR);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_HS512);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Request authorization
+        List<String> scopes = Collections.singletonList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+
+        // 3. Validate id_token
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
+
+        idTokenHintAlgDirEncA256CBC_HS512 = idToken;
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A128GCM);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Request authorization
+        List<String> scopes = Collections.singletonList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+
+        // 3. Validate id_token
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
+
+        idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM = idToken;
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
+    @Test
+    public void idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String sectorIdentifierUri) throws Exception {
+        showTitle("idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_HS512);
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+        String clientSecret = registerResponse.getClientSecret();
+
+        // 2. Request authorization
+        List<String> scopes = Collections.singletonList("openid");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        AuthorizeClient authorizeClient = new AuthorizeClient(authorizationEndpoint);
+        authorizeClient.setRequest(authorizationRequest);
+
+        AuthorizationResponse authorizationResponse = authenticateResourceOwnerAndGrantAccess(authorizationEndpoint,
+                authorizationRequest, userId, userSecret);
+
+        assertNotNull(authorizationResponse.getLocation(), "The location is null");
+        assertNotNull(authorizationResponse.getAccessToken(), "The accessToken is null");
+        assertNotNull(authorizationResponse.getTokenType(), "The tokenType is null");
+        assertNotNull(authorizationResponse.getIdToken(), "The idToken is null");
+        assertNotNull(authorizationResponse.getState(), "The state is null");
+
+        String idToken = authorizationResponse.getIdToken();
+
+        // 3. Validate id_token
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
+        assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUDIENCE));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.EXPIRATION_TIME));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
+        assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
+
+        idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512 = idToken;
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri", "clientJwksUri",
@@ -3878,9 +4432,8 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA128CBCPLUSHS256 = idToken;
@@ -3957,9 +4510,8 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA256CBCPLUSHS512 = idToken;
@@ -4035,9 +4587,8 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSAOAEPEncA256GCM = idToken;
@@ -4107,13 +4658,12 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED25519 = idToken;
-    }    
+    }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
@@ -4179,14 +4729,13 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
-        
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
-                JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+
+        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED448 = idToken;
-    }    
-    
+    }
+
     @Parameters({ "RS256_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenRS256(final String keyId, final String userEmail, final String dnName,
@@ -4296,7 +4845,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
 
         loginHintTokenES256K = jwt.toString();
     }
-    
+
     @Parameters({ "ES384_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenES384(final String keyId, final String userEmail, final String dnName,
@@ -4406,7 +4955,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
 
         loginHintTokenPS512 = jwt.toString();
     }
-    
+
     @Parameters({ "Ed25519_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenED25519(final String keyId, final String userEmail, final String dnName,
@@ -4427,8 +4976,8 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         jwt.setEncodedSignature(encodedSignature);
 
         loginHintTokenED25519 = jwt.toString();
-    }    
-    
+    }
+
     @Parameters({ "Ed448_keyId", "userEmail", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
     public void loginHintTokenED448(final String keyId, final String userEmail, final String dnName,
@@ -4449,6 +4998,6 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         jwt.setEncodedSignature(encodedSignature);
 
         loginHintTokenED448 = jwt.toString();
-    }    
-    
+    }
+
 }
