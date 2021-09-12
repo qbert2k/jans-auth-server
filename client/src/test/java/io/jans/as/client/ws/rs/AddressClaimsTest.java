@@ -5196,7 +5196,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedPassword(clientSecret);        
+        userInfoClient.setSharedPassword(clientSecret);
         UserInfoResponse userInfoResponse = userInfoClient.exec();        
 
         showClient(userInfoClient);
