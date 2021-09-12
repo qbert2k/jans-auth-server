@@ -19,6 +19,11 @@ import io.jans.as.model.token.JsonWebResponse;
  */
 public class Jwe extends JsonWebResponse {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
     private String encodedHeader;
     private String encodedEncryptedKey;
     private String encodedInitializationVector;
@@ -96,6 +101,20 @@ public class Jwe extends JsonWebResponse {
 
         return jwe;
     }
+    
+    public static Jwe parsePassw(String encodedJwe, PrivateKey privateKey, String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
+        Jwe jwe = null;
+
+        if (privateKey != null) {
+            JweDecrypter jweDecrypter = new JweDecrypterImpl(privateKey);
+            jwe = jweDecrypter.decrypt(encodedJwe);
+        } else if (sharedSymmetricPassword != null) {
+            JweDecrypter jweDecrypter = new JweDecrypterImpl(sharedSymmetricPassword);
+            jwe = jweDecrypter.decrypt(encodedJwe);
+        }
+
+        return jwe;
+    }    
 
     public Jwt getSignedJWTPayload() {
         return signedJWTPayload;

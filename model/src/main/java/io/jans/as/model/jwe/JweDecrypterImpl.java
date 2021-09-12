@@ -99,7 +99,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                 throw new InvalidJweException("BlockEncryptionAlgorithm isn't defined");
             }
             Key encriptionKey = null;
-            AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
+            final AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
             if (algorithmFamily == AlgorithmFamily.RSA || algorithmFamily == AlgorithmFamily.EC) {
                 encriptionKey = privateKey;
             } else if (algorithmFamily == AlgorithmFamily.AES || algorithmFamily == AlgorithmFamily.DIR) {
@@ -171,10 +171,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             } else {
                 throw new InvalidJweException("wrong AlgorithmFamily value");
             }
-            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW) {
-
+            if(algorithmFamily == AlgorithmFamily.PASSW) {
                 JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
                 decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
                 encryptedJwt.decrypt(decrypter);
@@ -188,7 +185,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     final String base64encodedPayload = encryptedJwt.getPayload().toString();
                     jwe.setClaims(new JwtClaims(base64encodedPayload));
                 }
-                return jwe;
+                return jwe;                
             } else {
                 JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
                 decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
@@ -203,7 +200,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     final String base64encodedPayload = encryptedJwt.getPayload().toString();
                     jwe.setClaims(new JwtClaims(base64encodedPayload));
                 }
-                return jwe;
+                return jwe;                
             }
         } catch (Exception e) {
             throw new InvalidJweException(e);

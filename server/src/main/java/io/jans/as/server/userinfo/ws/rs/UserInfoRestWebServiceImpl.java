@@ -17,6 +17,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.error.ErrorResponseFactory;
 import io.jans.as.model.exception.InvalidClaimException;
@@ -288,7 +289,58 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
         // Claims
         jwe.setClaims(createJwtClaims(user, authorizationGrant, scopes));
+        final AlgorithmFamily keyEncryptionAlgorithmFamily = keyEncryptionAlgorithm.getFamily();
+        if(keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA) {
+            JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
+            String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
+                    Use.ENCRYPTION);
+            PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
+            if (publicKey != null) {
+                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+                jwe = jweEncrypter.encrypt(jwe);
+            } else {
+                throw new InvalidJweException("The public key is not valid");
+            }            
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.EC) {
+            JweEncrypter jweEncrypter = null;             
+            JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
+            String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
+                    Use.ENCRYPTION);
+            JSONArray webKeys = jsonWebKeys.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
+            JSONObject key = null;
+            ECKey ecPublicKey = null;             
+            for (int i = 0; i < webKeys.length(); i++) {
+                key = webKeys.getJSONObject(i);
+                if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
+                    ecPublicKey = (ECKey) (JWK.parse(key.toString()));
+                    break;
+                }
+            }
+            if(ecPublicKey == null) {
+                throw new InvalidJweException("jweEncrypter was not created.");
+            }
+            jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
+            jwe = jweEncrypter.encrypt(jwe);                          
+        } else if(keyEncryptionAlgorithmFamily == AlgorithmFamily.AES ||
+                keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
+            byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret()).getBytes(Util.UTF8_STRING_ENCODING);
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricKey);
+            jwe = jweEncrypter.encrypt(jwe);
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.PASSW) {
+            String sharedSymmetricPassword = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret());
+            log.info("sharedSymmetricPassword = " + sharedSymmetricPassword);            
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                    sharedSymmetricPassword);            
+            jwe = jweEncrypter.encrypt(jwe);
+            log.info("jwe = " + jwe.toString());
+        } else {
+            throw new InvalidJweException("wrong AlgorithmFamily value.");            
+        }
+        return jwe.toString();
 
+/*
         // Encryption
         if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm)
                 || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm) 
@@ -350,6 +402,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             }
         }
         return jwe.toString();
+*/
+
     }
 
     /**

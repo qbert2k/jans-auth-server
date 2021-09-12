@@ -18,6 +18,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
@@ -100,7 +101,8 @@ public class JwtAuthorizationRequest {
     @SuppressWarnings("unused")
     private AppConfiguration appConfiguration;
 
-    public JwtAuthorizationRequest(AppConfiguration appConfiguration, AbstractCryptoProvider cryptoProvider, String encodedJwt, Client client) throws InvalidJwtException {
+    public JwtAuthorizationRequest(AppConfiguration appConfiguration, AbstractCryptoProvider cryptoProvider,
+            String encodedJwt, Client client) throws InvalidJwtException {
         try {
             this.appConfiguration = appConfiguration;
             this.responseTypes = new ArrayList<>();
@@ -120,35 +122,34 @@ public class JwtAuthorizationRequest {
                 JwtHeader jwtHeader = new JwtHeader(encodedHeader);
 
                 keyId = jwtHeader.getKeyId();
-                KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(
-                        jwtHeader.getClaimAsString(JwtHeaderName.ALGORITHM));
-                BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.fromName(
-                        jwtHeader.getClaimAsString(JwtHeaderName.ENCRYPTION_METHOD));
 
+                final KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
+                        .fromName(jwtHeader.getClaimAsString(JwtHeaderName.ALGORITHM));
+                final BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm
+                        .fromName(jwtHeader.getClaimAsString(JwtHeaderName.ENCRYPTION_METHOD));
                 JweDecrypterImpl jweDecrypter = null;
-                
-                switch(keyEncryptionAlgorithm.getFamily()) {
-                case RSA:
-                case EC: {
+
+                final AlgorithmFamily keyEncryptionAlgorithmFamily = keyEncryptionAlgorithm.getFamily();
+                if (keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA
+                        || keyEncryptionAlgorithmFamily == AlgorithmFamily.EC) {
                     PrivateKey privateKey = cryptoProvider.getPrivateKey(keyId);
                     if (privateKey == null && StringUtils.isNotBlank(appConfiguration.getStaticDecryptionKid())) {
                         privateKey = cryptoProvider.getPrivateKey(appConfiguration.getStaticDecryptionKid());
                     }
                     jweDecrypter = new JweDecrypterImpl(privateKey);
-                    break;
-                }
-                case AES:
-                case PASSW:
-                case DIR: {
+                } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.AES
+                        || keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
                     ClientService clientService = CdiUtil.bean(ClientService.class);
-                    jweDecrypter = new JweDecrypterImpl(clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8));                    
-                    break;
+                    jweDecrypter = new JweDecrypterImpl(
+                            clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8));
+                } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.PASSW) {
+                    ClientService clientService = CdiUtil.bean(ClientService.class);
+                    jweDecrypter = new JweDecrypterImpl(clientService.decryptSecret(client.getClientSecret()));
+                } else {
+                    throw new InvalidJwtException(
+                            "Wrong KeyEncryptionAlgorithm family" + keyEncryptionAlgorithm.getFamily());
                 }
-                default: {
-                    throw new InvalidJwtException("Wrong KeyEncryptionAlgorithm family" + keyEncryptionAlgorithm.getFamily());                    
-                }
-                }
-                
+
                 jweDecrypter.setKeyEncryptionAlgorithm(keyEncryptionAlgorithm);
                 jweDecrypter.setBlockEncryptionAlgorithm(blockEncryptionAlgorithm);
 
@@ -318,12 +319,12 @@ public class JwtAuthorizationRequest {
         }
     }
 
-    private boolean validateSignature(AbstractCryptoProvider cryptoProvider, SignatureAlgorithm signatureAlgorithm, Client client, String signingInput, String signature) throws Exception {
+    private boolean validateSignature(AbstractCryptoProvider cryptoProvider, SignatureAlgorithm signatureAlgorithm,
+            Client client, String signingInput, String signature) throws Exception {
         ClientService clientService = CdiUtil.bean(ClientService.class);
         String sharedSecret = clientService.decryptSecret(client.getClientSecret());
-        JSONObject jwks = Strings.isNullOrEmpty(client.getJwks()) ?
-                JwtUtil.getJSONWebKeys(client.getJwksUri()) :
-                new JSONObject(client.getJwks());
+        JSONObject jwks = Strings.isNullOrEmpty(client.getJwks()) ? JwtUtil.getJSONWebKeys(client.getJwksUri())
+                : new JSONObject(client.getJwks());
         return cryptoProvider.verifySignature(signingInput, signature, keyId, jwks, sharedSecret, signatureAlgorithm);
     }
 
@@ -392,7 +393,8 @@ public class JwtAuthorizationRequest {
     }
 
     public List<String> getAud() {
-        if (aud == null) aud = Lists.newArrayList();
+        if (aud == null)
+            aud = Lists.newArrayList();
         return aud;
     }
 
@@ -462,7 +464,7 @@ public class JwtAuthorizationRequest {
 
     @Nullable
     private static String queryRequest(@Nullable String requestUri, @Nullable RedirectUriResponse redirectUriResponse,
-                                       AppConfiguration appConfiguration) {
+            AppConfiguration appConfiguration) {
         if (StringUtils.isBlank(requestUri)) {
             return null;
         }
@@ -491,7 +493,8 @@ public class JwtAuthorizationRequest {
             }
 
             if (!validRequestUri && redirectUriResponse != null) {
-                throw redirectUriResponse.createWebException(AuthorizeErrorResponseType.INVALID_REQUEST_URI, "Invalid request uri.");
+                throw redirectUriResponse.createWebException(AuthorizeErrorResponseType.INVALID_REQUEST_URI,
+                        "Invalid request uri.");
             }
             return request;
         } catch (WebApplicationException e) {
@@ -502,7 +505,9 @@ public class JwtAuthorizationRequest {
         }
     }
 
-    public static JwtAuthorizationRequest createJwtRequest(String request, String requestUri, Client client, RedirectUriResponse redirectUriResponse, AbstractCryptoProvider cryptoProvider, AppConfiguration appConfiguration) {
+    public static JwtAuthorizationRequest createJwtRequest(String request, String requestUri, Client client,
+            RedirectUriResponse redirectUriResponse, AbstractCryptoProvider cryptoProvider,
+            AppConfiguration appConfiguration) {
         final String requestFromClient = queryRequest(requestUri, redirectUriResponse, appConfiguration);
         if (StringUtils.isNotBlank(requestFromClient)) {
             request = requestFromClient;

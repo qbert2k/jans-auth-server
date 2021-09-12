@@ -16,6 +16,7 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.exception.InvalidJweException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwe.JweEncrypter;
@@ -73,11 +74,13 @@ public class JwrService {
     private SectorIdentifierService sectorIdentifierService;
 
     /**
-     * Encode means encrypt for Jwe and sign for Jwt, means it's implementaiton specific but we want to abstract it.
+     * Encode means encrypt for Jwe and sign for Jwt, means it's implementaiton
+     * specific but we want to abstract it.
      *
      * @return encoded Jwr
      */
-    public io.jans.as.model.token.JsonWebResponse encode(io.jans.as.model.token.JsonWebResponse jwr, Client client) throws Exception {
+    public io.jans.as.model.token.JsonWebResponse encode(io.jans.as.model.token.JsonWebResponse jwr, Client client)
+            throws Exception {
         if (jwr instanceof Jwe) {
             return encryptJwe((Jwe) jwr, client);
         }
@@ -96,25 +99,20 @@ public class JwrService {
     }
 
     private Jwe encryptJwe(Jwe jwe, Client client) throws Exception {
-
         if (appConfiguration.getUseNestedJwtDuringEncryption()) {
             JwtSigner jwtSigner = JwtSigner.newJwtSigner(appConfiguration, webKeysConfiguration, client);
             Jwt jwt = jwtSigner.newJwt();
             jwt.setClaims(jwe.getClaims());
             jwe.setSignedJWTPayload(signJwt(jwt, client));
         }
-
-        KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(jwe.getHeader().getClaimAsString(ALGORITHM));
+        final KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
+                .fromName(jwe.getHeader().getClaimAsString(ALGORITHM));
         final BlockEncryptionAlgorithm encryptionMethod = jwe.getHeader().getEncryptionMethod();
-
-        if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm)  
-                || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm) 
-                ) {
+        final AlgorithmFamily keyEncryptionAlgorithmFamily = keyEncryptionAlgorithm.getFamily();
+        if (keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA) {
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(client.getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()), Use.ENCRYPTION);
             PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
             jwe.getHeader().setKeyId(keyId);
             if (publicKey == null) {
@@ -122,18 +120,14 @@ public class JwrService {
             }
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, publicKey);
             return jweEncrypter.encrypt(jwe);
-        } else if(KeyEncryptionAlgorithm.ECDH_ES.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)) {
-            JweEncrypter jweEncrypter = null;             
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.EC) {
+            JweEncrypter jweEncrypter = null;
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(client.getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()), Use.ENCRYPTION);
             JSONArray webKeys = jsonWebKeys.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
             JSONObject key = null;
-            ECKey ecPublicKey = null;             
+            ECKey ecPublicKey = null;
             for (int i = 0; i < webKeys.length(); i++) {
                 key = webKeys.getJSONObject(i);
                 if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
@@ -141,24 +135,22 @@ public class JwrService {
                     break;
                 }
             }
-            if(ecPublicKey == null) {
+            if (ecPublicKey == null) {
                 throw new InvalidJweException("jweEncrypter was not created.");
             }
             jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, ecPublicKey);
-            return jweEncrypter.encrypt(jwe);            
-        } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm)  
-                || KeyEncryptionAlgorithm.A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A128GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A192GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A256GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.DIR.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm)  
-                || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm) 
-                ) {
-            byte[] sharedSymmetricKey = clientService.decryptSecret(client.getClientSecret()).getBytes(StandardCharsets.UTF_8);
-            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod, sharedSymmetricKey);
+            return jweEncrypter.encrypt(jwe);
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.AES
+                || keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
+            byte[] sharedSymmetricKey = clientService.decryptSecret(client.getClientSecret())
+                    .getBytes(StandardCharsets.UTF_8);
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod,
+                    sharedSymmetricKey);
+            return jweEncrypter.encrypt(jwe);
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.PASSW) {
+            String sharedSymmetricPassword = clientService.decryptSecret(client.getClientSecret());
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, encryptionMethod,
+                    sharedSymmetricPassword);
             return jweEncrypter.encrypt(jwe);
         }
         throw new IllegalArgumentException("Unsupported encryption algorithm: " + keyEncryptionAlgorithm);
@@ -166,8 +158,10 @@ public class JwrService {
 
     public io.jans.as.model.token.JsonWebResponse createJwr(Client client) {
         try {
-            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(client.getIdTokenEncryptedResponseAlg());
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.fromName(client.getIdTokenEncryptedResponseEnc());
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
+                    .fromName(client.getIdTokenEncryptedResponseAlg());
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm
+                    .fromName(client.getIdTokenEncryptedResponseEnc());
 
             if (keyEncryptionAlgorithm != null && blockEncryptionAlgorithm != null) {
                 Jwe jwe = new Jwe();
@@ -186,11 +180,13 @@ public class JwrService {
         }
     }
 
-    public void setSubjectIdentifier(io.jans.as.model.token.JsonWebResponse jwr, IAuthorizationGrant authorizationGrant) {
+    public void setSubjectIdentifier(io.jans.as.model.token.JsonWebResponse jwr,
+            IAuthorizationGrant authorizationGrant) {
         jwr.getClaims().setSubjectIdentifier(authorizationGrant.getSub());
     }
 
-    public static Function<io.jans.as.model.token.JsonWebResponse, Void> wrapWithSidFunction(Function<JsonWebResponse, Void> input, String outsideSid) {
+    public static Function<io.jans.as.model.token.JsonWebResponse, Void> wrapWithSidFunction(
+            Function<JsonWebResponse, Void> input, String outsideSid) {
         return jwr -> {
             if (jwr == null) {
                 return null;
