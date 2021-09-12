@@ -126,11 +126,11 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                         if(privateKey != null) {
                             jwe = Jwe.parse(entity, privateKey);
                         } else if(sharedKey != null) {
-                            jwe = Jwe.parse(entity, null, sharedKey, null);                            
+                            jwe = Jwe.parse(entity, null, sharedKey, null);
                         } else if(sharedPassword != null) {
-                            jwe = Jwe.parse(entity, null, null, sharedPassword);                            
+                            jwe = Jwe.parse(entity, null, null, sharedPassword);
                         } else {
-                            throw new InvalidJweException("privateKey, sharedKey, sharedPassword: keys aren't defined");
+                            throw new InvalidJweException("privateKey, sharedKey, sharedPassword: keys aren't defined, jwe object hasn't been encrypted");
                         }
                         getResponse().setClaims(jwe.getClaims().toMap());
                     } else {
@@ -141,7 +141,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                                 jwt.getEncodedSignature(),
                                 jwt.getHeader().getKeyId(),
                                 JwtUtil.getJSONWebKeys(jwksUri),
-                                new String(sharedKey),
+                                (sharedKey != null) ? new String(sharedKey) : null, 
                                 jwt.getHeader().getSignatureAlgorithm());
 
                         if (signatureVerified) {
