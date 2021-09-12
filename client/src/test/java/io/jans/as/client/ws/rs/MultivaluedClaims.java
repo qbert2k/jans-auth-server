@@ -224,7 +224,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -311,7 +311,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -398,7 +398,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -1347,7 +1347,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -1437,7 +1437,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -1526,7 +1526,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -1615,7 +1615,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2840,7 +2840,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2941,7 +2941,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -3042,7 +3042,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4379,7 +4379,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4480,7 +4480,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4581,7 +4581,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4682,7 +4682,7 @@ public class MultivaluedClaims extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);

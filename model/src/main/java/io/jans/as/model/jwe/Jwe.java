@@ -88,32 +88,28 @@ public class Jwe extends JsonWebResponse {
         return additionalAuthenticatedData;
     }
 
-    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey) throws InvalidJweException, InvalidJwtException {
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey, String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
         Jwe jwe = null;
-
+        JweDecrypter jweDecrypter = null;
         if (privateKey != null) {
-            JweDecrypter jweDecrypter = new JweDecrypterImpl(privateKey);
-            jwe = jweDecrypter.decrypt(encodedJwe);
+            jweDecrypter = new JweDecrypterImpl(privateKey);
         } else if (sharedSymmetricKey != null) {
-            JweDecrypter jweDecrypter = new JweDecrypterImpl(sharedSymmetricKey);
-            jwe = jweDecrypter.decrypt(encodedJwe);
+            jweDecrypter = new JweDecrypterImpl(sharedSymmetricKey);
+        } else if (sharedSymmetricPassword != null) {
+            jweDecrypter = new JweDecrypterImpl(sharedSymmetricPassword);
+        } else {
+            new InvalidJweException("privateKey, sharedSymmetricKey, sharedSymmetricPassword: key aren't defined");
         }
-
+        jwe = jweDecrypter.decrypt(encodedJwe);
         return jwe;
     }
     
-    public static Jwe parsePassw(String encodedJwe, PrivateKey privateKey, String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
-        Jwe jwe = null;
-
-        if (privateKey != null) {
-            JweDecrypter jweDecrypter = new JweDecrypterImpl(privateKey);
-            jwe = jweDecrypter.decrypt(encodedJwe);
-        } else if (sharedSymmetricPassword != null) {
-            JweDecrypter jweDecrypter = new JweDecrypterImpl(sharedSymmetricPassword);
-            jwe = jweDecrypter.decrypt(encodedJwe);
-        }
-
-        return jwe;
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey) throws InvalidJweException, InvalidJwtException {
+        return parse(encodedJwe, privateKey, sharedSymmetricKey, null);
+    }
+    
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey) throws InvalidJweException, InvalidJwtException {
+        return parse(encodedJwe, privateKey, null, null);
     }    
 
     public Jwt getSignedJWTPayload() {

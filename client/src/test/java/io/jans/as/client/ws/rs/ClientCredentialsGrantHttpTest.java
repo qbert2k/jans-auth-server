@@ -35,6 +35,7 @@ import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.token.TokenErrorResponseType;
 import io.jans.as.model.userinfo.UserInfoErrorResponseType;
 import io.jans.as.model.util.StringUtils;
+import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -213,7 +214,7 @@ public class ClientCredentialsGrantHttpTest extends BaseTest {
 
         // 4. Request user info should fail
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -449,6 +450,7 @@ public class ClientCredentialsGrantHttpTest extends BaseTest {
         assertNotNull(registerResponse.getClientIdIssuedAt());
         assertNotNull(registerResponse.getClientSecretExpiresAt());
 
+        @SuppressWarnings("unused")
         String clientId = registerResponse.getClientId();
 
         // 2. Request Client Credentials Grant
@@ -805,6 +807,7 @@ public class ClientCredentialsGrantHttpTest extends BaseTest {
         assertNotNull(registerResponse.getClientSecretExpiresAt());
 
         String clientId = registerResponse.getClientId();
+        @SuppressWarnings("unused")
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Request Client Credentials Grant

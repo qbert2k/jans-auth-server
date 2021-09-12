@@ -60,7 +60,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestDefault(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -175,7 +175,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -276,7 +276,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -294,7 +294,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -395,7 +395,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -413,7 +413,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequestHS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri) throws Exception {
@@ -514,7 +514,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -532,7 +532,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -652,7 +652,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -772,7 +772,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "RS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestRS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -877,7 +877,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1024,7 +1024,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES256K_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES256K(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1144,7 +1144,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1264,7 +1264,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "ES512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestES512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1384,7 +1384,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS256_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS256(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1504,7 +1504,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS384_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS384(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1624,7 +1624,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "PS512_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestPS512(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1745,7 +1745,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed25519_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestED25519(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1865,7 +1865,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed448_keyId", "clientJwksUri" })
-    // @Test
+    @Test
     public void authorizationRequestED448(final String userId, final String userSecret, final String redirectUri,
             final String redirectUris, final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String sectorIdentifierUri, final String keyId, final String clientJwksUri) throws Exception {
@@ -1985,7 +1985,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA128KW_EncA128GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2089,7 +2089,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2107,7 +2107,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA256KW_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2211,7 +2211,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2229,7 +2229,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA128GCMKW_EncA128GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2333,7 +2333,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2351,7 +2351,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA256GCMKW_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2455,7 +2455,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2473,7 +2473,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA256GCMKW_EncA256CBC_HS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2577,7 +2577,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2595,7 +2595,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgA256GCMKW_EncA256CBC_PLUS_HS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String sectorIdentifierUri) throws Exception {
@@ -2699,7 +2699,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -2717,7 +2717,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSA15_EncA128CBCPLUSHS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2849,7 +2849,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSA15_EncA256CBCPLUSHS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -2981,7 +2981,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3113,7 +3113,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA128CBC_HS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3245,7 +3245,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA192CBC_HS384(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3377,7 +3377,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA_OAEP_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgRSAOAEP_EncA256CBC_HS512(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3509,7 +3509,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_EncA128CBC_HS256(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3641,7 +3641,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_EncA256GCM(final String userId, final String userSecret,
             final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
             final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
@@ -3773,7 +3773,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_PLUS_A128KW_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_PLUS_A128KW_EncA128CBC_HS256(final String userId,
             final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
             final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
@@ -3905,7 +3905,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_PLUS_A128KW_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_PLUS_A128KW_EncA256CBC_HS512(final String userId,
             final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
             final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
@@ -4037,7 +4037,7 @@ public class AddressClaimsTest extends BaseTest {
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_PLUS_A128KW_keyId", "clientJwksUri", "sectorIdentifierUri" })
-    // @Test
+    @Test
     public void authorizationRequest_AlgECDH_ES_PLUS_A128KW_EncA256CBC_PLUS_HS512(final String userId,
             final String userSecret, final String redirectUri, final String redirectUris, final String dnName,
             final String keyStoreFile, final String keyStoreSecret, final String clientKeyId,
@@ -4273,7 +4273,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4394,7 +4394,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4591,7 +4591,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4712,7 +4712,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -4808,7 +4808,7 @@ public class AddressClaimsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 4. Validate id_token
-        Jwe jwe = Jwe.parsePassw(idToken, null, clientSecret);
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -4833,8 +4833,8 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
-        UserInfoResponse userInfoResponse = userInfoClient.execPassw();
+        userInfoClient.setSharedPassword(clientSecret);        
+        UserInfoResponse userInfoResponse = userInfoClient.exec();        
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
@@ -4929,7 +4929,7 @@ public class AddressClaimsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 4. Validate id_token
-        Jwe jwe = Jwe.parsePassw(idToken, null, clientSecret);
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -4954,8 +4954,8 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
-        UserInfoResponse userInfoResponse = userInfoClient.execPassw();
+        userInfoClient.setSharedPassword(clientSecret);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
@@ -5050,7 +5050,7 @@ public class AddressClaimsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 4. Validate id_token
-        Jwe jwe = Jwe.parsePassw(idToken, null, clientSecret);
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -5075,8 +5075,8 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
-        UserInfoResponse userInfoResponse = userInfoClient.execPassw();
+        userInfoClient.setSharedPassword(clientSecret);        
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
@@ -5171,7 +5171,7 @@ public class AddressClaimsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 4. Validate id_token
-        Jwe jwe = Jwe.parsePassw(idToken, null, clientSecret);
+        Jwe jwe = Jwe.parse(idToken, null, null, clientSecret);
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -5196,8 +5196,8 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedKey(clientSecret);
-        UserInfoResponse userInfoResponse = userInfoClient.execPassw();
+        userInfoClient.setSharedPassword(clientSecret);        
+        UserInfoResponse userInfoResponse = userInfoClient.exec();        
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());

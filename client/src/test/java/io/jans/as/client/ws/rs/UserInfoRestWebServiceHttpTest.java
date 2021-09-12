@@ -34,10 +34,13 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.StringUtils;
+import io.jans.as.model.util.Util;
+
 import org.json.JSONObject;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -646,6 +649,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
         String clientSecret = registerResponse.getClientSecret();
 
         // 2. Request authorization
+        @SuppressWarnings("unused")
         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider();
 
         List<String> scopes = Arrays.asList("openid");
@@ -710,7 +714,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
     @Test
     public void requestUserInfoHS256(final String redirectUris, final String redirectUri,
                                      final String userId, final String userSecret,
-                                     final String sectorIdentifierUri) {
+                                     final String sectorIdentifierUri) throws UnsupportedEncodingException {
         showTitle("requestUserInfoHS256");
 
         List<ResponseType> responseTypes = Arrays.asList(
@@ -745,7 +749,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -766,7 +770,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
     @Test
     public void requestUserInfoHS384(final String redirectUris, final String redirectUri,
                                      final String userId, final String userSecret,
-                                     final String sectorIdentifierUri) {
+                                     final String sectorIdentifierUri) throws UnsupportedEncodingException {
         showTitle("requestUserInfoHS384");
 
         List<ResponseType> responseTypes = Arrays.asList(
@@ -801,7 +805,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -822,7 +826,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
     @Test
     public void requestUserInfoHS512(final String redirectUris, final String redirectUri,
                                      final String userId, final String userSecret,
-                                     final String sectorIdentifierUri) {
+                                     final String sectorIdentifierUri) throws UnsupportedEncodingException {
         showTitle("requestUserInfoHS512");
 
         List<ResponseType> responseTypes = Arrays.asList(
@@ -857,7 +861,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -1577,7 +1581,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
     @Test
     public void requestUserInfoAlgA128KWEncA128GCM(final String redirectUris, final String redirectUri,
                                                    final String userId, final String userSecret,
-                                                   final String sectorIdentifierUri) {
+                                                   final String sectorIdentifierUri) throws UnsupportedEncodingException {
         showTitle("requestUserInfoAlgA128KWEncA128GCM");
 
         List<ResponseType> responseTypes = Arrays.asList(
@@ -1615,7 +1619,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
 
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         userInfoClient.setRequest(userInfoRequest);
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
@@ -1635,7 +1639,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
     @Test
     public void requestUserInfoAlgA256KWEncA256GCM(final String redirectUris, final String redirectUri,
                                                    final String userId, final String userSecret,
-                                                   final String sectorIdentifierUri) {
+                                                   final String sectorIdentifierUri) throws UnsupportedEncodingException {
         showTitle("requestUserInfoAlgA256KWEncA256GCM");
 
         List<ResponseType> responseTypes = Arrays.asList(
@@ -1673,7 +1677,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
 
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret);
+        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
         userInfoClient.setRequest(userInfoRequest);
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
