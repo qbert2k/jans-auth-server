@@ -3840,7 +3840,7 @@ public class AddressClaimsTest extends BaseTest {
                 .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest
                 .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
-        
+
         try {
             @SuppressWarnings("unused")
             String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
@@ -3854,7 +3854,7 @@ public class AddressClaimsTest extends BaseTest {
             // only with key encryption/wrap mode (for example,
             // KeyEncryptionAlgorithm.A128KW)
             assertTrue(true);
-        }        
+        }
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
