@@ -19,7 +19,8 @@ import io.jans.as.model.util.StringUtils;
  * Identifies the cryptographic algorithm used with the key.
  *
  * @author Javier Rojas Blum
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public enum Algorithm {
 
@@ -27,16 +28,16 @@ public enum Algorithm {
     RS256("RS256", Use.SIGNATURE, AlgorithmFamily.RSA),
     RS384("RS384", Use.SIGNATURE, AlgorithmFamily.RSA),
     RS512("RS512", Use.SIGNATURE, AlgorithmFamily.RSA),
-    
+
     ES256("ES256", Use.SIGNATURE, AlgorithmFamily.EC),
     ES256K("ES256K", Use.SIGNATURE, AlgorithmFamily.EC),
     ES384("ES384", Use.SIGNATURE, AlgorithmFamily.EC),
     ES512("ES512", Use.SIGNATURE, AlgorithmFamily.EC),
-    
+
     PS256("PS256", Use.SIGNATURE, AlgorithmFamily.RSA),
     PS384("PS384", Use.SIGNATURE, AlgorithmFamily.RSA),
     PS512("PS512", Use.SIGNATURE, AlgorithmFamily.RSA),
-    
+
     ED25519("Ed25519", Use.SIGNATURE, AlgorithmFamily.ED),
     ED448("Ed448", Use.SIGNATURE, AlgorithmFamily.ED),
 

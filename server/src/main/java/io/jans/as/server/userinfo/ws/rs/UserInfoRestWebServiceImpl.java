@@ -80,7 +80,8 @@ import java.util.*;
  * Provides interface for User Info REST web services
  *
  * @author Javier Rojas Blum
- * @version October 14, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 @Path("/")
 public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
@@ -128,22 +129,26 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
     private TokenService tokenService;
 
     @Override
-    public Response requestUserInfoGet(String accessToken, String authorization, HttpServletRequest request, SecurityContext securityContext) {
+    public Response requestUserInfoGet(String accessToken, String authorization, HttpServletRequest request,
+            SecurityContext securityContext) {
         return requestUserInfo(accessToken, authorization, request, securityContext);
     }
 
     @Override
-    public Response requestUserInfoPost(String accessToken, String authorization, HttpServletRequest request, SecurityContext securityContext) {
+    public Response requestUserInfoPost(String accessToken, String authorization, HttpServletRequest request,
+            SecurityContext securityContext) {
         return requestUserInfo(accessToken, authorization, request, securityContext);
     }
 
-    private Response requestUserInfo(String accessToken, String authorization, HttpServletRequest request, SecurityContext securityContext) {
+    private Response requestUserInfo(String accessToken, String authorization, HttpServletRequest request,
+            SecurityContext securityContext) {
 
         if (tokenService.isBearerAuthToken(authorization)) {
             accessToken = tokenService.getBearerToken(authorization);
         }
 
-        log.debug("Attempting to request User Info, Access token = {}, Is Secure = {}", accessToken, securityContext.isSecure());
+        log.debug("Attempting to request User Info, Access token = {}, Is Secure = {}", accessToken,
+                securityContext.isSecure());
         errorResponseFactory.validateComponentEnabled(ComponentType.USERINFO);
         Response.ResponseBuilder builder = Response.ok();
 
@@ -154,7 +159,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 return response(400, UserInfoErrorResponseType.INVALID_REQUEST, "access token is not valid.");
             }
 
-            AuthorizationGrant authorizationGrant = authorizationGrantList.getAuthorizationGrantByAccessToken(accessToken);
+            AuthorizationGrant authorizationGrant = authorizationGrantList
+                    .getAuthorizationGrantByAccessToken(accessToken);
 
             if (authorizationGrant == null) {
                 log.trace("Failed to find authorization grant by access_token: " + accessToken);
@@ -164,19 +170,23 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
             final AbstractToken accessTokenObject = authorizationGrant.getAccessToken(accessToken);
             if (accessTokenObject == null || !accessTokenObject.isValid()) {
-                log.trace("Invalid access token object, access_token: {}, isNull: {}, isValid: {}", accessToken, accessTokenObject == null, false);
+                log.trace("Invalid access token object, access_token: {}, isNull: {}, isValid: {}", accessToken,
+                        accessTokenObject == null, false);
                 return response(401, UserInfoErrorResponseType.INVALID_TOKEN);
             }
 
             if (authorizationGrant.getAuthorizationGrantType() == AuthorizationGrantType.CLIENT_CREDENTIALS) {
-                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Grant object has client_credentials grant_type which is not valid.");
+                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
+                        "Grant object has client_credentials grant_type which is not valid.");
             }
             if (appConfiguration.getOpenidScopeBackwardCompatibility()
                     && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())
                     && !authorizationGrant.getScopes().contains(DefaultScope.PROFILE.toString())) {
-                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Both openid and profile scopes are not present.");
+                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
+                        "Both openid and profile scopes are not present.");
             }
-            if (!appConfiguration.getOpenidScopeBackwardCompatibility() && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
+            if (!appConfiguration.getOpenidScopeBackwardCompatibility()
+                    && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
                 return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Missed openid scope.");
             }
 
@@ -195,28 +205,23 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             if (authorizationGrant.getClient() != null
                     && authorizationGrant.getClient().getUserInfoEncryptedResponseAlg() != null
                     && authorizationGrant.getClient().getUserInfoEncryptedResponseEnc() != null) {
-                KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm.fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseAlg());
-                BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm.fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseEnc());
+                KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
+                        .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseAlg());
+                BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm
+                        .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseEnc());
                 builder.type("application/jwt");
-                builder.entity(getJweResponse(
-                        keyEncryptionAlgorithm,
-                        blockEncryptionAlgorithm,
-                        currentUser,
-                        authorizationGrant,
-                        authorizationGrant.getScopes()));
+                builder.entity(getJweResponse(keyEncryptionAlgorithm, blockEncryptionAlgorithm, currentUser,
+                        authorizationGrant, authorizationGrant.getScopes()));
             } else if (authorizationGrant.getClient() != null
                     && authorizationGrant.getClient().getUserInfoSignedResponseAlg() != null) {
-                SignatureAlgorithm algorithm = SignatureAlgorithm.fromString(authorizationGrant.getClient().getUserInfoSignedResponseAlg());
+                SignatureAlgorithm algorithm = SignatureAlgorithm
+                        .fromString(authorizationGrant.getClient().getUserInfoSignedResponseAlg());
                 builder.type("application/jwt");
-                builder.entity(getJwtResponse(algorithm,
-                        currentUser,
-                        authorizationGrant,
-                        authorizationGrant.getScopes()));
+                builder.entity(
+                        getJwtResponse(algorithm, currentUser, authorizationGrant, authorizationGrant.getScopes()));
             } else {
                 builder.type((MediaType.APPLICATION_JSON + ";charset=UTF-8"));
-                builder.entity(getJSonResponse(currentUser,
-                        authorizationGrant,
-                        authorizationGrant.getScopes()));
+                builder.entity(getJSonResponse(currentUser, authorizationGrant, authorizationGrant.getScopes()));
             }
             return builder.build();
         } catch (Exception e) {
@@ -232,17 +237,15 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
     }
 
     private Response response(int status, UserInfoErrorResponseType errorResponseType, String reason) {
-        return Response
-                .status(status)
-                .entity(errorResponseFactory.errorAsJson(errorResponseType, reason))
+        return Response.status(status).entity(errorResponseFactory.errorAsJson(errorResponseType, reason))
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate())
-                .build();
+                .cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate()).build();
     }
 
-    private String getJwtResponse(SignatureAlgorithm signatureAlgorithm, User user, AuthorizationGrant authorizationGrant,
-                                  Collection<String> scopes) throws Exception {
-        log.trace("Building JWT reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes, user.getUserId(), user.getCustomAttributes());
+    private String getJwtResponse(SignatureAlgorithm signatureAlgorithm, User user,
+            AuthorizationGrant authorizationGrant, Collection<String> scopes) throws Exception {
+        log.trace("Building JWT reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+                user.getUserId(), user.getCustomAttributes());
 
         Jwt jwt = new Jwt();
 
@@ -250,7 +253,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         jwt.getHeader().setType(JwtType.JWT);
         jwt.getHeader().setAlgorithm(signatureAlgorithm);
 
-        String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(webKeysConfiguration, Algorithm.fromString(signatureAlgorithm.getName()), Use.SIGNATURE);
+        String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(webKeysConfiguration,
+                Algorithm.fromString(signatureAlgorithm.getName()), Use.SIGNATURE);
         if (keyId != null) {
             jwt.getHeader().setKeyId(keyId);
         }
@@ -260,13 +264,15 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
         // Signature
         String sharedSecret = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret());
-        String signature = cryptoProvider.sign(jwt.getSigningInput(), jwt.getHeader().getKeyId(), sharedSecret, signatureAlgorithm);
+        String signature = cryptoProvider.sign(jwt.getSigningInput(), jwt.getHeader().getKeyId(), sharedSecret,
+                signatureAlgorithm);
         jwt.setEncodedSignature(signature);
 
         return jwt.toString();
     }
 
-    private JwtClaims createJwtClaims(User user, AuthorizationGrant authorizationGrant, Collection<String> scopes) throws Exception {
+    private JwtClaims createJwtClaims(User user, AuthorizationGrant authorizationGrant, Collection<String> scopes)
+            throws Exception {
         String claimsString = getJSonResponse(user, authorizationGrant, scopes);
         JwtClaims claims = new JwtClaims(new JSONObject(claimsString));
 
@@ -275,10 +281,11 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         return claims;
     }
 
-    public String getJweResponse(
-            KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
-            User user, AuthorizationGrant authorizationGrant, Collection<String> scopes) throws Exception {
-        log.trace("Building JWE reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes, user.getUserId(), user.getCustomAttributes());
+    public String getJweResponse(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm, User user, AuthorizationGrant authorizationGrant,
+            Collection<String> scopes) throws Exception {
+        log.trace("Building JWE reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+                user.getUserId(), user.getCustomAttributes());
 
         Jwe jwe = new Jwe();
 
@@ -290,27 +297,26 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         // Claims
         jwe.setClaims(createJwtClaims(user, authorizationGrant, scopes));
         final AlgorithmFamily keyEncryptionAlgorithmFamily = keyEncryptionAlgorithm.getFamily();
-        if(keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA) {
+        if (keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA) {
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()), Use.ENCRYPTION);
             PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
             if (publicKey != null) {
-                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                        publicKey);
                 jwe = jweEncrypter.encrypt(jwe);
             } else {
                 throw new InvalidJweException("The public key is not valid");
-            }            
+            }
         } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.EC) {
-            JweEncrypter jweEncrypter = null;             
+            JweEncrypter jweEncrypter = null;
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
+                    Algorithm.fromString(keyEncryptionAlgorithm.getName()), Use.ENCRYPTION);
             JSONArray webKeys = jsonWebKeys.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
             JSONObject key = null;
-            ECKey ecPublicKey = null;             
+            ECKey ecPublicKey = null;
             for (int i = 0; i < webKeys.length(); i++) {
                 key = webKeys.getJSONObject(i);
                 if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
@@ -318,92 +324,30 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                     break;
                 }
             }
-            if(ecPublicKey == null) {
+            if (ecPublicKey == null) {
                 throw new InvalidJweException("jweEncrypter was not created.");
             }
             jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
-            jwe = jweEncrypter.encrypt(jwe);                          
-        } else if(keyEncryptionAlgorithmFamily == AlgorithmFamily.AES ||
-                keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
-            byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret()).getBytes(Util.UTF8_STRING_ENCODING);
-            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricKey);
+            jwe = jweEncrypter.encrypt(jwe);
+        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.AES
+                || keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
+            byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret())
+                    .getBytes(Util.UTF8_STRING_ENCODING);
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                    sharedSymmetricKey);
             jwe = jweEncrypter.encrypt(jwe);
         } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.PASSW) {
-            String sharedSymmetricPassword = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret());
-            log.info("sharedSymmetricPassword = " + sharedSymmetricPassword);            
+            String sharedSymmetricPassword = clientService
+                    .decryptSecret(authorizationGrant.getClient().getClientSecret());
+            log.info("sharedSymmetricPassword = " + sharedSymmetricPassword);
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                    sharedSymmetricPassword);            
+                    sharedSymmetricPassword);
             jwe = jweEncrypter.encrypt(jwe);
             log.info("jwe = " + jwe.toString());
         } else {
-            throw new InvalidJweException("wrong AlgorithmFamily value.");            
+            throw new InvalidJweException("wrong AlgorithmFamily value.");
         }
         return jwe.toString();
-
-/*
-        // Encryption
-        if (KeyEncryptionAlgorithm.RSA1_5.equals(keyEncryptionAlgorithm)
-                || KeyEncryptionAlgorithm.RSA_OAEP.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.RSA_OAEP_256.equals(keyEncryptionAlgorithm)
-                ) {
-            JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
-            String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
-            PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
-            if (publicKey != null) {
-                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
-                jwe = jweEncrypter.encrypt(jwe);
-            } else {
-                throw new InvalidJweException("The public key is not valid");
-            }
-        } else if (KeyEncryptionAlgorithm.ECDH_ES.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW.equals(keyEncryptionAlgorithm)
-                ) {
-            JweEncrypter jweEncrypter = null;             
-            JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
-            String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
-                    Algorithm.fromString(keyEncryptionAlgorithm.getName()),
-                    Use.ENCRYPTION);
-            JSONArray webKeys = jsonWebKeys.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
-            JSONObject key = null;
-            ECKey ecPublicKey = null;             
-            for (int i = 0; i < webKeys.length(); i++) {
-                key = webKeys.getJSONObject(i);
-                if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
-                    ecPublicKey = (ECKey) (JWK.parse(key.toString()));
-                    break;
-                }
-            }
-            if(ecPublicKey == null) {
-                throw new InvalidJweException("jweEncrypter was not created.");
-            }
-            jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
-            jwe = jweEncrypter.encrypt(jwe);              
-        } else if (KeyEncryptionAlgorithm.A128KW.equals(keyEncryptionAlgorithm)  
-                || KeyEncryptionAlgorithm.A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A256KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A128GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A192GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.A256GCMKW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.DIR.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW.equals(keyEncryptionAlgorithm)  
-                || KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW.equals(keyEncryptionAlgorithm) 
-                || KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW.equals(keyEncryptionAlgorithm)                 
-                ) {
-            try {
-                byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret()).getBytes(Util.UTF8_STRING_ENCODING);
-                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricKey);
-                jwe = jweEncrypter.encrypt(jwe);
-            } catch (Exception e) {
-                throw new InvalidJweException(e);
-            }
-        }
-        return jwe.toString();
-*/
-
     }
 
     /**
@@ -411,7 +355,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
      */
     public String getJSonResponse(User user, AuthorizationGrant authorizationGrant, Collection<String> scopes)
             throws Exception {
-        log.trace("Building JSON reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes, user.getUserId(), user.getCustomAttributes());
+        log.trace("Building JSON reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+                user.getUserId(), user.getCustomAttributes());
 
         JsonWebResponse jsonWebResponse = new JsonWebResponse();
 
@@ -469,7 +414,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             JSONObject claimsObj = new JSONObject(authorizationGrant.getClaims());
             if (claimsObj.has("userinfo")) {
                 JSONObject userInfoObj = claimsObj.getJSONObject("userinfo");
-                for (Iterator<String> it = userInfoObj.keys(); it.hasNext(); ) {
+                for (Iterator<String> it = userInfoObj.keys(); it.hasNext();) {
                     String claimName = it.next();
                     boolean optional = true; // ClaimValueType.OPTIONAL.equals(claim.getClaimValue().getClaimValueType());
                     GluuAttribute gluuAttribute = attributeService.getByClaimName(claimName);
@@ -477,7 +422,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                     if (gluuAttribute != null) {
                         String ldapClaimName = gluuAttribute.getName();
 
-                        Object attribute = user.getAttribute(ldapClaimName, optional, gluuAttribute.getOxMultiValuedAttribute());
+                        Object attribute = user.getAttribute(ldapClaimName, optional,
+                                gluuAttribute.getOxMultiValuedAttribute());
                         jsonWebResponse.getClaims().setClaimFromJsonObject(claimName, attribute);
                     }
                 }
@@ -495,7 +441,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
                     if (validateRequesteClaim(gluuAttribute, client.getClaims(), scopes)) {
                         String ldapClaimName = gluuAttribute.getName();
-                        Object attribute = user.getAttribute(ldapClaimName, optional, gluuAttribute.getOxMultiValuedAttribute());
+                        Object attribute = user.getAttribute(ldapClaimName, optional,
+                                gluuAttribute.getOxMultiValuedAttribute());
                         jsonWebResponse.getClaims().setClaimFromJsonObject(claim.getName(), attribute);
                     }
                 }
@@ -505,15 +452,18 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         jsonWebResponse.getClaims().setSubjectIdentifier(authorizationGrant.getSub());
 
         if ((dynamicScopes.size() > 0) && externalDynamicScopeService.isEnabled()) {
-            final UnmodifiableAuthorizationGrant unmodifiableAuthorizationGrant = new UnmodifiableAuthorizationGrant(authorizationGrant);
-            DynamicScopeExternalContext dynamicScopeContext = new DynamicScopeExternalContext(dynamicScopes, jsonWebResponse, unmodifiableAuthorizationGrant);
+            final UnmodifiableAuthorizationGrant unmodifiableAuthorizationGrant = new UnmodifiableAuthorizationGrant(
+                    authorizationGrant);
+            DynamicScopeExternalContext dynamicScopeContext = new DynamicScopeExternalContext(dynamicScopes,
+                    jsonWebResponse, unmodifiableAuthorizationGrant);
             externalDynamicScopeService.executeExternalUpdateMethods(dynamicScopeContext);
         }
 
         return jsonWebResponse.toString();
     }
 
-    public boolean validateRequesteClaim(GluuAttribute gluuAttribute, String[] clientAllowedClaims, Collection<String> scopes) {
+    public boolean validateRequesteClaim(GluuAttribute gluuAttribute, String[] clientAllowedClaims,
+            Collection<String> scopes) {
         if (gluuAttribute == null) {
             log.trace("gluuAttribute is null.");
             return false;
@@ -531,7 +481,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
             if (scope != null && scope.getClaims() != null) {
                 for (String claimDn : scope.getClaims()) {
-                    if (gluuAttribute.getDisplayName().equals(attributeService.getAttributeByDn(claimDn).getDisplayName())) {
+                    if (gluuAttribute.getDisplayName()
+                            .equals(attributeService.getAttributeByDn(claimDn).getDisplayName())) {
                         return true;
                     }
                 }
@@ -563,7 +514,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             Object attribute = null;
 
             if (StringUtils.isBlank(claimName)) {
-                log.error("Failed to get claim because claim name is not set for attribute, id: " + gluuAttribute.getDn());
+                log.error("Failed to get claim because claim name is not set for attribute, id: "
+                        + gluuAttribute.getDn());
                 continue;
             }
             if (StringUtils.isBlank(ldapName)) {
@@ -571,20 +523,21 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 continue;
             }
 
-
             if (ldapName.equals("uid")) {
                 attribute = user.getUserId();
             } else if (ldapName.equals("updatedAt")) {
                 attribute = user.getUpdatedAt();
             } else if (AttributeDataType.BOOLEAN.equals(gluuAttribute.getDataType())) {
-                final Object value = user.getAttribute(gluuAttribute.getName(), true, gluuAttribute.getOxMultiValuedAttribute());
+                final Object value = user.getAttribute(gluuAttribute.getName(), true,
+                        gluuAttribute.getOxMultiValuedAttribute());
                 if (value instanceof String) {
                     attribute = Boolean.parseBoolean(String.valueOf(value));
                 } else {
                     attribute = value;
                 }
             } else if (AttributeDataType.DATE.equals(gluuAttribute.getDataType())) {
-                Object value = user.getAttribute(gluuAttribute.getName(), true, gluuAttribute.getOxMultiValuedAttribute());
+                Object value = user.getAttribute(gluuAttribute.getName(), true,
+                        gluuAttribute.getOxMultiValuedAttribute());
                 if (value instanceof Date) {
                     attribute = value;
                 } else if (value != null) {

@@ -33,7 +33,8 @@ import io.jans.util.security.StringEncrypter;
 
 /**
  * @author Javier Rojas Blum
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class ClientAssertion {
 

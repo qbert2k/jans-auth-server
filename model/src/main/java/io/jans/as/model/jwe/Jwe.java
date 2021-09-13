@@ -15,7 +15,8 @@ import io.jans.as.model.token.JsonWebResponse;
 
 /**
  * @author Javier Rojas Blum
- * @version July 29, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class Jwe extends JsonWebResponse {
 
@@ -23,7 +24,7 @@ public class Jwe extends JsonWebResponse {
      * 
      */
     private static final long serialVersionUID = 1L;
-    
+
     private String encodedHeader;
     private String encodedEncryptedKey;
     private String encodedInitializationVector;
@@ -81,14 +82,14 @@ public class Jwe extends JsonWebResponse {
     }
 
     public String getAdditionalAuthenticatedData() {
-        String additionalAuthenticatedData = encodedHeader + "."
-                + encodedEncryptedKey + "."
+        String additionalAuthenticatedData = encodedHeader + "." + encodedEncryptedKey + "."
                 + encodedInitializationVector;
 
         return additionalAuthenticatedData;
     }
 
-    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey, String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey,
+            String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
         Jwe jwe = null;
         JweDecrypter jweDecrypter = null;
         if (privateKey != null) {
@@ -98,19 +99,20 @@ public class Jwe extends JsonWebResponse {
         } else if (sharedSymmetricPassword != null) {
             jweDecrypter = new JweDecrypterImpl(sharedSymmetricPassword);
         } else {
-            new InvalidJweException("privateKey, sharedSymmetricKey, sharedSymmetricPassword: key aren't defined");
+            new InvalidJweException("privateKey, sharedSymmetricKey, sharedSymmetricPassword: keys aren't defined");
         }
         jwe = jweDecrypter.decrypt(encodedJwe);
         return jwe;
     }
-    
-    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey) throws InvalidJweException, InvalidJwtException {
+
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey)
+            throws InvalidJweException, InvalidJwtException {
         return parse(encodedJwe, privateKey, sharedSymmetricKey, null);
     }
-    
+
     public static Jwe parse(String encodedJwe, PrivateKey privateKey) throws InvalidJweException, InvalidJwtException {
         return parse(encodedJwe, privateKey, null, null);
-    }    
+    }
 
     public Jwt getSignedJWTPayload() {
         return signedJWTPayload;
@@ -122,10 +124,7 @@ public class Jwe extends JsonWebResponse {
 
     @Override
     public String toString() {
-        return encodedHeader + "."
-                + encodedEncryptedKey + "."
-                + encodedInitializationVector + "."
-                + encodedCiphertext + "."
-                + encodedIntegrityValue;
+        return encodedHeader + "." + encodedEncryptedKey + "." + encodedInitializationVector + "." + encodedCiphertext
+                + "." + encodedIntegrityValue;
     }
 }

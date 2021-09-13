@@ -48,7 +48,8 @@ import static io.jans.as.model.jwt.JwtHeaderName.ALGORITHM;
 
 /**
  * @author Yuriy Zabrovarnyy
- * @version April 10, 2020
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 @Stateless
 @Named

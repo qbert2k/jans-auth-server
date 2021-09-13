@@ -11,7 +11,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Javier Rojas Blum
- * @version June 15, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public enum EllipticEdvardsCurve {
 

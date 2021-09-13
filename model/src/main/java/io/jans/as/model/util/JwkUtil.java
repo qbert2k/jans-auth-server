@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
+import io.jans.as.model.exception.InvalidParameterException;
 import io.jans.as.model.jwk.KeyType;
 
 /**
@@ -18,14 +19,15 @@ import io.jans.as.model.jwk.KeyType;
 public class JwkUtil {
     
     @SuppressWarnings("unused")
-    private static final Logger log = LoggerFactory.getLogger(JwkUtil.class);    
+    private static final Logger log = LoggerFactory.getLogger(JwkUtil.class);
 
     /**
      * 
      * @param algFamily
      * @return
+     * @throws InvalidParameterException 
      */
-    public static KeyType getKeyTypeFromAlgFamily(final AlgorithmFamily algFamily) {
+    public static KeyType getKeyTypeFromAlgFamily(final AlgorithmFamily algFamily) throws InvalidParameterException {
         KeyType keyType = null;
         switch(algFamily) {
         case HMAC:
@@ -46,8 +48,10 @@ public class JwkUtil {
             keyType = KeyType.OKP; 
             break;
         }
+        default: {
+            throw new InvalidParameterException("Wrong value of AlgorithmFamily: algFamily = " + algFamily);
+        }
         }
         return keyType;
     }
-
 }

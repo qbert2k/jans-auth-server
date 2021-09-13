@@ -65,7 +65,8 @@ import io.jans.util.StringHelper;
  *
  * @author Javier Rojas Blum
  * @author Yuriy Movchan
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 @SuppressWarnings("deprecation")
 public class KeyGenerator {

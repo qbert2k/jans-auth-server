@@ -11,6 +11,7 @@ import io.jans.as.model.common.ResponseType;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
+import io.jans.as.model.crypto.signature.AlgorithmFamily;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJweException;
 import io.jans.as.model.jwe.Jwe;
@@ -33,7 +34,8 @@ import static io.jans.as.model.authorize.AuthorizeResponseParam.*;
 
 /**
  * @author Javier Rojas Blum
- * @version July 28, 2021
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class RedirectUri {
 
@@ -192,7 +194,8 @@ public class RedirectUri {
                 } else if (stParamValue.countTokens() == 2) {
                     try {
                         String paramName = stParamValue.nextElement().toString();
-                        String paramValue = URLDecoder.decode(stParamValue.nextElement().toString(), Util.UTF8_STRING_ENCODING);
+                        String paramValue = URLDecoder.decode(stParamValue.nextElement().toString(),
+                                Util.UTF8_STRING_ENCODING);
                         responseParameters.put(paramName, paramValue);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -206,7 +209,8 @@ public class RedirectUri {
         StringBuilder sb = new StringBuilder();
 
         try {
-            if (responseMode == ResponseMode.JWT || responseMode == ResponseMode.QUERY_JWT || responseMode == ResponseMode.FRAGMENT_JWT) {
+            if (responseMode == ResponseMode.JWT || responseMode == ResponseMode.QUERY_JWT
+                    || responseMode == ResponseMode.FRAGMENT_JWT) {
                 final String responseJwt = getJarmResponse();
                 sb.append(URLEncoder.encode(RESPONSE, Util.UTF8_STRING_ENCODING));
                 sb.append('=').append(URLEncoder.encode(responseJwt, Util.UTF8_STRING_ENCODING));
@@ -271,7 +275,8 @@ public class RedirectUri {
         }
 
         // Signature
-        String signature = cryptoProvider.sign(jwt.getSigningInput(), jwt.getHeader().getKeyId(), sharedSecret, signatureAlgorithm);
+        String signature = cryptoProvider.sign(jwt.getSigningInput(), jwt.getHeader().getKeyId(), sharedSecret,
+                signatureAlgorithm);
         jwt.setEncodedSignature(signature);
 
         return jwt.toString();
@@ -299,42 +304,34 @@ public class RedirectUri {
             jwe.getClaims().setClaim(entry.getKey(), entry.getValue());
         }
 
-        // Encryption
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA1_5
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.RSA_OAEP_256
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.ECDH_ES_PLUS_A256KW
-                ) {
-            PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
+        if (keyEncryptionAlgorithm == null) {
+            throw new InvalidJweException("Wrong value of keyEncryptionAlgorithm == null");
+        }
 
+        // Encryption
+        AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
+        if (algorithmFamily == AlgorithmFamily.RSA || algorithmFamily == AlgorithmFamily.EC) {
+            PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jsonWebKeys, null);
             if (publicKey != null) {
-                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                        publicKey);
                 jwe = jweEncrypter.encrypt(jwe);
             } else {
                 throw new InvalidJweException("The public key is not valid");
             }
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS256_PLUS_A128KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS384_PLUS_A192KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW
-                || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR
-                ) {
+        } else if (algorithmFamily == AlgorithmFamily.AES || algorithmFamily == AlgorithmFamily.PASSW
+                || algorithmFamily == AlgorithmFamily.DIR) {
             try {
-                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricKey);
+                JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                        sharedSymmetricKey);
                 jwe = jweEncrypter.encrypt(jwe);
             } catch (Exception e) {
                 throw new InvalidJweException(e);
             }
-        }
 
+        } else {
+            throw new InvalidJweException("Wrong value of algorithmFamily = " + algorithmFamily);
+        }
         return jwe.toString();
     }
 
@@ -367,7 +364,8 @@ public class RedirectUri {
                 sb.append("<form method=\"post\" action=\"").append(baseRedirectUri).append("\">");
                 for (Map.Entry<String, String> entry : responseParameters.entrySet()) {
                     String entryValue = StringEscapeUtils.escapeHtml(entry.getValue());
-                    sb.append("<input type=\"hidden\" name=\"").append(entry.getKey()).append("\" value=\"").append(entryValue).append("\"/>");
+                    sb.append("<input type=\"hidden\" name=\"").append(entry.getKey()).append("\" value=\"")
+                            .append(entryValue).append("\"/>");
                 }
                 sb.append("</form>");
                 sb.append("</body>");
@@ -378,7 +376,8 @@ public class RedirectUri {
                 sb.append("<head><title>Submit This Form</title></head>");
                 sb.append("<body onload=\"javascript:document.forms[0].submit()\">");
                 sb.append("<form method=\"post\" action=\"").append(baseRedirectUri).append("\">");
-                sb.append("<input type=\"hidden\" name=\"response\"").append(" value=\"").append(getQueryString()).append("\"/>");
+                sb.append("<input type=\"hidden\" name=\"response\"").append(" value=\"").append(getQueryString())
+                        .append("\"/>");
                 sb.append("</form>");
                 sb.append("</body>");
                 sb.append("</html>");
@@ -395,7 +394,8 @@ public class RedirectUri {
                             appendQuerySymbol(sb);
                         }
                     }
-                } else if (responseTypes != null && (responseTypes.contains(ResponseType.TOKEN) || responseTypes.contains(ResponseType.ID_TOKEN))) {
+                } else if (responseTypes != null && (responseTypes.contains(ResponseType.TOKEN)
+                        || responseTypes.contains(ResponseType.ID_TOKEN))) {
                     appendFragmentSymbol(sb);
                 } else {
                     appendQuerySymbol(sb);

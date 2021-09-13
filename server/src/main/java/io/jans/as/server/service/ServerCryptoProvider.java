@@ -27,6 +27,8 @@ import java.security.PublicKey;
 
 /**
  * @author Yuriy Zabrovarnyy
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class ServerCryptoProvider extends AbstractCryptoProvider {
 

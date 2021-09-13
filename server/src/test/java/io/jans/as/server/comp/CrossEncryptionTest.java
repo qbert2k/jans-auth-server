@@ -82,7 +82,6 @@ import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
 import io.jans.as.server.model.token.JwtSigner;
 
-
 @SuppressWarnings("deprecation")
 public class CrossEncryptionTest {
 
@@ -158,7 +157,7 @@ public class CrossEncryptionTest {
         public KeyEncryptionAlgorithm keyEncrAlg;
         public String keyData1;
         public String keyData2;
-        public String keyData3;        
+        public String keyData3;
         public String encData2;
         public BlockEncryptionAlgorithm[] blockEncryptionAlgorithms;
 
@@ -402,7 +401,7 @@ public class CrossEncryptionTest {
                             + e.getMessage());
                     assertTrue(false);
                 }
-                System.out.println("-----------------");                
+                System.out.println("-----------------");
             }
         }
     }
@@ -437,7 +436,7 @@ public class CrossEncryptionTest {
 
                     BlockEncryptionAlgorithm blockEncryptionAlgorithm = blckEncrAlgorithm;
                     KeyEncryptionAlgorithm keyEncryptionAlgorithm = keyEncrAlgorithmECDH.keyEncrAlg;
-                    
+
                     Jwe jwe = new Jwe();
                     jwe.getHeader().setType(JwtType.JWT);
                     jwe.getHeader().setAlgorithm(keyEncryptionAlgorithm);
@@ -504,7 +503,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
-                System.out.println("-----------------");                
+                System.out.println("-----------------");
             }
         }
     }
@@ -592,7 +591,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
-                System.out.println("-----------------");                
+                System.out.println("-----------------");
             }
         }
     }
@@ -674,7 +673,7 @@ public class CrossEncryptionTest {
                     System.out.println(message);
                     assertTrue(false, message);
                 }
-                System.out.println("-----------------");                
+                System.out.println("-----------------");
             }
         }
     }
@@ -914,7 +913,7 @@ public class CrossEncryptionTest {
                     public PrivateKey getPrivateKey(String keyId) throws Exception {
                         throw new UnsupportedOperationException("Method not implemented.");
                     }
-                    
+
                     @Override
                     public PublicKey getPublicKey(String keyId) {
                         throw new UnsupportedOperationException("Method not implemented.");

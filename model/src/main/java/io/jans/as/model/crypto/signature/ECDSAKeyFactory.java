@@ -46,7 +46,8 @@ import io.jans.as.model.crypto.KeyFactory;
  * Digital Signature Algorithm (ECDSA)
  *
  * @author Javier Rojas Blum
- * @version June 15, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> {
 
@@ -69,7 +70,6 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
         try {
             this.signatureAlgorithm = signatureAlgorithm;
 
-//            ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getName());
             ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
 
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");

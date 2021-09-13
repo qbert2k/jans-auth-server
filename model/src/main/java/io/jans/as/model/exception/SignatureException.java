@@ -11,6 +11,11 @@ package io.jans.as.model.exception;
  */
 public class SignatureException extends Exception {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4900715574864561038L;
+
     public SignatureException(String message) {
         super(message);
     }

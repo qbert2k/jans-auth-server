@@ -12,6 +12,8 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 
 /**
  * @author Yuriy Zabrovarnyy
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class HashUtil {
 
@@ -23,8 +25,8 @@ public class HashUtil {
     public static String getHash(String input, SignatureAlgorithm signatureAlgorithm) {
         try {
             byte[] digest = null;
-            if(signatureAlgorithm != null) {
-                switch(signatureAlgorithm) {
+            if (signatureAlgorithm != null) {
+                switch (signatureAlgorithm) {
                 case HS256:
                 case RS256:
                 case PS256:
@@ -52,7 +54,7 @@ public class HashUtil {
                 }
                 }
             } else {
-                digest = JwtUtil.getMessageDigestSHA384(input);                
+                digest = JwtUtil.getMessageDigestSHA384(input);
             }
             if (digest != null) {
                 byte[] lefMostHalf = new byte[digest.length / 2];

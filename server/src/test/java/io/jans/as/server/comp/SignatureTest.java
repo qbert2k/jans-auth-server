@@ -57,6 +57,8 @@ import io.jans.as.server.BaseTest;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 @SuppressWarnings("deprecation")
 public class SignatureTest extends BaseTest {
@@ -70,7 +72,7 @@ public class SignatureTest extends BaseTest {
 
     /**
      * 
-     * @author Sergey Manoylo 
+     * @author Sergey Manoylo
      * @version August 20, 2021
      *
      */
@@ -78,7 +80,7 @@ public class SignatureTest extends BaseTest {
         public java.security.Key privateKey;
         public java.security.PublicKey publicKey;
         public java.security.cert.Certificate certificate;
-    };    
+    };
 
     /**
      * 
@@ -87,18 +89,17 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateRS256Keys() throws Exception {
         showTitle("generateRS256Keys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;        
 
-        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm,
-                DEF_CERTIFICATE_OWN);
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;
+
+        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
 
         Key<RSAPrivateKey, RSAPublicKey> key = keyFactory.getKey();
 
         RSAPrivateKey privateKey = key.getPrivateKey();
         RSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
@@ -148,7 +149,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(rsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(rsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -157,34 +158,32 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })
     @Test
-    public void readRS256Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readRS256Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
-        
+
         showTitle("readRS256Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS256;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
 
         java.security.interfaces.RSAPrivateKey privateKey = (java.security.interfaces.RSAPrivateKey) testKeys.privateKey;
         java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(), privateKey.getPrivateExponent());
+
+        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(),
+                privateKey.getPrivateExponent());
         RSAPublicKey pubKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
+        System.out.println(cert);
 
         String signingInput = DEF_INPUT;
         RSASigner rsaSigner1 = new RSASigner(signatureAlgorithm, privKey);
@@ -226,7 +225,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(rsaSigner5.validateSignature(signingInput, signature));
         assertFalse(rsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(rsaSigner5.validateSignature(signingInput, signatureWrong));
-        assertFalse(rsaSigner5.validateSignature(signingInputWrong, signatureWrong));        
+        assertFalse(rsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
 
     /**
@@ -236,24 +235,23 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateRS384Keys() throws Exception {
         showTitle("generateRS384Keys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS384;        
 
-        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm,
-                DEF_CERTIFICATE_OWN);
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS384;
+
+        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
 
         Key<RSAPrivateKey, RSAPublicKey> key = keyFactory.getKey();
 
         RSAPrivateKey privateKey = key.getPrivateKey();
         RSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
         System.out.println(publicKey);
         System.out.println("CERTIFICATE");
-        System.out.println(certificate);               
+        System.out.println(certificate);
 
         String signingInput = DEF_INPUT;
         RSASigner rsaSigner1 = new RSASigner(signatureAlgorithm, privateKey);
@@ -308,31 +306,29 @@ public class SignatureTest extends BaseTest {
      */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS384_keyId" })
     @Test
-    public void readRS384Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readRS384Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readRS384Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS384;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
 
         java.security.interfaces.RSAPrivateKey privateKey = (java.security.interfaces.RSAPrivateKey) testKeys.privateKey;
         java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(), privateKey.getPrivateExponent());
+
+        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(),
+                privateKey.getPrivateExponent());
         RSAPublicKey pubKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
+        System.out.println(cert);
 
         String signingInput = DEF_INPUT;
         RSASigner rsaSigner1 = new RSASigner(signatureAlgorithm, privKey);
@@ -386,22 +382,21 @@ public class SignatureTest extends BaseTest {
         showTitle("generateRS512Keys");
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS512;
-        
-        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm,
-                DEF_CERTIFICATE_OWN);
+
+        KeyFactory<RSAPrivateKey, RSAPublicKey> keyFactory = new RSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
 
         Key<RSAPrivateKey, RSAPublicKey> key = keyFactory.getKey();
 
         RSAPrivateKey privateKey = key.getPrivateKey();
         RSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
         System.out.println(publicKey);
         System.out.println("CERTIFICATE");
-        System.out.println(certificate);              
+        System.out.println(certificate);
 
         String signingInput = DEF_INPUT;
         RSASigner rsaSigner1 = new RSASigner(signatureAlgorithm, privateKey);
@@ -445,7 +440,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(rsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(rsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -456,31 +451,29 @@ public class SignatureTest extends BaseTest {
      */
     @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS512_keyId" })
     @Test
-    public void readRS512Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readRS512Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readRS512Keys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS512;        
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.RS512;
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
 
         java.security.interfaces.RSAPrivateKey privateKey = (java.security.interfaces.RSAPrivateKey) testKeys.privateKey;
         java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(), privateKey.getPrivateExponent());
+
+        RSAPrivateKey privKey = new RSAPrivateKey(signatureAlgorithm, privateKey.getModulus(),
+                privateKey.getPrivateExponent());
         RSAPublicKey pubKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
+        System.out.println(cert);
 
         String signingInput = DEF_INPUT;
         RSASigner rsaSigner1 = new RSASigner(signatureAlgorithm, privKey);
@@ -532,7 +525,7 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateES256Keys() throws Exception {
         showTitle("generateES256Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;
 
         KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
@@ -543,13 +536,13 @@ public class SignatureTest extends BaseTest {
         ECDSAPrivateKey privateKey = key.getPrivateKey();
         ECDSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
         System.out.println(publicKey);
         System.out.println("CERTIFICATE");
-        System.out.println(certificate);              
+        System.out.println(certificate);
 
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privateKey);
@@ -560,8 +553,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, certificate);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privateKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(publicKey.getX(), publicKey.getY());
@@ -617,7 +609,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -626,34 +618,32 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })
     @Test
-    public void readES256Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readES256Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("generateES256Keys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;        
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256;
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         java.security.interfaces.ECPrivateKey privateKey = (java.security.interfaces.ECPrivateKey) testKeys.privateKey;
-        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;        
+        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS()); 
-        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(), publicKey.getW().getAffineY());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS());
+        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
+                publicKey.getW().getAffineY());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
-        
+        System.out.println(cert);
+
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privKey);
         String signature = ecdsaSigner1.generateSignature(signingInput);
@@ -663,8 +653,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, cert);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(pubKey.getX(), pubKey.getY());
@@ -686,7 +675,8 @@ public class SignatureTest extends BaseTest {
         assertTrue(ecSpecPrivateKey.getCurve().getFieldSize() == new SecP256R1Curve().getFieldSize());
         assertTrue(ecSpecPrublicKey.getCurve().getFieldSize() == new SecP256R1Curve().getFieldSize());
 
-        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
 
         Key<ECDSAPrivateKey, ECDSAPublicKey> keyWrong = keyFactory.getKey();
 
@@ -718,7 +708,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
-        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));        
+        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
 
     /**
@@ -728,8 +718,8 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateES256KKeys() throws Exception {
         showTitle("generateES256KKeys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;          
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;
 
         KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
                 DEF_CERTIFICATE_OWN);
@@ -739,13 +729,13 @@ public class SignatureTest extends BaseTest {
         ECDSAPrivateKey privateKey = key.getPrivateKey();
         ECDSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
         System.out.println(publicKey);
         System.out.println("CERTIFICATE");
-        System.out.println(certificate);              
+        System.out.println(certificate);
 
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privateKey);
@@ -756,8 +746,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, certificate);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privateKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(publicKey.getX(), publicKey.getY());
@@ -813,7 +802,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -822,34 +811,32 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })
     @Test
-    public void readES256KKeys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readES256KKeys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readES256KKeys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;        
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES256K;
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         java.security.interfaces.ECPrivateKey privateKey = (java.security.interfaces.ECPrivateKey) testKeys.privateKey;
-        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;        
+        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS()); 
-        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(), publicKey.getW().getAffineY());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS());
+        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
+                publicKey.getW().getAffineY());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);        
-        
+        System.out.println(cert);
+
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privKey);
         String signature = ecdsaSigner1.generateSignature(signingInput);
@@ -859,8 +846,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, cert);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(pubKey.getX(), pubKey.getY());
@@ -875,14 +861,15 @@ public class SignatureTest extends BaseTest {
 
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrivateKey.getName()));
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrublicKey.getName()));
-        
+
         assertTrue(ecSpecPrivateKey.getCurve().getClass() == SecP256K1Curve.class);
-        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP256K1Curve.class);        
+        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP256K1Curve.class);
 
         assertTrue(ecSpecPrivateKey.getCurve().getFieldSize() == new SecP256K1Curve().getFieldSize());
         assertTrue(ecSpecPrublicKey.getCurve().getFieldSize() == new SecP256K1Curve().getFieldSize());
 
-        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
 
         Key<ECDSAPrivateKey, ECDSAPublicKey> keyWrong = keyFactory.getKey();
 
@@ -914,8 +901,8 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
-        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));        
-    }    
+        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
+    }
 
     /**
      * 
@@ -924,7 +911,7 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateES384Keys() throws Exception {
         showTitle("generateES384Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES384;
 
         KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
@@ -935,13 +922,13 @@ public class SignatureTest extends BaseTest {
         ECDSAPrivateKey privateKey = key.getPrivateKey();
         ECDSAPublicKey publicKey = key.getPublicKey();
         Certificate certificate = key.getCertificate();
-        
+
         System.out.println("PRIVATE KEY");
         System.out.println(privateKey);
         System.out.println("PUBLIC KEY");
         System.out.println(publicKey);
         System.out.println("CERTIFICATE");
-        System.out.println(certificate);        
+        System.out.println(certificate);
 
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privateKey);
@@ -952,8 +939,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, certificate);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privateKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(publicKey.getX(), publicKey.getY());
@@ -1009,7 +995,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -1018,34 +1004,32 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })
     @Test
-    public void readES384Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readES384Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readES384Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES384;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         java.security.interfaces.ECPrivateKey privateKey = (java.security.interfaces.ECPrivateKey) testKeys.privateKey;
-        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;        
+        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS()); 
-        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(), publicKey.getW().getAffineY());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS());
+        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
+                publicKey.getW().getAffineY());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);         
-        
+        System.out.println(cert);
+
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privKey);
         String signature = ecdsaSigner1.generateSignature(signingInput);
@@ -1055,8 +1039,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, cert);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(pubKey.getX(), pubKey.getY());
@@ -1071,14 +1054,15 @@ public class SignatureTest extends BaseTest {
 
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrivateKey.getName()));
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrublicKey.getName()));
-        
+
         assertTrue(ecSpecPrivateKey.getCurve().getClass() == SecP384R1Curve.class);
-        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP384R1Curve.class);        
+        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP384R1Curve.class);
 
         assertTrue(ecSpecPrivateKey.getCurve().getFieldSize() == new SecP384R1Curve().getFieldSize());
         assertTrue(ecSpecPrublicKey.getCurve().getFieldSize() == new SecP384R1Curve().getFieldSize());
 
-        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
 
         Key<ECDSAPrivateKey, ECDSAPublicKey> keyWrong = keyFactory.getKey();
 
@@ -1110,7 +1094,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
-        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));        
+        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
 
     /**
@@ -1200,7 +1184,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -1209,34 +1193,32 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })
     @Test
-    public void readES512Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readES512Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readES512Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ES512;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         java.security.interfaces.ECPrivateKey privateKey = (java.security.interfaces.ECPrivateKey) testKeys.privateKey;
-        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;        
+        java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS()); 
-        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(), publicKey.getW().getAffineY());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        ECDSAPrivateKey privKey = new ECDSAPrivateKey(signatureAlgorithm, privateKey.getS());
+        ECDSAPublicKey pubKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
+                publicKey.getW().getAffineY());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);       
-        
+        System.out.println(cert);
+
         String signingInput = DEF_INPUT;
         ECDSASigner ecdsaSigner1 = new ECDSASigner(signatureAlgorithm, privKey);
         String signature = ecdsaSigner1.generateSignature(signingInput);
@@ -1246,8 +1228,7 @@ public class SignatureTest extends BaseTest {
         ECDSASigner ecdsaSigner3 = new ECDSASigner(signatureAlgorithm, cert);
         assertTrue(ecdsaSigner3.validateSignature(signingInput, signature));
 
-        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable
-                .getParameterSpec(signatureAlgorithm.getCurve().getAlias());
+        ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(signatureAlgorithm.getCurve().getAlias());
         ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(privKey.getD(), ecSpec);
 
         ECPoint pointQ = ecSpec.getCurve().createPoint(pubKey.getX(), pubKey.getY());
@@ -1262,14 +1243,15 @@ public class SignatureTest extends BaseTest {
 
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrivateKey.getName()));
         assertTrue(signatureAlgorithm.getCurve().getAlias().equals(ecSpecPrublicKey.getName()));
-        
+
         assertTrue(ecSpecPrivateKey.getCurve().getClass() == SecP521R1Curve.class);
-        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP521R1Curve.class);        
+        assertTrue(ecSpecPrublicKey.getCurve().getClass() == SecP521R1Curve.class);
 
         assertTrue(ecSpecPrivateKey.getCurve().getFieldSize() == new SecP521R1Curve().getFieldSize());
         assertTrue(ecSpecPrublicKey.getCurve().getFieldSize() == new SecP521R1Curve().getFieldSize());
 
-        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<ECDSAPrivateKey, ECDSAPublicKey> keyFactory = new ECDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
 
         Key<ECDSAPrivateKey, ECDSAPublicKey> keyWrong = keyFactory.getKey();
 
@@ -1301,8 +1283,8 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
-        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));        
-    }    
+        assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
+    }
 
     /**
      * 
@@ -1311,7 +1293,7 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateED25519Keys() throws Exception {
         showTitle("generateED25519Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED25519;
 
         KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm,
@@ -1376,7 +1358,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -1385,33 +1367,31 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
     @Test
-    public void readED25519Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readED25519Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readED25519Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED25519;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) testKeys.privateKey;
-        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) testKeys.publicKey;        
+        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        EDDSAPrivateKey privKey = new EDDSAPrivateKey(signatureAlgorithm, privateKey.getEncoded(), publicKey.getEncoded()); 
-        EDDSAPublicKey pubKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        EDDSAPrivateKey privKey = new EDDSAPrivateKey(signatureAlgorithm, privateKey.getEncoded(),
+                publicKey.getEncoded());
+        EDDSAPublicKey pubKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
+        System.out.println(cert);
 
         String signingInput = DEF_INPUT;
         EDDSASigner eddsaSigner1 = new EDDSASigner(signatureAlgorithm, privKey);
@@ -1433,7 +1413,8 @@ public class SignatureTest extends BaseTest {
         assertTrue(Ed25519.SECRET_KEY_SIZE == privKeyLen);
         assertTrue(Ed25519.PUBLIC_KEY_SIZE == pubKeyLen);
 
-        KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
         EDDSAPublicKey publicKeyWrong = keyFactory.getPublicKey();
         Certificate certificateWrong = keyFactory.getCertificate();
 
@@ -1461,7 +1442,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
-    }    
+    }
 
     /**
      * 
@@ -1470,8 +1451,8 @@ public class SignatureTest extends BaseTest {
     @Test
     public void generateED448Keys() throws Exception {
         showTitle("generateED448Keys");
-        
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED448;        
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED448;
 
         KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm,
                 DEF_CERTIFICATE_OWN);
@@ -1534,7 +1515,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
     }
-    
+
     /**
      * 
      * @param dnName
@@ -1543,33 +1524,31 @@ public class SignatureTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed448_keyId" })        
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed448_keyId" })
     @Test
-    public void readED448Keys(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
+    public void readED448Keys(final String dnName, final String keyStoreFile, final String keyStoreSecret,
             final String kid) throws Exception {
         showTitle("readED448Keys");
-        
+
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.ED448;
-        
-        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName,
-                kid);
-        
+
+        TestKeys testKeys = loadTestKeys(signatureAlgorithm, keyStoreFile, keyStoreSecret, dnName, kid);
+
         BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) testKeys.privateKey;
-        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) testKeys.publicKey;        
+        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) testKeys.publicKey;
         java.security.cert.Certificate certificate = testKeys.certificate;
-        
-        EDDSAPrivateKey privKey = new EDDSAPrivateKey(signatureAlgorithm, privateKey.getEncoded(), publicKey.getEncoded()); 
-        EDDSAPublicKey pubKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());        
-        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate)certificate);
-        
+
+        EDDSAPrivateKey privKey = new EDDSAPrivateKey(signatureAlgorithm, privateKey.getEncoded(),
+                publicKey.getEncoded());
+        EDDSAPublicKey pubKey = new EDDSAPublicKey(signatureAlgorithm, publicKey.getEncoded());
+        Certificate cert = new Certificate(signatureAlgorithm, (X509Certificate) certificate);
+
         System.out.println("PRIVATE KEY");
         System.out.println(privKey);
         System.out.println("PUBLIC KEY");
         System.out.println(pubKey);
         System.out.println("CERTIFICATE");
-        System.out.println(cert);           
+        System.out.println(cert);
 
         String signingInput = DEF_INPUT;
         EDDSASigner eddsaSigner1 = new EDDSASigner(signatureAlgorithm, privKey);
@@ -1591,7 +1570,8 @@ public class SignatureTest extends BaseTest {
         assertTrue(Ed448.SECRET_KEY_SIZE == privKeyLen);
         assertTrue(Ed448.PUBLIC_KEY_SIZE == pubKeyLen);
 
-        KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm, DEF_CERTIFICATE_OWN);
+        KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> keyFactory = new EDDSAKeyFactory(signatureAlgorithm,
+                DEF_CERTIFICATE_OWN);
         EDDSAPublicKey publicKeyWrong = keyFactory.getPublicKey();
         Certificate certificateWrong = keyFactory.getCertificate();
 
@@ -1619,7 +1599,7 @@ public class SignatureTest extends BaseTest {
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signature));
         assertFalse(ecdsaSigner5.validateSignature(signingInput, signatureWrong));
         assertFalse(ecdsaSigner5.validateSignature(signingInputWrong, signatureWrong));
-    }    
+    }
 
     /**
      * 
@@ -1682,19 +1662,19 @@ public class SignatureTest extends BaseTest {
     /**
      * 
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
-    private TestKeys loadTestKeys(SignatureAlgorithm signatureAlgorithm, String keyStore, String keyStoreSecret, String dName,
-            String keyID) throws Exception {
-        
+    private TestKeys loadTestKeys(SignatureAlgorithm signatureAlgorithm, String keyStore, String keyStoreSecret,
+            String dName, String keyID) throws Exception {
+
         TestKeys testKeys = new TestKeys();
-        
+
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStore, keyStoreSecret, dName);
         java.security.Key privateKey = authCryptoProvider.getKeyStore().getKey(keyID,
                 authCryptoProvider.getKeyStoreSecret().toCharArray());
         java.security.PublicKey publicKey = authCryptoProvider.getKeyStore().getCertificate(keyID).getPublicKey();
         java.security.cert.Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(keyID);
-        
+
         testKeys.privateKey = privateKey;
         testKeys.publicKey = publicKey;
         testKeys.certificate = certificate;

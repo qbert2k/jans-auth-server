@@ -26,24 +26,26 @@ import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.userinfo.UserInfoErrorResponseType;
 import io.jans.as.model.util.JwtUtil;
-import io.jans.as.model.util.Util;
 
 /**
- * Encapsulates functionality to make user info request calls to an authorization server via REST Services.
+ * Encapsulates functionality to make user info request calls to an
+ * authorization server via REST Services.
  *
  * @author Javier Rojas Blum
- * @version December 26, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse> {
 
     private String jwksUri;
-    
+
     private PrivateKey privateKey = null;
-    private byte[] sharedKey = null; 
+    private byte[] sharedKey = null;
     private String sharedPassword = null;
 
     /**
-     * Constructs an User Info client by providing a REST url where the service is located.
+     * Constructs an User Info client by providing a REST url where the service is
+     * located.
      *
      * @param url The REST Service location.
      */
@@ -57,7 +59,10 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                 || request.getAuthorizationMethod() == AuthorizationMethod.AUTHORIZATION_REQUEST_HEADER_FIELD
                 || request.getAuthorizationMethod() == AuthorizationMethod.URL_QUERY_PARAMETER) {
             return HttpMethod.GET;
-        } else /*if (request.getAuthorizationMethod() == AuthorizationMethod.FORM_ENCODED_BODY_PARAMETER)*/ {
+        } else /*
+                * if (request.getAuthorizationMethod() ==
+                * AuthorizationMethod.FORM_ENCODED_BODY_PARAMETER)
+                */ {
             return HttpMethod.POST;
         }
     }
@@ -65,7 +70,8 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
     /**
      * Executes the call to the REST Service and processes the response.
      *
-     * @param accessToken The access token obtained from the Jans Auth authorization request.
+     * @param accessToken The access token obtained from the Jans Auth authorization
+     *                    request.
      * @return The service response.
      */
     public UserInfoResponse execUserInfo(String accessToken) {
@@ -123,25 +129,23 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                     String[] jwtParts = entity.split("\\.");
                     if (jwtParts.length == 5) {
                         Jwe jwe = null;
-                        if(privateKey != null) {
+                        if (privateKey != null) {
                             jwe = Jwe.parse(entity, privateKey);
-                        } else if(sharedKey != null) {
+                        } else if (sharedKey != null) {
                             jwe = Jwe.parse(entity, null, sharedKey, null);
-                        } else if(sharedPassword != null) {
+                        } else if (sharedPassword != null) {
                             jwe = Jwe.parse(entity, null, null, sharedPassword);
                         } else {
-                            throw new InvalidJweException("privateKey, sharedKey, sharedPassword: keys aren't defined, jwe object hasn't been encrypted");
+                            throw new InvalidJweException(
+                                    "privateKey, sharedKey, sharedPassword: keys aren't defined, jwe object hasn't been encrypted");
                         }
                         getResponse().setClaims(jwe.getClaims().toMap());
                     } else {
                         Jwt jwt = Jwt.parse(entity);
                         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider();
-                        boolean signatureVerified = cryptoProvider.verifySignature(
-                                jwt.getSigningInput(),
-                                jwt.getEncodedSignature(),
-                                jwt.getHeader().getKeyId(),
-                                JwtUtil.getJSONWebKeys(jwksUri),
-                                (sharedKey != null) ? new String(sharedKey) : null, 
+                        boolean signatureVerified = cryptoProvider.verifySignature(jwt.getSigningInput(),
+                                jwt.getEncodedSignature(), jwt.getHeader().getKeyId(), JwtUtil.getJSONWebKeys(jwksUri),
+                                (sharedKey != null) ? new String(sharedKey) : null,
                                 jwt.getHeader().getSignatureAlgorithm());
 
                         if (signatureVerified) {
@@ -153,7 +157,8 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                         JSONObject jsonObj = new JSONObject(entity);
 
                         if (jsonObj.has("error")) {
-                            getResponse().setErrorType(UserInfoErrorResponseType.fromString(jsonObj.getString("error")));
+                            getResponse()
+                                    .setErrorType(UserInfoErrorResponseType.fromString(jsonObj.getString("error")));
                             jsonObj.remove("error");
                         }
                         if (jsonObj.has("error_description")) {
@@ -165,7 +170,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                             jsonObj.remove("error_uri");
                         }
 
-                        for (Iterator<String> iterator = jsonObj.keys(); iterator.hasNext(); ) {
+                        for (Iterator<String> iterator = jsonObj.keys(); iterator.hasNext();) {
                             String key = iterator.next();
                             List<String> values = new ArrayList<String>();
 
@@ -199,7 +204,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
 
         return getResponse();
     }
- 
+
     public void setSharedKey(byte[] sharedKey) {
         this.sharedKey = sharedKey;
     }
@@ -207,7 +212,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
     public void setSharedPassword(String sharedPassword) {
         this.sharedPassword = sharedPassword;
     }
-    
+
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
     }

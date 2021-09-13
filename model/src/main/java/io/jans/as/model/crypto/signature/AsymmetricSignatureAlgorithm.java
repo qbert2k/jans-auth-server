@@ -20,9 +20,10 @@ import io.jans.orm.annotation.AttributeEnum;
 
 /**
  * @author Javier Rojas Blum
- * @version August 20, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
-public enum  AsymmetricSignatureAlgorithm implements HasParamName, AttributeEnum {
+public enum AsymmetricSignatureAlgorithm implements HasParamName, AttributeEnum {
 
     RS256("RS256", AlgorithmFamily.RSA, "SHA256WITHRSA"),
     RS384("RS384", AlgorithmFamily.RSA, "SHA384WITHRSA"),
@@ -34,7 +35,6 @@ public enum  AsymmetricSignatureAlgorithm implements HasParamName, AttributeEnum
     PS256("PS256", AlgorithmFamily.RSA, "SHA256withRSAandMGF1"),
     PS384("PS384", AlgorithmFamily.RSA, "SHA384withRSAandMGF1"),
     PS512("PS512", AlgorithmFamily.RSA, "SHA512withRSAandMGF1"),
-    
     ED25519("Ed25519",  AlgorithmFamily.ED, "Ed25519",  EllipticEdvardsCurve.ED_25519),
     ED448("Ed448",      AlgorithmFamily.ED, "Ed448",    EllipticEdvardsCurve.ED_448),
     EDDSA("EdDSA",      AlgorithmFamily.ED, "Ed25519",  EllipticEdvardsCurve.ED_25519);    

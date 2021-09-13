@@ -26,7 +26,8 @@ import io.jans.as.model.util.StringUtils;
 
 /**
  * @author Javier Rojas Blum
- * @version June 29, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class Certificate {
 
@@ -60,7 +61,9 @@ public class Certificate {
             publicKey = new ECDSAPublicKey(signatureAlgorithm, jceecPublicKey.getQ().getXCoord().toBigInteger(),
                     jceecPublicKey.getQ().getYCoord().toBigInteger());
         } else if (x509Certificate != null && x509Certificate.getPublicKey() instanceof BCEdDSAPublicKey) {
-            
+            BCEdDSAPublicKey jceedPublicKey = (BCEdDSAPublicKey) x509Certificate.getPublicKey();            
+
+            publicKey = new EDDSAPublicKey(signatureAlgorithm, jceedPublicKey.getEncoded());            
         }
 
         return publicKey;
@@ -72,12 +75,13 @@ public class Certificate {
      */
     public RSAPublicKey getRsaPublicKey() {
         RSAPublicKey rsaPublicKey = null;
-        if(x509Certificate != null) {
+        if (x509Certificate != null) {
             if (x509Certificate.getPublicKey() instanceof BCRSAPublicKey) {
                 BCRSAPublicKey publicKey = (BCRSAPublicKey) x509Certificate.getPublicKey();
                 rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
-            } else if (x509Certificate.getPublicKey() instanceof java.security.interfaces.RSAPublicKey)  {
-                java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) x509Certificate.getPublicKey();
+            } else if (x509Certificate.getPublicKey() instanceof java.security.interfaces.RSAPublicKey) {
+                java.security.interfaces.RSAPublicKey publicKey = (java.security.interfaces.RSAPublicKey) x509Certificate
+                        .getPublicKey();
                 rsaPublicKey = new RSAPublicKey(publicKey.getModulus(), publicKey.getPublicExponent());
             }
         }
@@ -90,20 +94,21 @@ public class Certificate {
      */
     public ECDSAPublicKey getEcdsaPublicKey() {
         ECDSAPublicKey ecdsaPublicKey = null;
-        if(x509Certificate != null) {
+        if (x509Certificate != null) {
             if (x509Certificate.getPublicKey() instanceof BCECPublicKey) {
                 BCECPublicKey publicKey = (BCECPublicKey) x509Certificate.getPublicKey();
                 ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getQ().getXCoord().toBigInteger(),
                         publicKey.getQ().getYCoord().toBigInteger());
-            } else if(x509Certificate.getPublicKey() instanceof java.security.interfaces.ECPublicKey) {
-                java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) x509Certificate.getPublicKey();
+            } else if (x509Certificate.getPublicKey() instanceof java.security.interfaces.ECPublicKey) {
+                java.security.interfaces.ECPublicKey publicKey = (java.security.interfaces.ECPublicKey) x509Certificate
+                        .getPublicKey();
                 ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, publicKey.getW().getAffineX(),
                         publicKey.getW().getAffineY());
             }
         }
         return ecdsaPublicKey;
     }
-    
+
     /**
      * 
      * @return
@@ -116,7 +121,7 @@ public class Certificate {
         }
 
         return eddsaPublicKey;
-    }    
+    }
 
     public JSONArray toJSONArray() throws JSONException {
         String cert = toString();

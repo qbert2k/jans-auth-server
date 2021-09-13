@@ -35,7 +35,8 @@ import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
- * @version July 31, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class ECDSASigner extends AbstractJwsSigner {
 

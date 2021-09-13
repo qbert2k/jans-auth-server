@@ -320,8 +320,6 @@ public class RegisterRestWebServiceImpl implements RegisterRestWebService {
 
             log.info("Client registered: clientId = {}, applicationType = {}, clientName = {}, redirectUris = {}, sectorIdentifierUri = {}",
                     client.getClientId(), client.getApplicationType(), client.getClientName(), client.getRedirectUris(), client.getSectorIdentifierUri());
-            log.info("Client registered: clientId = {}, idTokenSignedResponseAlg = {}, idTokenEncryptedResponseAlg = {}, idTokenEncryptedResponseEnc = {}",
-                    client.getClientId(), client.getIdTokenSignedResponseAlg(), client.getIdTokenEncryptedResponseAlg(), client.getIdTokenEncryptedResponseEnc());
 
             oAuth2AuditLog.setClientId(client.getClientId());
             oAuth2AuditLog.setScope(clientScopesToString(client));

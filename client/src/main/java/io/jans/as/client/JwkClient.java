@@ -26,7 +26,8 @@ import io.jans.as.model.jwk.JSONWebKeySet;
  * server via REST Services.
  *
  * @author Javier Rojas Blum
- * @version December 26, 2016
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JwkClient extends BaseClient<JwkRequest, JwkResponse> {
 

@@ -44,7 +44,8 @@ import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
- * @version November 20, 2018
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JwtAuthorizationRequest {
 

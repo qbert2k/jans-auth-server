@@ -25,18 +25,17 @@ import org.testng.annotations.Test;
 
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
-import io.jans.as.model.crypto.signature.EDDSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JWKParameter;
-import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.Util;
 import io.jans.as.server.ConfigurableTest;
 import io.jans.as.server.model.config.ConfigurationFactory;
 
 /**
  * @author Javier Rojas Blum
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class CryptoProviderTest extends ConfigurableTest {
 
@@ -74,8 +73,8 @@ public class CryptoProviderTest extends ConfigurableTest {
 
     private static String ed448Key;
     private static String ed448Signature;
-    private static JSONObject ed448Jwks;    
-    
+    private static JSONObject ed448Jwks;
+
 	@Test
 	public void configuration() {
 		try {
@@ -85,8 +84,7 @@ public class CryptoProviderTest extends ConfigurableTest {
 			assertNotNull(cryptoProvider);
 
 			GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-//			calendar.add(GregorianCalendar.MINUTE, 5);
-			calendar.add(GregorianCalendar.MINUTE, 3000);
+			calendar.add(GregorianCalendar.MINUTE, 5);
 			expirationTime = calendar.getTimeInMillis();
 		} catch (Exception e) {
 			fail(e.getMessage(), e);
@@ -348,11 +346,11 @@ public class CryptoProviderTest extends ConfigurableTest {
         try {
             // check if key is the point of the secp256k1
             PrivateKey privateKey = cryptoProvider.getPrivateKey(es256KKey);
-            PublicKey publicKey = cryptoProvider.getPublicKey(es256KKey);            
+            PublicKey publicKey = cryptoProvider.getPublicKey(es256KKey);
             
             SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(Algorithm.ES256K.getParamName());
             
-            Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");            
+            Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
             signer.initSign(privateKey);
             signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
 
@@ -362,7 +360,7 @@ public class CryptoProviderTest extends ConfigurableTest {
             signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
             boolean result = signer.verify(signature);
             
-            assertTrue(result);            
+            assertTrue(result);
         } catch (Exception e) {
             fail(e.getMessage(), e);
         }
@@ -483,38 +481,6 @@ public class CryptoProviderTest extends ConfigurableTest {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
             ed25519Key = response.optString(KEY_ID);
-            
-            JSONArray keys = new JSONArray();
-            keys.put(response); 
-            
-            ed25519Jwks = new JSONObject();
-            ed25519Jwks.put(JWKParameter.JSON_WEB_KEY_SET, keys);
-
-            System.out.println("ed25519Jwks.toString() = " + ed25519Jwks.toString());
-            
-            String x_1 = "zLrCbb0ayFsRCd79x3CsNsvjdDGPm6tvH3eWOPQ9C1c";
-            String x_2 = "MCowBQYDK2VwAyEA8us3NqpE5QXmNPv8KL9l3Gut7Fh9ENYsINPGfnyOx-w";
-            
-            byte[] x_1_array = Base64Util.base64urldecode(x_1);
-            byte[] x_2_array = Base64Util.base64urldecode(x_2);
-            
-            EDDSAPublicKey edDSAPublicKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, x_2_array);
-            
-            byte[] edDSAPublicKeyDecoded = edDSAPublicKey.getPublicKeyDecoded();
-            
-            x_1_array = x_1_array;
-            
-
-//            String signatureWrong = Base64Util.base64urlencode(signatureArray);            
-            
-            
-/*            
-            "x"       "zLrCbb0ayFsRCd79x3CsNsvjdDGPm6tvH3eWOPQ9C1c"
-
-            "x"    "MCowBQYDK2VwAyEA8us3NqpE5QXmNPv8KL9l3Gut7Fh9ENYsINPGfnyOx-w",
-*/
-            
-            
         } catch (Exception e) {
             fail(e.getMessage(), e);
         }

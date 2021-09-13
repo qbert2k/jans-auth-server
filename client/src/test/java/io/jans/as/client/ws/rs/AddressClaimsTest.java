@@ -54,7 +54,8 @@ import io.jans.as.model.util.Util;
  * Note: In order to run this tests, set legacyIdTokenClaims to true.
  *
  * @author Javier Rojas Blum
- * @version March 8, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class AddressClaimsTest extends BaseTest {
 

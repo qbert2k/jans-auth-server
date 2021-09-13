@@ -120,10 +120,10 @@ public class JwtVerifyer {
         }
         
         if(signer == null) {
-            throw new InvalidJwtException("JwtVerifyer: signer == null (signer isn't  defined)");            
+            throw new InvalidJwtException("JwtVerifyer: signer == null (signer isn't  defined)");
         }
         
-        return signer.validate(jwt);               
+        return signer.validate(jwt);
     }
 
     /**

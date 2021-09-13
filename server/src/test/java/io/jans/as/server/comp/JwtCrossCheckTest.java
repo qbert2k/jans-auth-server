@@ -63,6 +63,8 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 
 /**
  * @author Yuriy Zabrovarnyy
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JwtCrossCheckTest extends BaseTest {
   

@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Javier Rojas Blum Date: 12.03.2012
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public enum BlockEncryptionAlgorithm {
 

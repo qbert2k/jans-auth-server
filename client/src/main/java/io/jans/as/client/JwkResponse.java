@@ -25,7 +25,8 @@ import io.jans.as.model.util.Base64Util;
  * Represents a JSON Web Key (JWK) received from the authorization server.
  *
  * @author Javier Rojas Blum
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JwkResponse extends BaseResponse {
 
@@ -82,7 +83,7 @@ public class JwkResponse extends BaseResponse {
             case OKP:
                 if (AlgorithmFamily.ED.equals(JSONWebKey.getAlg().getFamily())) {
                     publicKey = new EDDSAPublicKey(SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()),
-                            Base64Util.base64urldecode(JSONWebKey.getX()));                       
+                            Base64Util.base64urldecode(JSONWebKey.getX()));
                 }
                 break;
             default:
@@ -92,13 +93,12 @@ public class JwkResponse extends BaseResponse {
 
         return publicKey;
     }
-    
+
     public List<JSONWebKey> getKeys(Algorithm algorithm) {
         List<JSONWebKey> jsonWebKeys = new ArrayList<JSONWebKey>();
         AlgorithmFamily algorithmFamily = algorithm.getFamily();
-        if(AlgorithmFamily.RSA.equals(algorithmFamily) ||
-                AlgorithmFamily.EC.equals(algorithmFamily) ||
-                AlgorithmFamily.ED.equals(algorithmFamily)) {
+        if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
+                || AlgorithmFamily.ED.equals(algorithmFamily)) {
             for (JSONWebKey jsonWebKey : jwks.getKeys()) {
                 if (jsonWebKey.getAlg().equals(algorithm)) {
                     jsonWebKeys.add(jsonWebKey);
@@ -107,7 +107,7 @@ public class JwkResponse extends BaseResponse {
         }
         Collections.sort(jsonWebKeys);
         return jsonWebKeys;
-    }    
+    }
 
     public String getKeyId(Algorithm algorithm) {
         List<JSONWebKey> jsonWebKeys = getKeys(algorithm);

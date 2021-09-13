@@ -44,7 +44,8 @@ import io.jans.as.model.util.Base64Util;
 
 /**
  * @author Javier Rojas Blum
- * @version November 20, 2018
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JweEncrypterImpl extends AbstractJweEncrypter {
 
@@ -150,7 +151,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                     }
                 } else {
                     throw new InvalidJweException(String.format(
-                            "Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
+                            "Wrong value of the key encryption algorithm: keyEncryptionAlgorithm = " + keyEncryptionAlgorithm.toString()));
                 }
                 hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
                 sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
@@ -164,7 +165,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         } else if (algorithmFamily == AlgorithmFamily.PASSW) {
             return new PasswordBasedEncrypter(sharedSymmetricPassword, 16, 8192);
         } else {
-            throw new InvalidJweException("wrong AlgorithmFamily value");
+            throw new InvalidJweException("Wrong AlgorithmFamily value: algorithmFamily = " + algorithmFamily);
         }
     }
 

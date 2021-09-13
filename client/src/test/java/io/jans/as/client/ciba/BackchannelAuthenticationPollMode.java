@@ -62,7 +62,8 @@ import io.jans.as.model.util.StringUtils;
 
 /**
  * @author Javier Rojas Blum
- * @version May 28, 2020
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class BackchannelAuthenticationPollMode extends BaseTest {
 

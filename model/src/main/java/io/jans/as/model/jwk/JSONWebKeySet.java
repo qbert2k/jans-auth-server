@@ -26,7 +26,8 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 
 /**
  * @author Javier Rojas Blum
- * @version February 12, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class JSONWebKeySet {
 
@@ -53,17 +54,17 @@ public class JSONWebKeySet {
                 return jsonWebKey;
             }
         }
-
         return null;
     }
 
     @Deprecated
-    public List<JSONWebKey> getKeys(SignatureAlgorithm algorithm) {
+    public List<JSONWebKey> getKeys(SignatureAlgorithm signatureAlgorithm) {
         List<JSONWebKey> jsonWebKeys = new ArrayList<JSONWebKey>();
-        if (AlgorithmFamily.RSA.equals(algorithm.getFamily()) || AlgorithmFamily.EC.equals(algorithm.getFamily())
-                || AlgorithmFamily.ED.equals(algorithm.getFamily())) {
+        AlgorithmFamily algorithmFamily = signatureAlgorithm.getFamily();
+        if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
+                || AlgorithmFamily.ED.equals(algorithmFamily)) {
             for (JSONWebKey jsonWebKey : keys) {
-                if (jsonWebKey.getAlg().equals(algorithm.getName())) {
+                if (jsonWebKey.getAlg().equals(signatureAlgorithm.getAlg())) {
                     jsonWebKeys.add(jsonWebKey);
                 }
             }

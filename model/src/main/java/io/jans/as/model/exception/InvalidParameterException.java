@@ -11,6 +11,11 @@ package io.jans.as.model.exception;
  */
 public class InvalidParameterException extends Exception {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5104056185118314221L;
+
     public InvalidParameterException(String message) {
         super(message);
     }

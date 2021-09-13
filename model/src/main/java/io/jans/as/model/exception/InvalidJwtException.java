@@ -11,6 +11,11 @@ package io.jans.as.model.exception;
  */
 public class InvalidJwtException extends Exception {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7782466711394737156L;
+
     public InvalidJwtException(String message) {
         super(message);
     }

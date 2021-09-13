@@ -56,7 +56,8 @@ import io.jans.as.model.util.Util;
  * Note: In order to run this tests, set legacyIdTokenClaims to true.
  *
  * @author Javier Rojas Blum
- * @version March 8, 2019
+ * @author Sergey Manoylo
+ * @version September 13, 2021
  */
 public class MultivaluedClaims extends BaseTest {
 
@@ -4691,7 +4692,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(userInfoResponse.getClaim("member_of"));
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
-    
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
     public void authorizationRequestObjectWithMultivaluedClaimAlgDirEncA256CBC_HS512(final String userId,
@@ -4792,7 +4793,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(userInfoResponse.getClaim("member_of"));
         assertTrue(userInfoResponse.getClaim("member_of").size() > 1);
     }
-    
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "sectorIdentifierUri" })
     @Test
     public void authorizationRequestObjectWithMultivaluedClaimAlgDirEncA256CBC_PLUS_HS512(final String userId,
@@ -4845,20 +4846,21 @@ public class MultivaluedClaims extends BaseTest {
                 .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addIdTokenClaim(new Claim("member_of", ClaimValue.createEssential(true)));
         jwtAuthorizationRequest.addUserInfoClaim(new Claim("member_of", ClaimValue.createEssential(true)));
-        
+
         try {
             @SuppressWarnings("unused")
             String authJwt = jwtAuthorizationRequest.getEncodedJwt();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
             // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
             // can't be used together
-            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256 and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
-            // only with key encryption/wrap mode (for example, KeyEncryptionAlgorithm.A128KW) 
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256 and
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
+            // only with key encryption/wrap mode (for example,
+            // KeyEncryptionAlgorithm.A128KW)
             assertTrue(true);
-        }        
-    }    
+        }
+    }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "RSA1_5_keyId", "clientJwksUri", "sectorIdentifierUri" })
