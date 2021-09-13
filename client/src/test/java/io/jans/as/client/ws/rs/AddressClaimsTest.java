@@ -1741,7 +1741,6 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "sectorIdentifierUri", "Ed25519_keyId", "clientJwksUri" })
@@ -3772,6 +3771,93 @@ public class AddressClaimsTest extends BaseTest {
     }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
+            "ECDH_ES_keyId", "clientJwksUri", "sectorIdentifierUri" })
+    @Test
+    public void authorizationRequest_AlgECDH_ES_EncA256CBC_PLUS_HS512(final String userId, final String userSecret,
+            final String redirectUri, final String redirectUris, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret, final String clientKeyId, final String clientJwksUri,
+            final String sectorIdentifierUri) throws Exception {
+        showTitle("authorizationRequest_AlgECDH_ES_EncA256CBC_PLUS_HS512");
+
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.TOKEN, ResponseType.ID_TOKEN);
+
+        // 1. Register client
+        RegisterRequest registerRequest = new RegisterRequest(ApplicationType.WEB, "jans test app",
+                StringUtils.spaceSeparatedToList(redirectUris));
+        registerRequest.setResponseTypes(responseTypes);
+        registerRequest.setSectorIdentifierUri(sectorIdentifierUri);
+        registerRequest.setJwksUri(clientJwksUri);
+        registerRequest.setIdTokenEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setIdTokenEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+        registerRequest.setUserInfoEncryptedResponseAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setUserInfoEncryptedResponseEnc(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+        registerRequest.setRequestObjectEncryptionAlg(KeyEncryptionAlgorithm.ECDH_ES);
+        registerRequest.setRequestObjectEncryptionEnc(BlockEncryptionAlgorithm.A256CBC_PLUS_HS512);
+        registerRequest.addCustomAttribute("jansInclClaimsInIdTkn", "true");
+
+        RegisterClient registerClient = new RegisterClient(registrationEndpoint);
+        registerClient.setRequest(registerRequest);
+        RegisterResponse registerResponse = registerClient.exec();
+
+        showClient(registerClient);
+        assertEquals(registerResponse.getStatus(), 201, "Unexpected response code: " + registerResponse.getEntity());
+        assertNotNull(registerResponse.getClientId());
+        assertNotNull(registerResponse.getClientSecret());
+        assertNotNull(registerResponse.getRegistrationAccessToken());
+        assertNotNull(registerResponse.getClientIdIssuedAt());
+        assertNotNull(registerResponse.getClientSecretExpiresAt());
+
+        String clientId = registerResponse.getClientId();
+
+        // 2. Choose encryption key
+        JwkClient jwkClient = new JwkClient(jwksUri);
+        JwkResponse jwkResponse = jwkClient.exec();
+        String serverKeyId = jwkResponse.getKeyId(Algorithm.ECDH_ES);
+        assertNotNull(serverKeyId);
+
+        // 3. Request authorization
+        JSONObject jwks = JwtUtil.getJSONWebKeys(jwksUri);
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+
+        List<String> scopes = Arrays.asList("openid", "address");
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes,
+                redirectUri, nonce);
+        authorizationRequest.setState(state);
+
+        JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
+                KeyEncryptionAlgorithm.ECDH_ES, BlockEncryptionAlgorithm.A256CBC_PLUS_HS512, cryptoProvider);
+        jwtAuthorizationRequest.setKeyId(serverKeyId);
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addIdTokenClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
+        jwtAuthorizationRequest
+                .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
+        
+        try {
+            @SuppressWarnings("unused")
+            String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
+            assertTrue(false);
+        } catch (Exception e) {
+            // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
+            // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
+            // can't be used together
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256 and
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
+            // only with key encryption/wrap mode (for example,
+            // KeyEncryptionAlgorithm.A128KW)
+            assertTrue(true);
+        }        
+    }
+
+    @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "dnName", "keyStoreFile", "keyStoreSecret",
             "ECDH_ES_PLUS_A128KW_keyId", "clientJwksUri", "sectorIdentifierUri" })
     @Test
     public void authorizationRequest_AlgECDH_ES_PLUS_A128KW_EncA128CBC_HS256(final String userId,
@@ -4471,17 +4557,19 @@ public class AddressClaimsTest extends BaseTest {
                 .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_STREET_ADDRESS, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest
                 .addUserInfoClaim(new Claim(JwtClaimName.ADDRESS_COUNTRY, ClaimValue.createEssential(true)));
-        
+
         try {
             @SuppressWarnings("unused")
             String authJwt = jwtAuthorizationRequest.getEncodedJwt(jwks);
-        }
-        catch (Exception e) {
+            assertTrue(false);
+        } catch (Exception e) {
             // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
             // KeyEncryptionAlgorithm.DIR and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
             // can't be used together
-            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256 and BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
-            // only with key encryption/wrap mode (for example, KeyEncryptionAlgorithm.A128KW) 
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256 and
+            // BlockEncryptionAlgorithm.A128CBC_PLUS_HS256
+            // only with key encryption/wrap mode (for example,
+            // KeyEncryptionAlgorithm.A128KW)
             assertTrue(true);
         }
     }
@@ -4727,7 +4815,7 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "sectorIdentifierUri" })
     @Test
     public void authorizationRequest_AlgPBES2_HS256_PLUS_A128KW_EncA128GCM(final String userId, final String userSecret,
@@ -4833,8 +4921,8 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedPassword(clientSecret);        
-        UserInfoResponse userInfoResponse = userInfoClient.exec();        
+        userInfoClient.setSharedPassword(clientSecret);
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
@@ -4848,7 +4936,7 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "sectorIdentifierUri" })
     @Test
     public void authorizationRequest_AlgPBES2_HS512_PLUS_A256KW_EncA256GCM(final String userId, final String userSecret,
@@ -4968,12 +5056,12 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
-    }    
+    }
 
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequest_AlgPBES2_HS384_PLUS_A192KW_EncA256CBC_HS512(final String userId, final String userSecret,
-            final String redirectUri, final String redirectUris, final String clientJwksUri,
+    public void authorizationRequest_AlgPBES2_HS384_PLUS_A192KW_EncA256CBC_HS512(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String clientJwksUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequest_AlgPBES2_HS384_PLUS_A192KW_EncA256CBC_HS512");
 
@@ -5075,7 +5163,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
-        userInfoClient.setSharedPassword(clientSecret);        
+        userInfoClient.setSharedPassword(clientSecret);
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
@@ -5090,11 +5178,11 @@ public class AddressClaimsTest extends BaseTest {
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
     }
-    
+
     @Parameters({ "userId", "userSecret", "redirectUri", "redirectUris", "clientJwksUri", "sectorIdentifierUri" })
     @Test
-    public void authorizationRequest_AlgPBES2_HS512_PLUS_A256KW_EncA256CBC_PLUS_HS512(final String userId, final String userSecret,
-            final String redirectUri, final String redirectUris, final String clientJwksUri,
+    public void authorizationRequest_AlgPBES2_HS512_PLUS_A256KW_EncA256CBC_PLUS_HS512(final String userId,
+            final String userSecret, final String redirectUri, final String redirectUris, final String clientJwksUri,
             final String sectorIdentifierUri) throws Exception {
         showTitle("authorizationRequest_AlgPBES2_HS512_PLUS_A256KW_EncA256CBC_PLUS_HS512");
 
@@ -5141,7 +5229,8 @@ public class AddressClaimsTest extends BaseTest {
         authorizationRequest.setState(state);
 
         JwtAuthorizationRequest jwtAuthorizationRequest = new JwtAuthorizationRequest(authorizationRequest,
-                KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, BlockEncryptionAlgorithm.A256CBC_PLUS_HS512, clientSecret);
+                KeyEncryptionAlgorithm.PBES2_HS512_PLUS_A256KW, BlockEncryptionAlgorithm.A256CBC_PLUS_HS512,
+                clientSecret);
         jwtAuthorizationRequest
                 .addIdTokenClaim(new Claim(JwtClaimName.AUTHENTICATION_TIME, ClaimValue.createEssential(true)));
         jwtAuthorizationRequest
@@ -5197,7 +5286,7 @@ public class AddressClaimsTest extends BaseTest {
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
         userInfoClient.setRequest(userInfoRequest);
         userInfoClient.setSharedPassword(clientSecret);
-        UserInfoResponse userInfoResponse = userInfoClient.exec();        
+        UserInfoResponse userInfoResponse = userInfoClient.exec();
 
         showClient(userInfoClient);
         assertEquals(userInfoResponse.getStatus(), 200, "Unexpected response code: " + userInfoResponse.getStatus());
@@ -5210,6 +5299,6 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(userInfoResponse.getClaim(JwtClaimName.ADDRESS)
                 .containsAll(Arrays.asList(JwtClaimName.ADDRESS_STREET_ADDRESS, JwtClaimName.ADDRESS_COUNTRY,
                         JwtClaimName.ADDRESS_LOCALITY, JwtClaimName.ADDRESS_REGION)));
-    }    
+    }
 
 }

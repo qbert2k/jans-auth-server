@@ -304,7 +304,7 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
                 JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
-    
+
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
     @Test
     public void usesAsymmetricIdTokenSignaturesES384(
@@ -410,7 +410,7 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
                 JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
-    
+
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
     @Test
     public void usesAsymmetricIdTokenSignaturesED25519(
@@ -463,7 +463,7 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
                 JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
-    
+
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "sectorIdentifierUri"})
     @Test
     public void usesAsymmetricIdTokenSignaturesED448(
@@ -516,5 +516,5 @@ public class UsesAsymmetricIdTokenSignatures extends BaseTest {
                 JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
-    
+
 }

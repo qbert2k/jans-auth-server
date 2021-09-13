@@ -116,7 +116,7 @@ public class JwtAuthorizationRequest {
         this(authorizationRequest, null, null, keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
     }
 
-    public JwtAuthorizationRequest(
+    private JwtAuthorizationRequest(
             AuthorizationRequest authorizationRequest, SignatureAlgorithm signatureAlgorithm,
             AbstractCryptoProvider cryptoProvider, KeyEncryptionAlgorithm keyEncryptionAlgorithm,
             BlockEncryptionAlgorithm blockEncryptionAlgorithm, String sharedKey) {

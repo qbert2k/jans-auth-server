@@ -92,7 +92,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
         Jwt jwt = Jwt.parse(idToken);
         JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
                 JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
     @Parameters({"redirectUris", "userId", "userSecret", "redirectUri", "postLogoutRedirectUri", "clientJwksUri"})
@@ -155,7 +155,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
         Jwt jwt = Jwt.parse(idToken);
         JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
                 JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
 
@@ -219,7 +219,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
         Jwt jwt = Jwt.parse(idToken);
         JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
                 JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
     
 
@@ -283,7 +283,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
         Jwt jwt = Jwt.parse(idToken);
         JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
                 JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
     }        
  
     
@@ -347,7 +347,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
         Jwt jwt = Jwt.parse(idToken);
         JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(),
                 JwtUtil.getJSONWebKeys(jwksUri));
-        assertTrue(jwtVerifyer.verifyJwt(jwt));        
-   }        
-    
+        assertTrue(jwtVerifyer.verifyJwt(jwt));
+   }
+
 }
