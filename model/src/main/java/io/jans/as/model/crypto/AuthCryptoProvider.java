@@ -259,8 +259,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 break;
             }
             case EC: {
-                //ECGenParameterSpec eccgen = new ECGenParameterSpec("curve25519");
-                //ECGenParameterSpec eccgen = new ECGenParameterSpec("curve448");
                 ECGenParameterSpec eccgen = new ECGenParameterSpec(keyEncryptionAlgorithm.getCurve().getAlias());
                 keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
                 keyGen.initialize(eccgen, new SecureRandom());                   
@@ -278,10 +276,10 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             // Java API requires a certificate chain
             X509Certificate cert = null;
             
-            if(algorithm.getFamily().equals(AlgorithmFamily.RSA)) {
+            if(algorithm.getFamily() == AlgorithmFamily.RSA) {
                 cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);                
             }
-            else if(algorithm.getFamily().equals(AlgorithmFamily.EC)) {
+            else if(algorithm.getFamily() == AlgorithmFamily.EC) {
                 cert = generateV3Certificate(keyPair, dnName, "SHA256WITHECDSA", expirationTime);                
             }
             
@@ -316,8 +314,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             }
             else if (publicKey instanceof ECPublicKey) {
                 ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
-                //jsonObject.put(JWKParameter.CURVE, "curve25519");
-                //jsonObject.put(JWKParameter.CURVE, "curve448");
                 jsonObject.put(JWKParameter.CURVE, keyEncryptionAlgorithm.getCurve().getAlias());
                 jsonObject.put(JWKParameter.X, Base64Util.base64urlencode(ecPublicKey.getW().getAffineX().toByteArray()));
                 jsonObject.put(JWKParameter.Y, Base64Util.base64urlencode(ecPublicKey.getW().getAffineY().toByteArray()));
