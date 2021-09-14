@@ -9,17 +9,21 @@ package io.jans.as.server.service.external.context;
 import io.jans.as.client.RegisterRequest;
 import io.jans.as.common.model.registration.Client;
 import io.jans.as.model.error.ErrorResponseFactory;
+import io.jans.as.model.error.IErrorType;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.register.RegisterErrorResponseType;
+import io.jans.as.model.util.CertUtils;
 import io.jans.model.SimpleCustomProperty;
 import io.jans.model.custom.script.conf.CustomScriptConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,7 @@ public class DynamicClientRegistrationContext extends ExternalScriptContext {
     private Jwt dcr;
     private Client client;
     private ErrorResponseFactory errorResponseFactory;
+    private X509Certificate certificate;
 
     public DynamicClientRegistrationContext(HttpServletRequest httpRequest, JSONObject registerRequest, CustomScriptConfiguration script) {
         this(httpRequest, registerRequest, script, null);
@@ -115,6 +120,67 @@ public class DynamicClientRegistrationContext extends ExternalScriptContext {
     public void validateSSA() {
         validateSSANotNull();
         validateSSARedirectUri();
+        validateSoftwareId();
+        validateCertSubjectHasCNAndOU();
+        validateCNEqualsSoftwareId();
+        validateOUEqualsOrgId();
+    }
+
+    public void validateCertSubjectHasCNAndOU() {
+        validateCNIsNotBlank();
+        validateOUIsNotBlank();
+    }
+
+    public String validateOUIsNotBlank() {
+        final String ou = CertUtils.getAttr(certificate, BCStyle.OU);
+        if (StringUtils.isBlank(ou)) {
+            throwWebApplicationException("OU of certificate is not set.", RegisterErrorResponseType.INVALID_CLIENT_METADATA);
+        }
+        return ou;
+    }
+
+    public String validateCNIsNotBlank() {
+        final String cn = CertUtils.getAttr(certificate, BCStyle.CN);
+        if (StringUtils.isBlank(cn)) {
+            throwWebApplicationException("CN of certificate is not set.", RegisterErrorResponseType.INVALID_CLIENT_METADATA);
+        }
+        return cn;
+    }
+
+    public void throwWebApplicationException(String message, IErrorType errorType) {
+        log.error(message);
+        throwWebApplicationExceptionIfSet();
+        throw createWebApplicationException(Response.Status.BAD_REQUEST.getStatusCode(), errorResponseFactory.getErrorAsJson(errorType));
+    }
+
+    public void validateCNEqualsSoftwareId() {
+        final String cn = validateCNIsNotBlank();
+        final String softwareId = softwareStatement.getClaims().getClaimAsString("software_id");
+
+        if (StringUtils.isBlank(softwareId)) {
+            throwWebApplicationException("softwareId is not set in SSA", RegisterErrorResponseType.INVALID_CLIENT_METADATA);
+            return;
+        }
+
+        if (cn.equals(softwareId)) // success
+            return;
+
+        throwWebApplicationException("CN does not equals to softwareId in SSA. CN: " + cn + ", softwareId: " + softwareId, RegisterErrorResponseType.INVALID_CLIENT_METADATA);
+    }
+
+    public void validateOUEqualsOrgId() {
+        final String ou = validateOUIsNotBlank();
+        final String orgId = softwareStatement.getClaims().getClaimAsString("org_id");
+
+        if (StringUtils.isBlank(orgId)) {
+            throwWebApplicationException("orgId is not set in SSA", RegisterErrorResponseType.INVALID_CLIENT_METADATA);
+            return;
+        }
+
+        if (ou.equals(orgId)) // success
+            return;
+
+        throwWebApplicationException("OU does not equals to orgId in SSA. OU: " + ou + ", orgId: " + orgId, RegisterErrorResponseType.INVALID_CLIENT_METADATA);
     }
 
     public void validateSSARedirectUri() {
@@ -130,17 +196,25 @@ public class DynamicClientRegistrationContext extends ExternalScriptContext {
         if (ssaRedirectUris.containsAll(redirectUris))
             return;
 
-        log.error("SSA redirect_uris does not match redirect_uris of the request. SSA redirect_uris: " + ssaRedirectUris + ", request redirectUris: " + redirectUris);
-        throwWebApplicationExceptionIfSet();
-        throw createWebApplicationException(Response.Status.BAD_REQUEST.getStatusCode(), errorResponseFactory.getErrorAsJson(RegisterErrorResponseType.INVALID_REDIRECT_URI));
+        throwWebApplicationException("SSA redirect_uris does not match redirect_uris of the request. SSA redirect_uris: " + ssaRedirectUris + ", request redirectUris: " + redirectUris, RegisterErrorResponseType.INVALID_REDIRECT_URI);
     }
 
     public void validateSSANotNull() {
         if (softwareStatement == null) {
-            log.error("SSA is null");
-            throwWebApplicationExceptionIfSet();
-            throw createWebApplicationException(Response.Status.BAD_REQUEST.getStatusCode(), errorResponseFactory.getErrorAsJson(RegisterErrorResponseType.INVALID_SOFTWARE_STATEMENT));
+            throwWebApplicationException("SSA is null", RegisterErrorResponseType.INVALID_SOFTWARE_STATEMENT);
         }
+    }
+
+    public void validateSoftwareId() {
+        final String softwareId = registerRequest.getSoftwareId();
+        if (StringUtils.isBlank(softwareId))
+            return;
+
+        final String ssaSoftwareId = softwareStatement.getClaims().getClaimAsString("software_id");
+        if (softwareId.equals(ssaSoftwareId))
+            return;
+
+        throwWebApplicationException(String.format("SSA softwareId (%s), does not match to softwareId in request (%s)", ssaSoftwareId, softwareId), RegisterErrorResponseType.INVALID_CLIENT_METADATA);
     }
 
     public ErrorResponseFactory getErrorResponseFactory() {
@@ -149,6 +223,14 @@ public class DynamicClientRegistrationContext extends ExternalScriptContext {
 
     public void setErrorResponseFactory(ErrorResponseFactory errorResponseFactory) {
         this.errorResponseFactory = errorResponseFactory;
+    }
+
+    public X509Certificate getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(X509Certificate certificate) {
+        this.certificate = certificate;
     }
 
     @Override

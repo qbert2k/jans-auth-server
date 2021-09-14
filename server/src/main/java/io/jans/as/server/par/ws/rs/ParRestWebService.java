@@ -2,12 +2,14 @@ package io.jans.as.server.par.ws.rs;
 
 import io.jans.as.common.model.registration.Client;
 import io.jans.as.common.util.RedirectUri;
+import io.jans.as.model.authorize.AuthorizeErrorResponseType;
 import io.jans.as.model.authorize.AuthorizeRequestParam;
 import io.jans.as.model.common.ComponentType;
 import io.jans.as.model.common.ResponseMode;
 import io.jans.as.model.common.ResponseType;
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.error.ErrorResponseFactory;
+import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.util.Util;
 import io.jans.as.persistence.model.Par;
 import io.jans.as.server.authorize.ws.rs.AuthorizeRestWebServiceValidator;
@@ -15,6 +17,7 @@ import io.jans.as.server.service.RedirectUriResponse;
 import io.jans.as.server.service.RequestParameterService;
 import io.jans.as.server.util.QueryStringDecoder;
 import io.jans.as.server.util.ServerUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -116,7 +119,9 @@ public class ParRestWebService {
             ResponseMode responseModeObj = ResponseMode.getByValue(responseMode);
 
             Client client = authorizeRestWebServiceValidator.validateClient(clientId, state, true);
-            redirectUri = authorizeRestWebServiceValidator.validateRedirectUri(client, redirectUri, state, null, httpRequest);
+
+            redirectUri = getRedirectUri(redirectUri, request);
+            redirectUri = authorizeRestWebServiceValidator.validateRedirectUri(client, redirectUri, state, null, httpRequest, AuthorizeErrorResponseType.INVALID_REQUEST);
 
             RedirectUriResponse redirectUriResponse = new RedirectUriResponse(new RedirectUri(redirectUri, responseTypes, responseModeObj), state, httpRequest, errorResponseFactory);
             redirectUriResponse.setFapiCompatible(appConfiguration.getFapiCompatibility());
@@ -134,7 +139,6 @@ public class ParRestWebService {
             par.getAttributes().setClientId(clientId);
             par.getAttributes().setRedirectUri(redirectUri);
             par.getAttributes().setState(state);
-            par.getAttributes().setResponseMode(responseMode);
             par.getAttributes().setResponseMode(responseMode);
             par.getAttributes().setNonce(nonce);
             par.getAttributes().setDisplay(display);
@@ -175,6 +179,20 @@ public class ParRestWebService {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
+    }
+
+    private String getRedirectUri(String redirectUri, String request) {
+        if (StringUtils.isNotBlank(redirectUri) || StringUtils.isBlank(request))
+            return redirectUri;
+
+        Jwt jwt = Jwt.parseSilently(request);
+        if (jwt != null) {
+            final String redirectUriFromJwt = jwt.getClaims().getClaimAsString("redirect_uri");
+            log.trace("redirectUriFromJwt: " + redirectUriFromJwt);
+            return redirectUriFromJwt;
+        }
+
+        return null;
     }
 
     @PUT

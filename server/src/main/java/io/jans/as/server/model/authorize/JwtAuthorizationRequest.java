@@ -23,6 +23,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwe.JweDecrypterImpl;
+import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtHeaderName;
 import io.jans.as.model.util.Base64Util;
@@ -34,6 +35,7 @@ import io.jans.service.cdi.util.CdiUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +61,7 @@ import java.util.List;
 public class JwtAuthorizationRequest {
 
     private final static Logger log = LoggerFactory.getLogger(JwtAuthorizationRequest.class);
+    private final static int SIXTY_MINUTES_AS_SECONDS = 3600;
 
     // Header
     private String type;
@@ -117,6 +120,10 @@ public class JwtAuthorizationRequest {
 
             String[] parts = encodedJwt.split("\\.");
 
+            if (appConfiguration.getRequireRequestObjectEncryption() && parts.length != 5) {
+                throw new InvalidJwtException("Request object is not encrypted.");
+            }
+
             if (parts.length == 5) {
                 String encodedHeader = parts[0];
 
@@ -155,6 +162,14 @@ public class JwtAuthorizationRequest {
                 jweDecrypter.setBlockEncryptionAlgorithm(blockEncryptionAlgorithm);
 
                 Jwe jwe = jweDecrypter.decrypt(encodedJwt);
+
+                final Jwt nestedJwt = jwe.getSignedJWTPayload();
+                if (nestedJwt != null) {
+                    keyId = nestedJwt.getHeader().getKeyId();
+                    if (!validateSignature(cryptoProvider, nestedJwt.getHeader().getSignatureAlgorithm(), client, nestedJwt.getSigningInput(), nestedJwt.getEncodedSignature())) {
+                        throw new InvalidJwtException("The Nested JWT signature is not valid");
+                    }
+                }
 
                 loadHeader(jwe.getHeader().toJsonString());
                 loadPayload(jwe.getClaims().toJsonString());
@@ -320,8 +335,7 @@ public class JwtAuthorizationRequest {
         }
     }
 
-    private boolean validateSignature(AbstractCryptoProvider cryptoProvider, SignatureAlgorithm signatureAlgorithm,
-            Client client, String signingInput, String signature) throws Exception {
+    private boolean validateSignature(@NotNull AbstractCryptoProvider cryptoProvider, SignatureAlgorithm signatureAlgorithm, Client client, String signingInput, String signature) throws Exception {
         ClientService clientService = CdiUtil.bean(ClientService.class);
         String sharedSecret = clientService.decryptSecret(client.getClientSecret());
         JSONObject jwks = Strings.isNullOrEmpty(client.getJwks()) ? JwtUtil.getJSONWebKeys(client.getJwksUri())
@@ -519,7 +533,9 @@ public class JwtAuthorizationRequest {
         }
 
         try {
-            return new JwtAuthorizationRequest(appConfiguration, cryptoProvider, request, client);
+            final JwtAuthorizationRequest requestObject = new JwtAuthorizationRequest(appConfiguration, cryptoProvider, request, client);
+            requestObject.validate();
+            return requestObject;
         } catch (WebApplicationException e) {
             throw e;
         } catch (Exception e) {
@@ -528,4 +544,31 @@ public class JwtAuthorizationRequest {
         return null;
     }
 
+    private void validate() throws InvalidJwtException {
+        if (appConfiguration.getFapiCompatibility()) {
+            validateFapi();
+        }
+    }
+
+    private void validateFapi() throws InvalidJwtException {
+        final Integer nbf = getNbf();
+        if (nbf == null || nbf <= 0) { // https://github.com/JanssenProject/jans-auth-server/issues/164 fapi1-advanced-final-ensure-request-object-without-nbf-fails
+            log.error("nbf claim is not set, nbf: " + nbf);
+            throw new InvalidJwtException("nbf claim is not set");
+        }
+        final long nowSeconds = System.currentTimeMillis() / 1000;
+        final long nbfDiff = nowSeconds - nbf;
+        if (nbfDiff > SIXTY_MINUTES_AS_SECONDS) { // https://github.com/JanssenProject/jans-auth-server/issues/166
+            log.error("nbf claim is more then 60 Minutes in the past, nbf: " + nbf + ", nowSeconds: " + nowSeconds);
+            throw new InvalidJwtException("nbf claim is more then 60 in the past");
+        }
+        final Integer exp = getExp();
+        final long nowSecondsExp = System.currentTimeMillis() / 1000;
+        final long expDiff = exp - nowSecondsExp;
+        if (expDiff > SIXTY_MINUTES_AS_SECONDS) {  //https://github.com/JanssenProject/jans-auth-server/issues/165
+            log.error("exp claim is more then 60 minutes in the future, exp: " + exp + ", nowSecondsExp: " + nowSecondsExp);
+            throw new InvalidJwtException("exp claim is more then 60 in the future");
+        }
+
+    }
 }

@@ -26,6 +26,7 @@ import io.jans.as.client.AuthorizationRequest;
 import io.jans.as.client.util.ClientUtil;
 import io.jans.as.model.common.Display;
 import io.jans.as.model.common.Prompt;
+import io.jans.as.model.common.ResponseMode;
 import io.jans.as.model.common.ResponseType;
 import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
@@ -36,11 +37,22 @@ import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwe.JweEncrypterImpl;
 import io.jans.as.model.jwk.JWKParameter;
+import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaims;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.Util;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.PublicKey;
+import java.util.List;
 
 /**
  * @author Javier Rojas Blum
@@ -61,6 +73,7 @@ public class JwtAuthorizationRequest {
 
     // Payload
     private List<ResponseType> responseTypes;
+    private ResponseMode responseMode;
     private String clientId;
     private List<String> scopes;
     private String redirectUri;
@@ -90,6 +103,7 @@ public class JwtAuthorizationRequest {
 
     private UserInfoMember userInfoMember;
     private IdTokenMember idTokenMember;
+    private Jwt nestedPayload;
 
     // Signature/Encryption Keys
     private String sharedKey;
@@ -136,6 +150,7 @@ public class JwtAuthorizationRequest {
     private void setAuthorizationRequestParams(AuthorizationRequest authorizationRequest) {
         if (authorizationRequest != null) {
             this.responseTypes = authorizationRequest.getResponseTypes();
+            this.responseMode = authorizationRequest.getResponseMode();
             this.clientId = authorizationRequest.getClientId();
             this.scopes = authorizationRequest.getScopes();
             this.redirectUri = authorizationRequest.getRedirectUri();
@@ -208,6 +223,14 @@ public class JwtAuthorizationRequest {
 
     public void setResponseTypes(List<ResponseType> responseTypes) {
         this.responseTypes = responseTypes;
+    }
+
+    public ResponseMode getResponseMode() {
+        return responseMode;
+    }
+
+    public void setResponseMode(ResponseMode responseMode) {
+        this.responseMode = responseMode;
     }
 
     public String getClientId() {
@@ -336,6 +359,14 @@ public class JwtAuthorizationRequest {
 
     public void setIdTokenMember(IdTokenMember idTokenMember) {
         this.idTokenMember = idTokenMember;
+    }
+
+    public Jwt getNestedPayload() {
+        return nestedPayload;
+    }
+
+    public void setNestedPayload(Jwt nestedPayload) {
+        this.nestedPayload = nestedPayload;
     }
 
     public void addUserInfoClaim(Claim claim) {
@@ -472,12 +503,17 @@ public class JwtAuthorizationRequest {
             String header = ClientUtil.toPrettyJson(headerToJSONObject());
             String encodedHeader = Base64Util.base64urlencode(header.getBytes(Util.UTF8_STRING_ENCODING));
 
-            String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
-            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
-
             Jwe jwe = new Jwe();
             jwe.setHeader(new JwtHeader(encodedHeader));
-            jwe.setClaims(new JwtClaims(encodedClaims));
+
+            if (nestedPayload == null) {
+                String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
+                String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
+                jwe.setClaims(new JwtClaims(encodedClaims));
+            } else {
+                jwe.setSignedJWTPayload(nestedPayload);
+            }
+
             jweEncrypter.encrypt(jwe);
 
             encodedJwt = jwe.toString();
@@ -547,6 +583,9 @@ public class JwtAuthorizationRequest {
                     }
                     obj.put("response_type", responseTypeJsonArray);
                 }
+            }
+            if (responseMode != null) {
+                obj.put("response_mode", responseMode);
             }
             if (StringUtils.isNotBlank(clientId)) {
                 obj.put("client_id", clientId);

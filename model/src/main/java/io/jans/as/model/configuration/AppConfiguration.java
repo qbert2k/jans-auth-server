@@ -71,6 +71,7 @@ public class AppConfiguration implements Configuration {
     private String mtlsDeviceAuthzEndpoint;
 
     private Boolean sessionAsJwt = false;
+    private Boolean requireRequestObjectEncryption = false;
 
     private int sectorIdentifierCacheLifetimeInMinutes = 1440;
 
@@ -174,6 +175,7 @@ public class AppConfiguration implements Configuration {
     private Boolean sessionIdRequestParameterEnabled = false; // #1195
     private Boolean changeSessionIdOnAuthentication = true;
     private Boolean sessionIdPersistInCache = false;
+    private Boolean includeSidInResponse = false;
     /**
      * SessionId will be expired after sessionIdLifetime seconds
      */
@@ -298,6 +300,15 @@ public class AppConfiguration implements Configuration {
     private Boolean httpLoggingEnabled; // Used in ServletLoggingFilter to enable http request/response logging.
     private Set<String> httpLoggingExludePaths; // Used in ServletLoggingFilter to exclude some paths from logger. Paths example: ["/jans-auth/img", "/jans-auth/stylesheet"]
     private String externalLoggerConfiguration; // Path to external log4j2 configuration file. This property might be configured from oxTrust: /identity/logviewer/configure
+
+    public Boolean getRequireRequestObjectEncryption() {
+        if (requireRequestObjectEncryption == null) requireRequestObjectEncryption = false;
+        return requireRequestObjectEncryption;
+    }
+
+    public void setRequireRequestObjectEncryption(Boolean requireRequestObjectEncryption) {
+        this.requireRequestObjectEncryption = requireRequestObjectEncryption;
+    }
 
     public Boolean getAllowIdTokenWithoutImplicitGrantType() {
         if (allowIdTokenWithoutImplicitGrantType == null) allowIdTokenWithoutImplicitGrantType = false;
@@ -523,6 +534,15 @@ public class AppConfiguration implements Configuration {
         this.forceOfflineAccessScopeToEnableRefreshToken = forceOfflineAccessScopeToEnableRefreshToken;
     }
 
+    public Boolean getIncludeSidInResponse() {
+        if (includeSidInResponse == null) includeSidInResponse = false;
+        return includeSidInResponse;
+    }
+
+    public void setIncludeSidInResponse(Boolean includeSidInResponse) {
+        this.includeSidInResponse = includeSidInResponse;
+    }
+
     public Boolean getSessionIdPersistInCache() {
         if (sessionIdPersistInCache == null) sessionIdPersistInCache = false;
         return sessionIdPersistInCache;
@@ -548,6 +568,10 @@ public class AppConfiguration implements Configuration {
 
     public void setReturnClientSecretOnRead(Boolean returnClientSecretOnRead) {
         this.returnClientSecretOnRead = returnClientSecretOnRead;
+    }
+
+    public boolean isFapi() {
+        return Boolean.TRUE.equals(getFapiCompatibility());
     }
 
     public Boolean getFapiCompatibility() {

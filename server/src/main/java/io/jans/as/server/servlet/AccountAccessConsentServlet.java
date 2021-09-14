@@ -5,6 +5,7 @@ import io.jans.as.server.service.ClientService;
 import io.jans.as.server.service.token.TokenService;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ import java.util.UUID;
  */
 
 @WebServlet(urlPatterns = "/open-banking/v3.1/aisp/account-access-consents", loadOnStartup = 9)
-public class AccontAccessConsentServlet extends HttpServlet {
+public class AccountAccessConsentServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8224898157373678903L;
 
@@ -43,7 +44,7 @@ public class AccontAccessConsentServlet extends HttpServlet {
 	@Override 
 	public void init() throws ServletException
 	{
-		log.info("Inside init method of AccoutAccess Consent ***********************************************************************");
+		log.info("Inside init method of AccountAccess Consent ***********************************************************************");
 	}
 	
 	public static void printJsonObject(JSONObject jsonObj, ServletOutputStream out ) throws IOException {
@@ -64,7 +65,7 @@ public class AccontAccessConsentServlet extends HttpServlet {
 	 * @param httpResponse servlet response
 	 */	
 	protected void processRequest(HttpServletRequest servletRequest, HttpServletResponse httpResponse) {
-		log.info("Starting processRequest method of AccoutAccess Consent ***********************************************************************");
+		log.info("Starting processRequest method of AccountAccess Consent ***********************************************************************");
 		String authFromReq = null;
         try (PrintWriter out = httpResponse.getWriter()) {
         	
@@ -78,23 +79,30 @@ public class AccontAccessConsentServlet extends HttpServlet {
         	JSONObject jsonObj = new JSONObject();
         	
         	String permissionKey="";
-        	String permissionValue="";
+        	JSONArray permissionValue=new JSONArray();
         	
         	for (String keyStr : jsonBody.keySet()) {
     	    	Object keyvalue = jsonBody.get(keyStr);
-    	    	jsonObj.put(keyStr, keyvalue);
+    	    	/*jsonObj.put(keyStr, keyvalue);
     		    if (keyStr.equals("Risk"))
         	   	{
-        	   	}
-    	    	if (keyStr.equals("Data")) {
+        	   	}*/
+    	    	if (keyStr.equals("data")) {
     	    		JSONObject keyvalueTemp = (JSONObject)jsonBody.get(keyStr);
     		    	for (String keyStr1 : keyvalueTemp.keySet()) {
     		    		Object keyvalue1 = keyvalueTemp.get(keyStr1);
-    		    		if (keyStr1.equals("Permissions"))
+    		    		if (keyStr1.equals("permissions"))
     		    	   	{
-    		    	   		permissionKey=keyStr1; 
-    		    	   		permissionValue=keyvalue1.toString();
-    		    	   	}
+                                        permissionKey=keyStr1; 
+                                        String tempstr=keyvalue1.toString();
+                                        String []temp=tempstr.substring(1, tempstr.length() - 1).split(",");
+                                        for (int i=0;i<temp.length;i++)
+                                                permissionValue.put(temp[i].substring(1, temp[i].length() - 1));
+				}
+    		    		if (keyStr1.equals("expirationDateTime"))
+                                {
+    		    	   		jsonObj.put(keyStr1, keyvalue1.toString());
+                                }
     		    	}
     	    	}
     	    }
@@ -121,16 +129,16 @@ public class AccontAccessConsentServlet extends HttpServlet {
         		ConsentID=UUID.randomUUID().toString();
         		log.info("FAPIOBUK: ClientID is null");
         	}
-        	jsonObj.put("Links", new JSONObject().put("self","/open-banking/v3.1/aisp/account-access-consents/"+ConsentID));
+        	jsonObj.put("links", new JSONObject().put("self","/open-banking/v3.1/aisp/account-access-consents/"+ConsentID));
         	
         	JSONObject data=new JSONObject();
         	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        	data.put("CreationDateTime", timestamp.getTime());
-        	data.put("Status", "AwaitingAuthorisation");
+        	data.put("creationDateTime", timestamp.getTime());
+        	data.put("status", "AwaitingAuthorisation");
         	data.put(permissionKey, permissionValue);
-        	data.put("ConsentId",ConsentID);
-        	data.put("StatusUpdateDateTime", timestamp.getTime());
-        	jsonObj.put("Data",data);
+        	data.put("consentId",ConsentID);
+        	data.put("statusUpdateDateTime", timestamp.getTime());
+        	jsonObj.put("data",data);
         	   	
         	out.print(jsonObj.toString());
         	httpResponse.setStatus(201, "Created");

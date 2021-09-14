@@ -22,7 +22,6 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.SignedJWT;
-
 import io.jans.as.model.crypto.encryption.BlockEncryptionAlgorithm;
 import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.crypto.signature.AlgorithmFamily;
@@ -33,6 +32,12 @@ import io.jans.as.model.jwt.JwtClaims;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtHeaderName;
 import io.jans.as.model.util.SecurityProviderUtility;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.util.Arrays;
 
 /**
  * @author Javier Rojas Blum
