@@ -4,8 +4,9 @@
 package io.jans.as.server.comp;
 
 import static org.testng.Assert.assertTrue;
-import static io.jans.as.model.jwk.JWKParameter.JSON_WEB_KEY_SET;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertFalse;
+import static io.jans.as.model.jwk.JWKParameter.JSON_WEB_KEY_SET;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,7 +36,7 @@ import io.jans.as.server.model.token.JwtSigner;
 
 /**
  * @author Sergey Manoylo
- * @version September 7, 2021
+ * @version September 14, 2021
  *
  */
 public class JwtSignerVerifyerTest extends BaseTest {
@@ -84,14 +85,13 @@ public class JwtSignerVerifyerTest extends BaseTest {
 
     @Parameters({ "userSecret", "dnName", "keyStoreFile", "keyStoreSecret" })
     @Test
-    public void signerVerifyerTest(final String userSecret, final String dnName, final String keyStoreFile,
-            final String keyStoreSecret) {
-        showTitle("signerVerifyerTest suite:");
+    public void signerVerifyerTestOk(final String userSecret, final String dnName, final String keyStoreFile,
+            final String keyStoreSecret) throws Exception {
+        AppConfiguration appConfiguration = new AppConfiguration();
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         for (SignatureAlgorithm signatureAlgorithm : SignatureAlgorithm.values()) {
-            showTitle("signerVerifyerTest suite: signatureAlgorithm = " + signatureAlgorithm);
+            showTitle("signerVerifyerTestOk suite: signatureAlgorithm = " + signatureAlgorithm);
             try {
-                AppConfiguration appConfiguration = new AppConfiguration();
-                AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
 
                 JwtSigner jwtSigner = null;
                 if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
@@ -115,6 +115,56 @@ public class JwtSignerVerifyerTest extends BaseTest {
                     assertTrue(jwtVerifyer.verifyJwt(jwt));
                 }
 
+            } catch (Exception e) {
+                System.out.println("Error (signerVerifyerTest) : " + " signatureAlgorithm = " + signatureAlgorithm
+                        + " message: " + e.getMessage());
+                assertTrue(false);
+            }
+        }
+    }
+
+    @Parameters({ "userSecret", "dnName", "keyStoreFile", "keyStoreSecret" })
+    @Test
+    public void signerVerifyerTestFailWrongSignature(final String userSecret, final String dnName,
+            final String keyStoreFile, final String keyStoreSecret) throws Exception {
+        AppConfiguration appConfiguration = new AppConfiguration();
+        AuthCryptoProvider cryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
+        for (SignatureAlgorithm signatureAlgorithm : SignatureAlgorithm.values()) {
+            showTitle("signerVerifyerTestFailWrongSignature suite: signatureAlgorithm = " + signatureAlgorithm);
+            try {
+
+                JwtSigner jwtSigner = null;
+                if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
+                    jwtSigner = new JwtSigner(appConfiguration, jwks, signatureAlgorithm, dnName, userSecret);
+                } else {
+                    jwtSigner = new JwtSigner(appConfiguration, jwks, signatureAlgorithm, dnName);
+                }
+
+                jwtSigner.setCryptoProvider(cryptoProvider);
+
+                Jwt jwt = jwtSigner.newJwt();
+                jwt.getClaims().setSubjectIdentifier("testing");
+                jwt.getClaims().setIssuer("https:devgluu.saminet.local");
+                jwt = jwtSigner.sign();
+
+                Jwt jwt2 = jwtSigner.newJwt();
+                jwt2.getClaims().setSubjectIdentifier("testing2");
+                jwt2.getClaims().setIssuer("https:devgluu2.saminet.local");
+                jwt2 = jwtSigner.sign();
+
+                jwt.setEncodedSignature(jwt2.getEncodedSignature());
+
+                JwtVerifyer jwtVerifyer = new JwtVerifyer(cryptoProvider, jwks.toJSONObject());
+
+                if (signatureAlgorithm == SignatureAlgorithm.NONE) {
+                    assertTrue(jwtVerifyer.verifyJwt(jwt));
+                } else {
+                    if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
+                        assertFalse(jwtVerifyer.verifyJwt(jwt, userSecret));
+                    } else {
+                        assertFalse(jwtVerifyer.verifyJwt(jwt));
+                    }
+                }
             } catch (Exception e) {
                 System.out.println("Error (signerVerifyerTest) : " + " signatureAlgorithm = " + signatureAlgorithm
                         + " message: " + e.getMessage());

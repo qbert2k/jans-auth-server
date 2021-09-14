@@ -6,9 +6,9 @@
         <listener class-name="io.jans.as.client.RetryListener" />
     </listeners>
 
-    <test name="OC5. FeatureTest-Uses Asymmetric ID Token Signatures" enabled="true">
+    <test name="Multivalued claims" enabled="true">
         <classes>
-            <class name="io.jans.as.client.interop.UsesAsymmetricIdTokenSignatures"/>
+            <class name="io.jans.as.client.ws.rs.MultivaluedClaims"/>
         </classes>
     </test>
 
