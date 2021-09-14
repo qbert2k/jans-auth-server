@@ -96,29 +96,28 @@ public class JwtAuthorizationRequest {
     private AbstractCryptoProvider cryptoProvider;
 
     public JwtAuthorizationRequest(AuthorizationRequest authorizationRequest, SignatureAlgorithm signatureAlgorithm,
-                                   AbstractCryptoProvider cryptoProvider) {
+            AbstractCryptoProvider cryptoProvider) {
         this(authorizationRequest, signatureAlgorithm, cryptoProvider, null, null, null);
     }
 
     public JwtAuthorizationRequest(AuthorizationRequest authorizationRequest, SignatureAlgorithm signatureAlgorithm,
-                                   String sharedKey, AbstractCryptoProvider cryptoProvider) {
+            String sharedKey, AbstractCryptoProvider cryptoProvider) {
         this(authorizationRequest, signatureAlgorithm, cryptoProvider, null, null, sharedKey);
     }
 
-    public JwtAuthorizationRequest(
-            AuthorizationRequest authorizationRequest, KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, AbstractCryptoProvider cryptoProvider) {
+    public JwtAuthorizationRequest(AuthorizationRequest authorizationRequest,
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
+            AbstractCryptoProvider cryptoProvider) {
         this(authorizationRequest, null, cryptoProvider, keyEncryptionAlgorithm, blockEncryptionAlgorithm, null);
     }
 
-    public JwtAuthorizationRequest(
-            AuthorizationRequest authorizationRequest, KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, String sharedKey) {
+    public JwtAuthorizationRequest(AuthorizationRequest authorizationRequest,
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
+            String sharedKey) {
         this(authorizationRequest, null, null, keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
     }
 
-    private JwtAuthorizationRequest(
-            AuthorizationRequest authorizationRequest, SignatureAlgorithm signatureAlgorithm,
+    private JwtAuthorizationRequest(AuthorizationRequest authorizationRequest, SignatureAlgorithm signatureAlgorithm,
             AbstractCryptoProvider cryptoProvider, KeyEncryptionAlgorithm keyEncryptionAlgorithm,
             BlockEncryptionAlgorithm blockEncryptionAlgorithm, String sharedKey) {
         setAuthorizationRequestParams(authorizationRequest);
@@ -441,7 +440,7 @@ public class JwtAuthorizationRequest {
             JweEncrypterImpl jweEncrypter = null;
             if (cryptoProvider != null && jwks != null) {
                 PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
-                if(publicKey instanceof ECPublicKey) {
+                if (publicKey instanceof ECPublicKey) {
                     JSONArray webKeys = jwks.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
                     JSONObject key = null;
                     ECKey ecPublicKey = null;
@@ -452,20 +451,21 @@ public class JwtAuthorizationRequest {
                             break;
                         }
                     }
-                    if(ecPublicKey != null) {
-                        jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
+                    if (ecPublicKey != null) {
+                        jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                                ecPublicKey);
                     } else {
-                        throw new InvalidJwtException("jweEncrypter was not created.");                        
+                        throw new InvalidJwtException("jweEncrypter was not created.");
                     }
                 } else {
                     jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
                 }
             } else {
-                if(keyEncryptionAlgorithm.getFamily() == AlgorithmFamily.PASSW) {
+                if (keyEncryptionAlgorithm.getFamily() == AlgorithmFamily.PASSW) {
                     jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
-                }
-                else {
-                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
+                } else {
+                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                            sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
                 }
             }
 
@@ -511,8 +511,8 @@ public class JwtAuthorizationRequest {
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 
         return decodedJwt;
     }
