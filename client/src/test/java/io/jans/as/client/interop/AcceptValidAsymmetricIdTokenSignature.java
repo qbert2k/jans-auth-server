@@ -18,7 +18,7 @@ import io.jans.as.model.common.SubjectType;
 import io.jans.as.model.crypto.AuthCryptoProvider;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwt.Jwt;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -91,7 +91,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
@@ -152,7 +152,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
@@ -213,7 +213,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
@@ -274,7 +274,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 
@@ -335,7 +335,7 @@ public class AcceptValidAsymmetricIdTokenSignature extends BaseTest {
 
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
     }
 

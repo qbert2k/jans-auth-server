@@ -41,7 +41,7 @@ import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwk.Algorithm;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
@@ -153,7 +153,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -270,7 +270,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -389,7 +389,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -508,7 +508,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -628,7 +628,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -748,7 +748,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -853,7 +853,7 @@ public class AddressClaimsTest extends BaseTest {
         // 3. Validate id_token
         Jwt jwt = Jwt.parse(idToken);
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1000,7 +1000,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1120,7 +1120,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1240,7 +1240,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1360,7 +1360,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1480,7 +1480,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1600,7 +1600,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1720,7 +1720,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1840,7 +1840,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1960,7 +1960,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwt.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -2082,7 +2082,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2204,7 +2204,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2326,7 +2326,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2448,7 +2448,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2570,7 +2570,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2692,7 +2692,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2824,7 +2824,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -2956,7 +2956,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3088,7 +3088,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3220,7 +3220,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3352,7 +3352,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3484,7 +3484,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3616,7 +3616,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3748,7 +3748,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3967,7 +3967,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4099,7 +4099,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4232,7 +4232,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(cryptoProvider, jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(cryptoProvider, jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4353,7 +4353,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4474,7 +4474,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4673,7 +4673,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4794,7 +4794,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -4915,7 +4915,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5036,7 +5036,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5157,7 +5157,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5279,7 +5279,7 @@ public class AddressClaimsTest extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_LOCALITY));
         assertNotNull(jwe.getClaims().getClaimAsJSON(JwtClaimName.ADDRESS).has(JwtClaimName.ADDRESS_REGION));
 
-        JwtVerifyer jweVerifyer = new JwtVerifyer(new AuthCryptoProvider(), jwks);
+        JwtVerifier jweVerifyer = new JwtVerifier(new AuthCryptoProvider(), jwks);
         assertTrue(jweVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info

@@ -55,7 +55,7 @@ import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -516,7 +516,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ISSUED_AT));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         String sub = jwt.getClaims().getClaimAsString(JwtClaimName.SUBJECT_IDENTIFIER);
@@ -3285,7 +3285,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS256 = idToken;
@@ -3356,7 +3356,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS384 = idToken;
@@ -3427,7 +3427,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintRS512 = idToken;
@@ -3498,7 +3498,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES256 = idToken;
@@ -3569,7 +3569,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES256K = idToken;
@@ -3640,7 +3640,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES384 = idToken;
@@ -3711,7 +3711,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintES512 = idToken;
@@ -3782,7 +3782,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS256 = idToken;
@@ -3853,7 +3853,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS384 = idToken;
@@ -3924,7 +3924,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintPS512 = idToken;
@@ -3996,7 +3996,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgA128KWEncA128GCM = idToken;
@@ -4068,7 +4068,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgA256KWEncA256GCM = idToken;
@@ -4140,7 +4140,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgDirEncA128GCM = idToken;
@@ -4212,7 +4212,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgDirEncA256CBC_HS512 = idToken;
@@ -4284,7 +4284,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA128GCM = idToken;
@@ -4356,7 +4356,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgPBES2_HS256_PLUS_A128KWEncA256CBC_HS512 = idToken;
@@ -4434,7 +4434,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA128CBCPLUSHS256 = idToken;
@@ -4512,7 +4512,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSA15EncA256CBCPLUSHS512 = idToken;
@@ -4589,7 +4589,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         idTokenHintAlgRSAOAEPEncA256GCM = idToken;
@@ -4660,7 +4660,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED25519 = idToken;
@@ -4731,7 +4731,7 @@ public class BackchannelAuthenticationPollMode extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.ACCESS_TOKEN_HASH));
         assertNotNull(jwt.getClaims().getClaimAsString(JwtClaimName.AUTHENTICATION_TIME));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         idTokenHintED448 = idToken;

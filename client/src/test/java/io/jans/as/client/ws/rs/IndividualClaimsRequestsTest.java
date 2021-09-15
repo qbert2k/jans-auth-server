@@ -45,7 +45,7 @@ import io.jans.as.model.jws.PlainTextSignature;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -434,7 +434,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -569,7 +569,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -704,7 +704,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -842,7 +842,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -980,7 +980,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1118,7 +1118,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1256,7 +1256,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1394,7 +1394,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1532,7 +1532,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1670,7 +1670,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1808,7 +1808,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1946,7 +1946,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwt.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -2083,7 +2083,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2220,7 +2220,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2357,7 +2357,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2494,7 +2494,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2631,7 +2631,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2768,7 +2768,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2921,7 +2921,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3074,7 +3074,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -3227,7 +3227,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL));
         assertNull(jwe.getClaims().getClaimAsString(JwtClaimName.EMAIL_VERIFIED));
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info

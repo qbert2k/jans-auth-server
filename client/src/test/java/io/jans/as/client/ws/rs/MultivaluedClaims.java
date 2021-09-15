@@ -46,7 +46,7 @@ import io.jans.as.model.jws.PlainTextSignature;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
@@ -218,7 +218,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -305,7 +305,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -392,7 +392,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -477,7 +477,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -563,7 +563,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -649,7 +649,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -735,7 +735,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -821,7 +821,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -907,7 +907,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -993,7 +993,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1079,7 +1079,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1165,7 +1165,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1251,7 +1251,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -1341,7 +1341,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1431,7 +1431,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1520,7 +1520,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1609,7 +1609,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1704,7 +1704,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1799,7 +1799,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1894,7 +1894,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -1989,7 +1989,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2084,7 +2084,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2179,7 +2179,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2274,7 +2274,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2369,7 +2369,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2464,7 +2464,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -2550,7 +2550,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -2636,7 +2636,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -2834,7 +2834,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -2935,7 +2935,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -3036,7 +3036,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt, clientSecret));
 
         // 4. Request user info
@@ -3139,7 +3139,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3242,7 +3242,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3345,7 +3345,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3448,7 +3448,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3551,7 +3551,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3654,7 +3654,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3757,7 +3757,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3860,7 +3860,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -3963,7 +3963,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -4066,7 +4066,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -4169,7 +4169,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -4272,7 +4272,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwt.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwt.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwt));
 
         // 4. Request user info
@@ -4373,7 +4373,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -4474,7 +4474,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -4575,7 +4575,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -4676,7 +4676,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -4777,7 +4777,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -4960,7 +4960,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5075,7 +5075,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5190,7 +5190,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5305,7 +5305,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5421,7 +5421,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 5. Request user info
@@ -5522,7 +5522,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -5623,7 +5623,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info
@@ -5725,7 +5725,7 @@ public class MultivaluedClaims extends BaseTest {
         assertNotNull(jwe.getClaims().getClaimAsStringList("member_of"));
         assertTrue(jwe.getClaims().getClaimAsStringList("member_of").size() > 1);
 
-        JwtVerifyer jwtVerifyer = new JwtVerifyer(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
+        JwtVerifier jwtVerifyer = new JwtVerifier(new AuthCryptoProvider(), JwtUtil.getJSONWebKeys(jwksUri));
         assertTrue(jwtVerifyer.verifyJwt(jwe.getSignedJWTPayload()));
 
         // 4. Request user info

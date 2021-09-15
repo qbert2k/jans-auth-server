@@ -29,7 +29,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.JSONWebKey;
 import io.jans.as.model.jwk.JSONWebKeySet;
 import io.jans.as.model.jwt.Jwt;
-import io.jans.as.model.jwt.JwtVerifyer;
+import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.server.BaseTest;
 import io.jans.as.server.model.token.JwtSigner;
@@ -107,7 +107,7 @@ public class JwtSignerVerifyerTest extends BaseTest {
                 jwt.getClaims().setIssuer("https:devgluu.saminet.local");
                 jwt = jwtSigner.sign();
 
-                JwtVerifyer jwtVerifyer = new JwtVerifyer(cryptoProvider, jwks.toJSONObject());
+                JwtVerifier jwtVerifyer = new JwtVerifier(cryptoProvider, jwks.toJSONObject());
 
                 if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
                     assertTrue(jwtVerifyer.verifyJwt(jwt, userSecret));
@@ -154,7 +154,7 @@ public class JwtSignerVerifyerTest extends BaseTest {
 
                 jwt.setEncodedSignature(jwt2.getEncodedSignature());
 
-                JwtVerifyer jwtVerifyer = new JwtVerifyer(cryptoProvider, jwks.toJSONObject());
+                JwtVerifier jwtVerifyer = new JwtVerifier(cryptoProvider, jwks.toJSONObject());
 
                 if (signatureAlgorithm == SignatureAlgorithm.NONE) {
                     assertTrue(jwtVerifyer.verifyJwt(jwt));

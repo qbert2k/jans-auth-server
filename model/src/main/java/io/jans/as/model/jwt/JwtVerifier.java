@@ -28,10 +28,10 @@ import io.jans.as.model.jws.RSASigner;
  * @author Sergey Manoylo 
  * @version September 6, 2021  
  */
-public class JwtVerifyer {
+public class JwtVerifier {
     
     @SuppressWarnings("unused")
-    private final static Logger log = LoggerFactory.getLogger(JwtVerifyer.class);
+    private final static Logger log = LoggerFactory.getLogger(JwtVerifier.class);
     
     private AbstractCryptoProvider cryptoProvider;
     
@@ -42,7 +42,7 @@ public class JwtVerifyer {
      * @param cryptoProvider
      * @param jwks
      */
-    public JwtVerifyer(final AbstractCryptoProvider cryptoProvider, final  JSONObject jwks) {
+    public JwtVerifier(final AbstractCryptoProvider cryptoProvider, final  JSONObject jwks) {
         this.cryptoProvider = cryptoProvider;
         this.jwks = jwks;
     }
