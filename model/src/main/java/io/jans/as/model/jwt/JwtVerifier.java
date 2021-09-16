@@ -25,16 +25,16 @@ import io.jans.as.model.jws.JwsSigner;
 import io.jans.as.model.jws.RSASigner;
 
 /**
- * @author Sergey Manoylo 
- * @version September 6, 2021  
+ * @author Sergey Manoylo
+ * @version September 6, 2021
  */
 public class JwtVerifier {
-    
+
     @SuppressWarnings("unused")
     private final static Logger log = LoggerFactory.getLogger(JwtVerifier.class);
-    
+
     private AbstractCryptoProvider cryptoProvider;
-    
+
     private JSONObject jwks;
 
     /**
@@ -42,11 +42,11 @@ public class JwtVerifier {
      * @param cryptoProvider
      * @param jwks
      */
-    public JwtVerifier(final AbstractCryptoProvider cryptoProvider, final  JSONObject jwks) {
+    public JwtVerifier(final AbstractCryptoProvider cryptoProvider, final JSONObject jwks) {
         this.cryptoProvider = cryptoProvider;
         this.jwks = jwks;
     }
-    
+
     /**
      * 
      * @param jwt
@@ -55,61 +55,63 @@ public class JwtVerifier {
      * @throws Exception
      */
     public boolean verifyJwt(final Jwt jwt, final String clientSecret) throws Exception {
-        
-        if(jwt == null) {
+
+        if (jwt == null) {
             throw new InvalidJwtException("JwtVerifyer: jwt == null (jwt isn't defined)");
         }
-        
+
         String signKeyId = jwt.getHeader().getKeyId();
-        
+
         SignatureAlgorithm signatureAlgorithm = jwt.getHeader().getSignatureAlgorithm();
-        if(signatureAlgorithm == null) {
-            throw new InvalidJwtException("JwtVerifyer: signatureAlgorithm == null (signatureAlgorithm  isn't defined)");
+        if (signatureAlgorithm == null) {
+            throw new InvalidJwtException(
+                    "JwtVerifyer: signatureAlgorithm == null (signatureAlgorithm  isn't defined)");
         }
-        
-        AlgorithmFamily algFamily = signatureAlgorithm.getFamily();
-        
-        PublicKey publicKey = null;         
-        if(AlgorithmFamily.RSA.equals(algFamily)
-                || AlgorithmFamily.EC.equals(algFamily)
-                || AlgorithmFamily.ED.equals(algFamily)
-                ) {
-            if(signKeyId == null) {
+
+        final AlgorithmFamily algFamily = signatureAlgorithm.getFamily();
+
+        PublicKey publicKey = null;
+        if (AlgorithmFamily.RSA.equals(algFamily) || AlgorithmFamily.EC.equals(algFamily)
+                || AlgorithmFamily.ED.equals(algFamily)) {
+            if (signKeyId == null) {
                 throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
             }
             publicKey = cryptoProvider.getPublicKey(signKeyId, jwks, null);
-            if(publicKey == null) {
-                throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");            
-            }            
+            if (publicKey == null) {
+                throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");
+            }
+        } else {
+            throw new InvalidJwtException("Wrong AlgorithmFamily value: " + algFamily);
         }
-        
+
         JwsSigner signer = null;
-        
-        switch(signatureAlgorithm.getFamily()) {
+
+        switch (signatureAlgorithm.getFamily()) {
         case NONE: {
             return true;
         }
         case HMAC: {
-            if(clientSecret == null) {
-                throw new InvalidJwtException("JwtVerifyer: clientSecret == null (clientSecret isn't  defined)");                
+            if (clientSecret == null) {
+                throw new InvalidJwtException("JwtVerifyer: clientSecret == null (clientSecret isn't  defined)");
             }
             signer = new HMACSigner(signatureAlgorithm, clientSecret);
             break;
         }
         case RSA: {
-            java.security.interfaces.RSAPublicKey jrsaPublicKey = (java.security.interfaces.RSAPublicKey)publicKey;
+            java.security.interfaces.RSAPublicKey jrsaPublicKey = (java.security.interfaces.RSAPublicKey) publicKey;
             RSAPublicKey rsaPublicKey = new RSAPublicKey(jrsaPublicKey.getModulus(), jrsaPublicKey.getPublicExponent());
             signer = new RSASigner(signatureAlgorithm, rsaPublicKey);
             break;
         }
         case EC: {
-            ECPublicKey ecPublicKey = (ECPublicKey)publicKey;
-            ECDSAPublicKey ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, ecPublicKey.getW().getAffineX(), ecPublicKey.getW().getAffineY());
+            ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
+            ECDSAPublicKey ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, ecPublicKey.getW().getAffineX(),
+                    ecPublicKey.getW().getAffineY());
             signer = new ECDSASigner(signatureAlgorithm, ecdsaPublicKey);
             break;
         }
         case ED: {
-            BCEdDSAPublicKey bceddsaPublicKey = (BCEdDSAPublicKey)publicKey;
+            BCEdDSAPublicKey bceddsaPublicKey = (BCEdDSAPublicKey) publicKey;
             EDDSAPublicKey eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, bceddsaPublicKey.getEncoded());
             signer = new EDDSASigner(signatureAlgorithm, eddsaPublicKey);
             break;
@@ -118,11 +120,11 @@ public class JwtVerifier {
             break;
         }
         }
-        
-        if(signer == null) {
+
+        if (signer == null) {
             throw new InvalidJwtException("JwtVerifyer: signer == null (signer isn't  defined)");
         }
-        
+
         return signer.validate(jwt);
     }
 
@@ -135,5 +137,5 @@ public class JwtVerifier {
     public boolean verifyJwt(final Jwt jwt) throws Exception {
         return verifyJwt(jwt, null);
     }
-    
+
 }
