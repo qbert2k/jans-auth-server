@@ -210,72 +210,72 @@ public class KeyGenerator {
             calendar.add(Calendar.HOUR, expiration_hours);
 
             FileOutputStream fosTestPropFile = null;
-            boolean genTestPropFile = (testPropFile != null);
+            boolean genTestPropFile = (testPropFile != null && testPropFile.length() > 0);
 
-            if (genTestPropFile) {
-                fosTestPropFile = new FileOutputStream(testPropFile);
-            }
-
-            for (Algorithm algorithm : signatureAlgorithms) {
-                SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
-                JSONObject result = cryptoProvider.generateKey(algorithm, calendar.getTimeInMillis(), Use.SIGNATURE);
-
-                JSONWebKey key = new JSONWebKey();
-                key.setKid(result.getString(KEY_ID));
-                key.setUse(Use.SIGNATURE);
-                key.setAlg(algorithm);
-                key.setKty(JwkUtil.getKeyTypeFromAlgFamily(signatureAlgorithm.getFamily()));
-                key.setExp(result.optLong(EXPIRATION_TIME));
-                key.setCrv(signatureAlgorithm.getCurve());
-                key.setN(result.optString(MODULUS));
-                key.setE(result.optString(EXPONENT));
-                key.setX(result.optString(X));
-                key.setY(result.optString(Y));
-
-                JSONArray x5c = result.optJSONArray(CERTIFICATE_CHAIN);
-                key.setX5c(StringUtils.toList(x5c));
-
-                jwks.getKeys().add(key);
-
+            try {
                 if (genTestPropFile) {
-                    String rec = getKeyNameFromAlgorithm(algorithm) + "=" + result.getString(KEY_ID);
-                    fosTestPropFile.write(rec.getBytes());
-                    fosTestPropFile.write("\n".getBytes());
+                    fosTestPropFile = new FileOutputStream(testPropFile);
+                }
+                for (Algorithm algorithm : signatureAlgorithms) {
+                    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(algorithm.getParamName());
+                    JSONObject result = cryptoProvider.generateKey(algorithm, calendar.getTimeInMillis(), Use.SIGNATURE);
+
+                    JSONWebKey key = new JSONWebKey();
+                    key.setKid(result.getString(KEY_ID));
+                    key.setUse(Use.SIGNATURE);
+                    key.setAlg(algorithm);
+                    key.setKty(JwkUtil.getKeyTypeFromAlgFamily(signatureAlgorithm.getFamily()));
+                    key.setExp(result.optLong(EXPIRATION_TIME));
+                    key.setCrv(signatureAlgorithm.getCurve());
+                    key.setN(result.optString(MODULUS));
+                    key.setE(result.optString(EXPONENT));
+                    key.setX(result.optString(X));
+                    key.setY(result.optString(Y));
+
+                    JSONArray x5c = result.optJSONArray(CERTIFICATE_CHAIN);
+                    key.setX5c(StringUtils.toList(x5c));
+
+                    jwks.getKeys().add(key);
+
+                    if (genTestPropFile) {
+                        String rec = getKeyNameFromAlgorithm(algorithm) + "=" + result.getString(KEY_ID);
+                        fosTestPropFile.write(rec.getBytes());
+                        fosTestPropFile.write("\n".getBytes());
+                    }
+                }
+                for (Algorithm algorithm : encryptionAlgorithms) {
+                    KeyEncryptionAlgorithm encryptionAlgorithm = KeyEncryptionAlgorithm.fromName(algorithm.getParamName());
+                    JSONObject result = cryptoProvider.generateKey(algorithm, calendar.getTimeInMillis(), Use.ENCRYPTION);
+
+                    JSONWebKey key = new JSONWebKey();
+                    key.setKid(result.getString(KEY_ID));
+                    key.setUse(Use.ENCRYPTION);
+                    key.setAlg(algorithm);
+                    key.setKty(KeyType.fromString(encryptionAlgorithm.getFamily().toString()));
+                    key.setExp(result.optLong(EXPIRATION_TIME));
+                    key.setCrv(encryptionAlgorithm.getCurve());
+                    key.setN(result.optString(MODULUS));
+                    key.setE(result.optString(EXPONENT));
+                    key.setX(result.optString(X));
+                    key.setY(result.optString(Y));
+
+                    JSONArray x5c = result.optJSONArray(CERTIFICATE_CHAIN);
+                    key.setX5c(StringUtils.toList(x5c));
+
+                    jwks.getKeys().add(key);
+
+                    if (genTestPropFile) {
+                        String rec = getKeyNameFromAlgorithm(algorithm) + "=" + result.getString(KEY_ID);
+                        fosTestPropFile.write(rec.getBytes());
+                        fosTestPropFile.write("\n".getBytes());
+                    }
                 }
             }
-
-            for (Algorithm algorithm : encryptionAlgorithms) {
-                KeyEncryptionAlgorithm encryptionAlgorithm = KeyEncryptionAlgorithm.fromName(algorithm.getParamName());
-                JSONObject result = cryptoProvider.generateKey(algorithm, calendar.getTimeInMillis(), Use.ENCRYPTION);
-
-                JSONWebKey key = new JSONWebKey();
-                key.setKid(result.getString(KEY_ID));
-                key.setUse(Use.ENCRYPTION);
-                key.setAlg(algorithm);
-                key.setKty(KeyType.fromString(encryptionAlgorithm.getFamily().toString()));
-                key.setExp(result.optLong(EXPIRATION_TIME));
-                key.setCrv(encryptionAlgorithm.getCurve());
-                key.setN(result.optString(MODULUS));
-                key.setE(result.optString(EXPONENT));
-                key.setX(result.optString(X));
-                key.setY(result.optString(Y));
-
-                JSONArray x5c = result.optJSONArray(CERTIFICATE_CHAIN);
-                key.setX5c(StringUtils.toList(x5c));
-
-                jwks.getKeys().add(key);
-
-                if (genTestPropFile) {
-                    String rec = getKeyNameFromAlgorithm(algorithm) + "=" + result.getString(KEY_ID);
-                    fosTestPropFile.write(rec.getBytes());
-                    fosTestPropFile.write("\n".getBytes());
+            finally {
+                if(fosTestPropFile != null) {
+                    fosTestPropFile.close();
                 }
             }
-
-            if (genTestPropFile) {
-                fosTestPropFile.close();
-            }
-
             System.out.println(jwks);
         }
 
