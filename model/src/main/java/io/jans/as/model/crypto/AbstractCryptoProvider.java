@@ -209,7 +209,7 @@ public abstract class AbstractCryptoProvider {
             break;
         }
         default: {
-            throw new Exception("Wrong value AlgorithmFamily: " + family.toString());
+            throw new Exception("Wrong value AlgorithmFamily: " + ((family != null) ? family : "null"));
         }
         }
 
