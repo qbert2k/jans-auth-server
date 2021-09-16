@@ -176,13 +176,13 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             AlgorithmFamily algorithmFamily = algorithm.getFamily();
             switch (algorithmFamily) {
             case RSA: {
-                keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
+                keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(2048, new SecureRandom());
                 break;
             }
             case EC: {
                 ECGenParameterSpec eccgen = new ECGenParameterSpec(signatureAlgorithm.getCurve().getAlias());
-                keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
+                keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(eccgen, new SecureRandom());
                 break;
             }
@@ -260,16 +260,16 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 keyEncryptionAlgorithm = KeyEncryptionAlgorithm.RSA1_5;
             }
             KeyPairGenerator keyGen = null;
-            AlgorithmFamily algorithmFamily = algorithm.getFamily();
+            final AlgorithmFamily algorithmFamily = algorithm.getFamily();
             switch (algorithmFamily) {
             case RSA: {
-                keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
+                keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(2048, new SecureRandom());
                 break;
             }
             case EC: {
                 ECGenParameterSpec eccgen = new ECGenParameterSpec(keyEncryptionAlgorithm.getCurve().getAlias());
-                keyGen = KeyPairGenerator.getInstance(algorithm.getFamily().toString(), "BC");
+                keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(eccgen, new SecureRandom());
                 break;
             }
@@ -285,10 +285,12 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             // Java API requires a certificate chain
             X509Certificate cert = null;
 
-            if (algorithm.getFamily() == AlgorithmFamily.RSA) {
+            if (algorithmFamily == AlgorithmFamily.RSA) {
                 cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);
-            } else if (algorithm.getFamily() == AlgorithmFamily.EC) {
+            } else if (algorithmFamily == AlgorithmFamily.EC) {
                 cert = generateV3Certificate(keyPair, dnName, "SHA256WITHECDSA", expirationTime);
+            } else {
+                throw new RuntimeException("The provided key encryption algorithm parameter is not supported: algorithmFamily = " + algorithmFamily);
             }
 
             X509Certificate[] chain = new X509Certificate[1];
