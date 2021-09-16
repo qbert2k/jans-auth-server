@@ -173,7 +173,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 signatureAlgorithm = SignatureAlgorithm.ES384;
             }
             KeyPairGenerator keyGen = null;
-            AlgorithmFamily algorithmFamily = algorithm.getFamily();
+            final AlgorithmFamily algorithmFamily = algorithm.getFamily();
             switch (algorithmFamily) {
             case RSA: {
                 keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
@@ -260,17 +260,20 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 keyEncryptionAlgorithm = KeyEncryptionAlgorithm.RSA1_5;
             }
             KeyPairGenerator keyGen = null;
+            String signatureAlgorithm = null;
             final AlgorithmFamily algorithmFamily = algorithm.getFamily();
             switch (algorithmFamily) {
             case RSA: {
                 keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(2048, new SecureRandom());
+                signatureAlgorithm = "SHA256WITHRSA";
                 break;
             }
             case EC: {
                 ECGenParameterSpec eccgen = new ECGenParameterSpec(keyEncryptionAlgorithm.getCurve().getAlias());
                 keyGen = KeyPairGenerator.getInstance(algorithmFamily.toString(), "BC");
                 keyGen.initialize(eccgen, new SecureRandom());
+                signatureAlgorithm = "SHA256WITHECDSA";                
                 break;
             }
             default: {
@@ -283,15 +286,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             PrivateKey pk = keyPair.getPrivate();
 
             // Java API requires a certificate chain
-            X509Certificate cert = null;
-
-            if (algorithmFamily == AlgorithmFamily.RSA) {
-                cert = generateV3Certificate(keyPair, dnName, "SHA256WITHRSA", expirationTime);
-            } else if (algorithmFamily == AlgorithmFamily.EC) {
-                cert = generateV3Certificate(keyPair, dnName, "SHA256WITHECDSA", expirationTime);
-            } else {
-                throw new RuntimeException("The provided key encryption algorithm parameter is not supported: algorithmFamily = " + algorithmFamily);
-            }
+            X509Certificate cert = generateV3Certificate(keyPair, dnName, signatureAlgorithm, expirationTime);
 
             X509Certificate[] chain = new X509Certificate[1];
             chain[0] = cert;
