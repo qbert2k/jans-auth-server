@@ -9,7 +9,6 @@ package io.jans.as.model.jwe;
 import java.security.PrivateKey;
 
 import io.jans.as.model.exception.InvalidJweException;
-import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.token.JsonWebResponse;
 
@@ -89,7 +88,7 @@ public class Jwe extends JsonWebResponse {
     }
 
     public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey,
-            String sharedSymmetricPassword) throws InvalidJweException, InvalidJwtException {
+            String sharedSymmetricPassword) throws InvalidJweException {
         Jwe jwe = null;
         JweDecrypter jweDecrypter = null;
         if (privateKey != null) {
@@ -106,11 +105,11 @@ public class Jwe extends JsonWebResponse {
     }
 
     public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey)
-            throws InvalidJweException, InvalidJwtException {
+            throws InvalidJweException {
         return parse(encodedJwe, privateKey, sharedSymmetricKey, null);
     }
 
-    public static Jwe parse(String encodedJwe, PrivateKey privateKey) throws InvalidJweException, InvalidJwtException {
+    public static Jwe parse(String encodedJwe, PrivateKey privateKey) throws InvalidJweException {
         return parse(encodedJwe, privateKey, null, null);
     }
 
