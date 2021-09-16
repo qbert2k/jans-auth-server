@@ -33,12 +33,6 @@ import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtHeaderName;
 import io.jans.as.model.util.SecurityProviderUtility;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
-import java.util.Arrays;
-
 /**
  * @author Javier Rojas Blum
  * @author Sergey Manoylo
@@ -161,7 +155,10 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                             hashCalc = new SHA512Digest(); // hash length == 512 bits
                             break;
                         }
-                        }                        
+                        default: {
+                            throw new InvalidJweException(String.format("Wrong value of the key length: " + keyLength));
+                        }
+                        }
                     } else {
                         throw new InvalidJweException(String.format(
                                 "Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
@@ -177,7 +174,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             } else {
                 throw new InvalidJweException("wrong AlgorithmFamily value");
             }
-            if(algorithmFamily == AlgorithmFamily.PASSW) {
+            if (algorithmFamily == AlgorithmFamily.PASSW) {
                 JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
                 decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
                 encryptedJwt.decrypt(decrypter);
@@ -191,7 +188,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     final String base64encodedPayload = encryptedJwt.getPayload().toString();
                     jwe.setClaims(new JwtClaims(base64encodedPayload));
                 }
-                return jwe;                
+                return jwe;
             } else {
                 JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
                 decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
@@ -206,7 +203,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     final String base64encodedPayload = encryptedJwt.getPayload().toString();
                     jwe.setClaims(new JwtClaims(base64encodedPayload));
                 }
-                return jwe;                
+                return jwe;
             }
         } catch (Exception e) {
             throw new InvalidJweException(e);
