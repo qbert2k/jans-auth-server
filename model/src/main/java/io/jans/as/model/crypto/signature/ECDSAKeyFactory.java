@@ -22,7 +22,6 @@ import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -91,7 +90,7 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
                 GregorianCalendar startDate = new GregorianCalendar(); // time from which certificate is valid
                 GregorianCalendar expiryDate = new GregorianCalendar(); // time after which certificate is not valid
                 expiryDate.add(Calendar.YEAR, 1);
-                BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
+                BigInteger serialNumber = new BigInteger(1024, new SecureRandom()); // serial number for certificate
                 X500Name name = new X500Name(dnName);
                 JcaX509v1CertificateBuilder certGen = new JcaX509v1CertificateBuilder(name, serialNumber,
                         startDate.getTime(), expiryDate.getTime(), name, keyPair.getPublic());
@@ -118,7 +117,7 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
         Certificate certificate = null;
         try {
             BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
-            BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
+            BigInteger serialNumber = new BigInteger(1024, new SecureRandom()); // serial number for certificate
             X500Name name = new X500Name(dnName);
             JcaX509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(name, serialNumber, startDate,
                     expirationDate, name, publicKey);

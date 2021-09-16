@@ -19,7 +19,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -72,7 +71,7 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
             GregorianCalendar startDate = new GregorianCalendar(); // time from which certificate is valid
             GregorianCalendar expiryDate = new GregorianCalendar(); // time after which certificate is not valid
             expiryDate.add(Calendar.YEAR, 1);
-            BigInteger serialNumber = new BigInteger(1024, new Random()); // serial number for certificate
+            BigInteger serialNumber = new BigInteger(1024, new SecureRandom()); // serial number for certificate
 
             X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
             X500Principal principal = new X500Principal(dnName);

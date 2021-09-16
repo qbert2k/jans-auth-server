@@ -68,11 +68,11 @@ public class JwtVerifier {
                     "JwtVerifyer: signatureAlgorithm == null (signatureAlgorithm  isn't defined)");
         }
 
-        final AlgorithmFamily algFamily = signatureAlgorithm.getFamily();
+        final AlgorithmFamily algorithmFamily = signatureAlgorithm.getFamily();
 
         PublicKey publicKey = null;
-        if (AlgorithmFamily.RSA.equals(algFamily) || AlgorithmFamily.EC.equals(algFamily)
-                || AlgorithmFamily.ED.equals(algFamily)) {
+        if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
+                || AlgorithmFamily.ED.equals(algorithmFamily)) {
             if (signKeyId == null) {
                 throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
             }
@@ -81,7 +81,7 @@ public class JwtVerifier {
                 throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");
             }
         } else {
-            throw new InvalidJwtException("Wrong AlgorithmFamily value: " + algFamily);
+            throw new InvalidJwtException("Wrong AlgorithmFamily value: " + algorithmFamily);
         }
 
         JwsSigner signer = null;
