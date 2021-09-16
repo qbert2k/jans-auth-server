@@ -174,37 +174,19 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
             } else {
                 throw new InvalidJweException("wrong AlgorithmFamily value");
             }
-            if (algorithmFamily == AlgorithmFamily.PASSW) {
-                JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
-                decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
-                encryptedJwt.decrypt(decrypter);
-
-                final SignedJWT signedJWT = encryptedJwt.getPayload().toSignedJWT();
-                if (signedJWT != null) {
-                    final Jwt jwt = Jwt.parse(signedJWT.serialize());
-                    jwe.setSignedJWTPayload(jwt);
-                    jwe.setClaims(jwt != null ? jwt.getClaims() : null);
-                } else {
-                    final String base64encodedPayload = encryptedJwt.getPayload().toString();
-                    jwe.setClaims(new JwtClaims(base64encodedPayload));
-                }
-                return jwe;
+            JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
+            decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
+            encryptedJwt.decrypt(decrypter);
+            final SignedJWT signedJWT = encryptedJwt.getPayload().toSignedJWT();
+            if (signedJWT != null) {
+                final Jwt jwt = Jwt.parse(signedJWT.serialize());
+                jwe.setSignedJWTPayload(jwt);
+                jwe.setClaims(jwt != null ? jwt.getClaims() : null);
             } else {
-                JWEDecrypter decrypter = DECRYPTER_FACTORY.createJWEDecrypter(encryptedJwt.getHeader(), encriptionKey);
-                decrypter.getJCAContext().setProvider(SecurityProviderUtility.getInstance());
-                encryptedJwt.decrypt(decrypter);
-
-                final SignedJWT signedJWT = encryptedJwt.getPayload().toSignedJWT();
-                if (signedJWT != null) {
-                    final Jwt jwt = Jwt.parse(signedJWT.serialize());
-                    jwe.setSignedJWTPayload(jwt);
-                    jwe.setClaims(jwt != null ? jwt.getClaims() : null);
-                } else {
-                    final String base64encodedPayload = encryptedJwt.getPayload().toString();
-                    jwe.setClaims(new JwtClaims(base64encodedPayload));
-                }
-                return jwe;
+                final String base64encodedPayload = encryptedJwt.getPayload().toString();
+                jwe.setClaims(new JwtClaims(base64encodedPayload));
             }
+            return jwe;
         } catch (Exception e) {
             throw new InvalidJweException(e);
         }
