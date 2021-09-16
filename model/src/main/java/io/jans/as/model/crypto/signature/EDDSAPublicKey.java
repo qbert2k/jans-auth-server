@@ -162,5 +162,13 @@ public class EDDSAPublicKey extends PublicKey {
             }
         }
         return true;        
-    }    
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.xEncoded);         
+    }
 }

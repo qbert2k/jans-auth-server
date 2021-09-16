@@ -201,4 +201,12 @@ public class EDDSAPrivateKey extends PrivateKey {
         }
         return true;
     }
+
+    /**
+     * 
+     */
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.dEncoded) ^ Arrays.hashCode(this.xEncoded);         
+    }
 }
