@@ -7,7 +7,6 @@
 package io.jans.as.model.jwe;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
@@ -81,7 +80,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         this.ecKey = ecKey;
     }
 
-    public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException, NoSuchAlgorithmException {
+    public JWEEncrypter createJweEncrypter() throws JOSEException, InvalidJweException {
         final KeyEncryptionAlgorithm keyEncryptionAlgorithm = getKeyEncryptionAlgorithm();
         if (keyEncryptionAlgorithm == null) {
             throw new InvalidJweException("KeyEncryptionAlgorithm isn't defined");
@@ -90,7 +89,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         if (blockEncryptionAlgorithm == null) {
             throw new InvalidJweException("BlockEncryptionAlgorithm isn't defined");
         }
-        AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
+        final AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
         if (algorithmFamily == AlgorithmFamily.RSA) {
             return new RSAEncrypter(new RSAKey.Builder((RSAPublicKey) publicKey).build());
         } else if (algorithmFamily == AlgorithmFamily.EC) {
@@ -148,6 +147,9 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                         hashCalc = new SHA512Digest(); // hash length == 512 bits
                         break;
                     }
+                    default: {
+                        throw new InvalidJweException(String.format("Wrong value of the key length: " + keyLength));
+                    }                    
                     }
                 } else {
                     throw new InvalidJweException(String.format(
