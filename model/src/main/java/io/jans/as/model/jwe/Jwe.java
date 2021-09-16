@@ -98,7 +98,7 @@ public class Jwe extends JsonWebResponse {
         } else if (sharedSymmetricPassword != null) {
             jweDecrypter = new JweDecrypterImpl(sharedSymmetricPassword);
         } else {
-            new InvalidJweException("privateKey, sharedSymmetricKey, sharedSymmetricPassword: keys aren't defined");
+            throw new InvalidJweException("privateKey, sharedSymmetricKey, sharedSymmetricPassword: keys aren't defined");
         }
         jwe = jweDecrypter.decrypt(encodedJwe);
         return jwe;
