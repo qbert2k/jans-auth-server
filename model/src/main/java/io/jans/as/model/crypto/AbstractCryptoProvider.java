@@ -166,7 +166,7 @@ public abstract class AbstractCryptoProvider {
 
     private PublicKey processKey(Algorithm requestedAlgorithm, String alias, JSONObject key) throws Exception {
         PublicKey publicKey = null;
-        AlgorithmFamily family = null;
+        AlgorithmFamily algorithmFamily = null;
 
         if (key.has(JWKParameter.ALGORITHM)) {
             Algorithm algorithm = Algorithm.fromString(key.optString(JWKParameter.ALGORITHM));
@@ -176,12 +176,14 @@ public abstract class AbstractCryptoProvider {
                         + ", requestedAlgorithm:" + requestedAlgorithm + ", kid:" + alias);
                 return null;
             }
-            family = algorithm.getFamily();
+            algorithmFamily = algorithm.getFamily();
         } else if (key.has(JWKParameter.KEY_TYPE)) {
-            family = AlgorithmFamily.fromString(key.getString(JWKParameter.KEY_TYPE));
+            algorithmFamily = AlgorithmFamily.fromString(key.getString(JWKParameter.KEY_TYPE));
+        } else {
+            throw new Exception("Wrong key (JSONObject): doesn't contain 'alg' and 'kty' properties");            
         }
 
-        switch (family) {
+        switch (algorithmFamily) {
         case RSA: {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(
@@ -209,7 +211,7 @@ public abstract class AbstractCryptoProvider {
             break;
         }
         default: {
-            throw new Exception("Wrong value AlgorithmFamily: " + ((family != null) ? family : "null"));
+            throw new Exception("Wrong AlgorithmFamily value: " + algorithmFamily);
         }
         }
 
