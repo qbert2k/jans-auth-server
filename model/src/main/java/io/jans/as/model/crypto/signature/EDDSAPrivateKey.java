@@ -98,9 +98,8 @@ public class EDDSAPrivateKey extends PrivateKey {
      * get original array (decoded) of the public key (ED25519 - 32 byte, ED448 - 56 bytes);
      * 
      * @return original array (decoded) of the public key (ED25519 - 32 byte, ED448 - 56 bytes);
-     * @throws IOException
      */
-    public byte[] getPublicKeyDecoded() throws IOException {
+    public byte[] getPublicKeyDecoded() {
         SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
         return subjPubKeyInfo.getPublicKeyData().getOctets();       
     }
@@ -171,35 +170,20 @@ public class EDDSAPrivateKey extends PrivateKey {
         if(!Arrays.equals(this.dEncoded, objTyped.dEncoded)) {
             return false;
         }
-
+        
         String thisKeyId = getKeyId();
-        String objKeyId = objTyped.getKeyId();
-        
-        if(thisKeyId != null) {
-            if(objKeyId == null || !thisKeyId.equals(objKeyId)) {
-                return false;
-            }
-        }
-        else if(objKeyId != null) {
-            if(thisKeyId == null || !objKeyId.equals(thisKeyId)) {
-                return false;
-            }
-        }
-        
+        String objKeyId = objTyped.getKeyId();        
+
         SignatureAlgorithm thisSignAlg = this.getSignatureAlgorithm();        
         SignatureAlgorithm objSignAlg = objTyped.getSignatureAlgorithm();
         
-        if(thisSignAlg != null) {
-            if(objSignAlg == null || !thisSignAlg.equals(objSignAlg)) {
-                return false;
-            }
-        }
-        else if (objSignAlg != null) {
-            if(thisSignAlg == null || !objSignAlg.equals(thisSignAlg)) {
-                return false;
-            }
-        }
-        return true;
+        boolean keysEquals = (thisKeyId == null && objKeyId == null) ||
+                (thisKeyId != null && thisKeyId.equals(objKeyId));
+
+        boolean signAlgEquals = (thisSignAlg == null && objSignAlg == null) ||
+                (thisSignAlg != null && thisSignAlg.equals(objSignAlg));
+
+        return keysEquals && signAlgEquals;         
     }
 
     /**

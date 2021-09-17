@@ -9,7 +9,6 @@ import static io.jans.as.model.jwk.JWKParameter.EXPONENT;
 import static io.jans.as.model.jwk.JWKParameter.MODULUS;
 import static io.jans.as.model.jwk.JWKParameter.X;
 
-import java.io.IOException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
@@ -58,9 +57,8 @@ public class EDDSAPublicKey extends PublicKey {
      * 
      * @return original array (decoded) of the public key;
      * 
-     * @throws IOException
      */
-    public byte[] getPublicKeyDecoded() throws IOException {
+    public byte[] getPublicKeyDecoded() {
         if(this.xEncoded == null) {
             return null;
         }
@@ -135,33 +133,18 @@ public class EDDSAPublicKey extends PublicKey {
         }
 
         String thisKeyId = getKeyId();
-        String objKeyId = objTyped.getKeyId();
-        
-        if(thisKeyId != null) {
-            if(objKeyId == null || !thisKeyId.equals(objKeyId)) {
-                return false;
-            }
-        }
-        else if(objKeyId != null) {
-            if(thisKeyId == null || !objKeyId.equals(thisKeyId)) {
-                return false;
-            }
-        }
-        
+        String objKeyId = objTyped.getKeyId();        
+
         SignatureAlgorithm thisSignAlg = this.getSignatureAlgorithm();        
         SignatureAlgorithm objSignAlg = objTyped.getSignatureAlgorithm();
         
-        if(thisSignAlg != null) {
-            if(objSignAlg == null || !thisSignAlg.equals(objSignAlg)) {
-                return false;
-            }
-        }
-        else if (objSignAlg != null) {
-            if(thisSignAlg == null || !objSignAlg.equals(thisSignAlg)) {
-                return false;
-            }
-        }
-        return true;        
+        boolean keysEquals = (thisKeyId == null && objKeyId == null) ||
+                (thisKeyId != null && thisKeyId.equals(objKeyId));
+
+        boolean signAlgEquals = (thisSignAlg == null && objSignAlg == null) ||
+                (thisSignAlg != null && thisSignAlg.equals(objSignAlg));
+
+        return keysEquals && signAlgEquals; 
     }
     
     /**
