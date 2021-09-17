@@ -38,13 +38,13 @@ public enum SignatureAlgorithm {
     ES384(SignatureAlgorithm.DEF_ES384, AlgorithmFamily.EC, SignatureAlgorithm.DEF_SHA384WITHECDSA, EllipticEdvardsCurve.P_384, JWSAlgorithm.ES384),
     ES512(SignatureAlgorithm.DEF_ES512, AlgorithmFamily.EC, SignatureAlgorithm.DEF_SHA512WITHECDSA, EllipticEdvardsCurve.P_521, JWSAlgorithm.ES512),
 
-    PS256(SignatureAlgorithm.DEF_PS256, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA256withRSAandMGF1, JWSAlgorithm.PS256),
-    PS384(SignatureAlgorithm.DEF_PS384, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA384withRSAandMGF1, JWSAlgorithm.PS384),
-    PS512(SignatureAlgorithm.DEF_PS512, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA512withRSAandMGF1, JWSAlgorithm.PS512),
+    PS256(SignatureAlgorithm.DEF_PS256, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA256WITHRSAANDMGF1, JWSAlgorithm.PS256),
+    PS384(SignatureAlgorithm.DEF_PS384, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA384WITHRSAANDMGF1, JWSAlgorithm.PS384),
+    PS512(SignatureAlgorithm.DEF_PS512, AlgorithmFamily.RSA, SignatureAlgorithm.DEF_SHA512WITHRSAANDMGF1, JWSAlgorithm.PS512),
 
     ED25519(SignatureAlgorithm.DEF_ED25519, AlgorithmFamily.ED, SignatureAlgorithm.DEF_ED25519, EllipticEdvardsCurve.ED_25519, JWSAlgorithm.EdDSA),
     ED448(SignatureAlgorithm.DEF_ED448, AlgorithmFamily.ED, SignatureAlgorithm.DEF_ED448, EllipticEdvardsCurve.ED_448, JWSAlgorithm.EdDSA),
-    EDDSA(SignatureAlgorithm.DEF_EDdDSA, AlgorithmFamily.ED, SignatureAlgorithm.DEF_ED25519, EllipticEdvardsCurve.ED_25519, JWSAlgorithm.EdDSA);
+    EDDSA(SignatureAlgorithm.DEF_EDDDSA, AlgorithmFamily.ED, SignatureAlgorithm.DEF_ED25519, EllipticEdvardsCurve.ED_25519, JWSAlgorithm.EdDSA);
 
     public static final String DEF_HS256 = "HS256";    
     public static final String DEF_HS384 = "HS384";
@@ -65,7 +65,7 @@ public enum SignatureAlgorithm {
     
     public static final String DEF_ED25519 = "Ed25519";
     public static final String DEF_ED448 = "Ed448";
-    public static final String DEF_EDdDSA = "EdDSA";
+    public static final String DEF_EDDDSA = "EdDSA";
     
     public static final String DEF_HMACSHA256 = "HMACSHA256";
     public static final String DEF_HMACSHA384 = "HMACSHA384";
@@ -79,9 +79,9 @@ public enum SignatureAlgorithm {
     public static final String DEF_SHA384WITHECDSA = "SHA384WITHECDSA";
     public static final String DEF_SHA512WITHECDSA = "SHA512WITHECDSA";
     
-    public static final String DEF_SHA256withRSAandMGF1 = "SHA256withRSAandMGF1";
-    public static final String DEF_SHA384withRSAandMGF1 = "SHA384withRSAandMGF1";
-    public static final String DEF_SHA512withRSAandMGF1 = "SHA512withRSAandMGF1";
+    public static final String DEF_SHA256WITHRSAANDMGF1 = "SHA256withRSAandMGF1";
+    public static final String DEF_SHA384WITHRSAANDMGF1 = "SHA384withRSAandMGF1";
+    public static final String DEF_SHA512WITHRSAANDMGF1 = "SHA512withRSAandMGF1";
     
     private final String name;
     private final AlgorithmFamily family;
