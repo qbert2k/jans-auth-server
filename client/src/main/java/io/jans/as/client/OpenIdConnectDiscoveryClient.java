@@ -44,7 +44,6 @@ public class OpenIdConnectDiscoveryClient extends BaseClient<OpenIdConnectDiscov
     public OpenIdConnectDiscoveryClient(String resource) throws URISyntaxException {
         setRequest(new OpenIdConnectDiscoveryRequest(resource));
         setUrl(SCHEMA + getRequest().getHost() + PATH);
-		System.out.println("URL = " + getUrl());
     }
 
     @Override

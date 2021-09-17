@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
+import java.text.ParseException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -456,74 +457,11 @@ public class JwtAuthorizationRequest {
     }
 
     public String getEncodedJwt(JSONObject jwks) throws Exception {
-        String encodedJwt = null;
         if (keyEncryptionAlgorithm != null && blockEncryptionAlgorithm != null) {
-            JweEncrypterImpl jweEncrypter = null;
-            if (cryptoProvider != null && jwks != null) {
-                PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
-                if (publicKey instanceof ECPublicKey) {
-                    JSONArray webKeys = jwks.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
-                    JSONObject key = null;
-                    ECKey ecPublicKey = null;
-                    for (int i = 0; i < webKeys.length(); i++) {
-                        key = webKeys.getJSONObject(i);
-                        if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
-                            ecPublicKey = (ECKey) (JWK.parse(key.toString()));
-                            break;
-                        }
-                    }
-                    if (ecPublicKey != null) {
-                        jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                                ecPublicKey);
-                    } else {
-                        throw new InvalidJwtException("jweEncrypter was not created.");
-                    }
-                } else {
-                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
-                }
-            } else {
-                if (keyEncryptionAlgorithm.getFamily() == AlgorithmFamily.PASSW) {
-                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
-                } else {
-                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                            sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
-                }
-            }
-
-            String header = ClientUtil.toPrettyJson(headerToJSONObject());
-            String encodedHeader = Base64Util.base64urlencode(header.getBytes(Util.UTF8_STRING_ENCODING));
-
-            Jwe jwe = new Jwe();
-            jwe.setHeader(new JwtHeader(encodedHeader));
-
-            if (nestedPayload == null) {
-                String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
-                String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
-                jwe.setClaims(new JwtClaims(encodedClaims));
-            } else {
-                jwe.setSignedJWTPayload(nestedPayload);
-            }
-
-            jweEncrypter.encrypt(jwe);
-
-            encodedJwt = jwe.toString();
+            return getEncodedJwtEncrypting(jwks);
         } else {
-            if (cryptoProvider == null) {
-                throw new Exception("The Crypto Provider cannot be null.");
-            }
-
-            JSONObject headerJsonObject = headerToJSONObject();
-            JSONObject payloadJsonObject = payloadToJSONObject();
-            String headerString = ClientUtil.toPrettyJson(headerJsonObject);
-            String payloadString = ClientUtil.toPrettyJson(payloadJsonObject);
-            String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(Util.UTF8_STRING_ENCODING));
-            String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(Util.UTF8_STRING_ENCODING));
-            String signingInput = encodedHeader + "." + encodedPayload;
-            String encodedSignature = cryptoProvider.sign(signingInput, keyId, sharedKey, signatureAlgorithm);
-
-            encodedJwt = encodedHeader + "." + encodedPayload + "." + encodedSignature;
+            return getEncodedJwtSigning();
         }
-        return encodedJwt;
     }
 
     public String getEncodedJwt() throws Exception {
@@ -686,6 +624,82 @@ public class JwtAuthorizationRequest {
         }
 
         return obj;
+    }
+    
+    private String getEncodedJwtEncrypting(JSONObject jwks) throws Exception {
+        JweEncrypterImpl jweEncrypter = null;
+        if (cryptoProvider != null && jwks != null) {
+            PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
+            if (publicKey instanceof ECPublicKey) {
+                JWK jwk = getKey(jwks);
+                if (jwk != null) {
+                    ECKey ecPublicKey = (ECKey) jwk;
+                    jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                            ecPublicKey);
+                } else {
+                    throw new InvalidJwtException("jweEncrypter was not created.");
+                }
+            } else {
+                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
+            }
+        } else {
+            if (keyEncryptionAlgorithm.getFamily() == AlgorithmFamily.PASSW) {
+                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
+            } else {
+                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
+                        sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
+            }
+        }
+
+        String header = ClientUtil.toPrettyJson(headerToJSONObject());
+        String encodedHeader = Base64Util.base64urlencode(header.getBytes(Util.UTF8_STRING_ENCODING));
+
+        Jwe jwe = new Jwe();
+        jwe.setHeader(new JwtHeader(encodedHeader));
+
+        if (nestedPayload == null) {
+            String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
+            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
+            jwe.setClaims(new JwtClaims(encodedClaims));
+        } else {
+            jwe.setSignedJWTPayload(nestedPayload);
+        }
+
+        jweEncrypter.encrypt(jwe);
+
+        return jwe.toString();
+    }
+    
+    private String getEncodedJwtSigning() throws Exception {
+        
+        if (cryptoProvider == null) {
+            throw new Exception("The Crypto Provider cannot be null.");
+        }
+
+        JSONObject headerJsonObject = headerToJSONObject();
+        JSONObject payloadJsonObject = payloadToJSONObject();
+        String headerString = ClientUtil.toPrettyJson(headerJsonObject);
+        String payloadString = ClientUtil.toPrettyJson(payloadJsonObject);
+        String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(Util.UTF8_STRING_ENCODING));
+        String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(Util.UTF8_STRING_ENCODING));
+        String signingInput = encodedHeader + "." + encodedPayload;
+        String encodedSignature = cryptoProvider.sign(signingInput, keyId, sharedKey, signatureAlgorithm);
+
+        return encodedHeader + "." + encodedPayload + "." + encodedSignature;        
+    }
+    
+    private JWK getKey(JSONObject jwks) throws ParseException {
+        JWK jwk = null;
+        JSONArray webKeys = jwks.getJSONArray(JWKParameter.JSON_WEB_KEY_SET);
+        JSONObject key = null;
+        for (int i = 0; i < webKeys.length(); i++) {
+            key = webKeys.getJSONObject(i);
+            if (keyId.equals(key.getString(JWKParameter.KEY_ID))) {
+                jwk = JWK.parse(key.toString());
+                break;
+            }
+        }
+        return jwk; 
     }
 
 }

@@ -59,10 +59,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                 || request.getAuthorizationMethod() == AuthorizationMethod.AUTHORIZATION_REQUEST_HEADER_FIELD
                 || request.getAuthorizationMethod() == AuthorizationMethod.URL_QUERY_PARAMETER) {
             return HttpMethod.GET;
-        } else /*
-                * if (request.getAuthorizationMethod() ==
-                * AuthorizationMethod.FORM_ENCODED_BODY_PARAMETER)
-                */ {
+        } else {
             return HttpMethod.POST;
         }
     }
@@ -143,10 +140,9 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                     } else {
                         Jwt jwt = Jwt.parse(entity);
                         AuthCryptoProvider cryptoProvider = new AuthCryptoProvider();
-                        boolean signatureVerified = cryptoProvider.verifySignature(jwt.getSigningInput(),
-                                jwt.getEncodedSignature(), jwt.getHeader().getKeyId(), JwtUtil.getJSONWebKeys(jwksUri),
-                                (sharedKey != null) ? new String(sharedKey) : null,
-                                jwt.getHeader().getSignatureAlgorithm());
+                        boolean signatureVerified = cryptoProvider.verifySignature(jwt.getSigningInput(), jwt.getEncodedSignature(),
+                                jwt.getHeader().getKeyId(), JwtUtil.getJSONWebKeys(jwksUri),
+                                (sharedKey != null) ? new String(sharedKey) : null, jwt.getHeader().getSignatureAlgorithm());
 
                         if (signatureVerified) {
                             getResponse().setClaims(jwt.getClaims().toMap());
@@ -157,8 +153,7 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                         JSONObject jsonObj = new JSONObject(entity);
 
                         if (jsonObj.has("error")) {
-                            getResponse()
-                                    .setErrorType(UserInfoErrorResponseType.fromString(jsonObj.getString("error")));
+                            getResponse().setErrorType(UserInfoErrorResponseType.fromString(jsonObj.getString("error")));
                             jsonObj.remove("error");
                         }
                         if (jsonObj.has("error_description")) {
