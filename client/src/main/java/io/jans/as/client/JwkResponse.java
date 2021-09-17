@@ -77,8 +77,8 @@ public class JwkResponse extends BaseResponse {
                 publicKey = new RSAPublicKey(JSONWebKey.getN(), JSONWebKey.getE());
                 break;
             case EC:
-                publicKey = new ECDSAPublicKey(SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()),
-                        JSONWebKey.getX(), JSONWebKey.getY());
+                publicKey = new ECDSAPublicKey(SignatureAlgorithm.fromString(JSONWebKey.getAlg().getParamName()), JSONWebKey.getX(),
+                        JSONWebKey.getY());
                 break;
             case OKP:
                 if (AlgorithmFamily.ED.equals(JSONWebKey.getAlg().getFamily())) {

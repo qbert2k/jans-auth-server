@@ -97,7 +97,8 @@ public class ServerCryptoProvider extends AbstractCryptoProvider {
     }
 
     @Override
-    public boolean verifySignature(String signingInput, String encodedSignature, String keyId, JSONObject jwks, String sharedSecret, SignatureAlgorithm signatureAlgorithm) throws Exception {
+    public boolean verifySignature(String signingInput, String encodedSignature, String keyId, JSONObject jwks, String sharedSecret,
+            SignatureAlgorithm signatureAlgorithm) throws Exception {
         if (configurationFactory.getAppConfiguration().getRejectJwtWithNoneAlg() && signatureAlgorithm == SignatureAlgorithm.NONE) {
             LOG.trace("None algorithm is forbidden by `rejectJwtWithNoneAlg` configuration property.");
             return false;
@@ -128,7 +129,7 @@ public class ServerCryptoProvider extends AbstractCryptoProvider {
 
         return privateKey;
     }
-    
+
     @Override
     public PublicKey getPublicKey(String keyId) throws Exception {
         PublicKey publicKey = cryptoProvider.getPublicKey(keyId);
@@ -141,5 +142,5 @@ public class ServerCryptoProvider extends AbstractCryptoProvider {
         }
 
         return publicKey;
-    }    
+    }
 }

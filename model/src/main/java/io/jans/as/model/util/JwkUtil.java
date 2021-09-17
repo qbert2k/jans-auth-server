@@ -13,11 +13,11 @@ import io.jans.as.model.jwk.KeyType;
 /**
  * @author Sergey Manoylo
  * 
- * @version August 24, 2021 
+ * @version August 24, 2021
  *
  */
 public class JwkUtil {
-    
+
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(JwkUtil.class);
 
@@ -25,11 +25,11 @@ public class JwkUtil {
      * 
      * @param algFamily
      * @return
-     * @throws InvalidParameterException 
+     * @throws InvalidParameterException
      */
     public static KeyType getKeyTypeFromAlgFamily(final AlgorithmFamily algFamily) throws InvalidParameterException {
         KeyType keyType = null;
-        switch(algFamily) {
+        switch (algFamily) {
         case HMAC:
         case AES:
         case PASSW: {
@@ -41,11 +41,11 @@ public class JwkUtil {
             break;
         }
         case EC: {
-            keyType = KeyType.EC; 
+            keyType = KeyType.EC;
             break;
         }
         case ED: {
-            keyType = KeyType.OKP; 
+            keyType = KeyType.OKP;
             break;
         }
         default: {

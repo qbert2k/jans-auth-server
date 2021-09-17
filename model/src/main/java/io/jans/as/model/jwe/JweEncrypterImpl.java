@@ -54,28 +54,27 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
     private PublicKey publicKey;
     private ECKey ecKey;
 
-    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, byte[] sharedSymmetricKey) {
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
+            byte[] sharedSymmetricKey) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
         if (sharedSymmetricKey != null) {
             this.sharedSymmetricKey = sharedSymmetricKey.clone();
         }
     }
 
-    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, String sharedSymmetricPassword) {
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
+            String sharedSymmetricPassword) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
         this.sharedSymmetricPassword = sharedSymmetricPassword;
     }
 
-    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, PublicKey publicKey) {
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm,
+            PublicKey publicKey) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
         this.publicKey = publicKey;
     }
 
-    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
-            BlockEncryptionAlgorithm blockEncryptionAlgorithm, ECKey ecKey) {
+    public JweEncrypterImpl(KeyEncryptionAlgorithm keyEncryptionAlgorithm, BlockEncryptionAlgorithm blockEncryptionAlgorithm, ECKey ecKey) {
         super(keyEncryptionAlgorithm, blockEncryptionAlgorithm);
         this.ecKey = ecKey;
     }
@@ -99,33 +98,36 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 throw new InvalidJweException("The shared symmetric key is null");
             }
             int keyLength = 0;
-            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW
-                    || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW) {
+            if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW) {
                 keyLength = 16;
+                if (sharedSymmetricKey.length != keyLength) {
+                    Digest hashCalc = new MD5Digest(); // hash length == 128 bits
+                    hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
+                    sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
+                    hashCalc.doFinal(sharedSymmetricKey, 0);
+                }
             } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
                     || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW) {
                 keyLength = 24;
+                if (sharedSymmetricKey.length != keyLength) {
+                    Digest hashCalc = new TigerDigest(); // hash length == 192 bits
+                    hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
+                    sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
+                    hashCalc.doFinal(sharedSymmetricKey, 0);
+                }
             } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
                     || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
                 keyLength = 32;
+                if (sharedSymmetricKey.length != keyLength) {
+                    Digest hashCalc = new SHA256Digest(); // hash length == 256 bits
+                    hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
+                    sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
+                    hashCalc.doFinal(sharedSymmetricKey, 0);
+                }
             } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR) {
                 keyLength = blockEncryptionAlgorithm.getCmkLength() / 8; // 128, 192, 256, 384, 512
-            } else {
-                throw new InvalidJweException(String
-                        .format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
-            }
-            if (sharedSymmetricKey.length != keyLength) {
-                Digest hashCalc = null;
-                if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW
-                        || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW) {
-                    hashCalc = new MD5Digest(); // hash length == 128 bits
-                } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW
-                        || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW) {
-                    hashCalc = new TigerDigest(); // hash length == 192 bits
-                } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW
-                        || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
-                    hashCalc = new SHA256Digest(); // hash length == 256 bits
-                } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR) {
+                if (sharedSymmetricKey.length != keyLength) {
+                    Digest hashCalc = null;
                     switch (keyLength) {
                     case 16: {
                         hashCalc = new MD5Digest(); // hash length == 128 bits
@@ -149,15 +151,15 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                     }
                     default: {
                         throw new InvalidJweException(String.format("Wrong value of the key length: " + keyLength));
-                    }                    
                     }
-                } else {
-                    throw new InvalidJweException(String.format(
-                            "Wrong value of the key encryption algorithm: keyEncryptionAlgorithm = " + keyEncryptionAlgorithm.toString()));
+                    }
+                    hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
+                    sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
+                    hashCalc.doFinal(sharedSymmetricKey, 0);
                 }
-                hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
-                sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
-                hashCalc.doFinal(sharedSymmetricKey, 0);
+            } else {
+                throw new InvalidJweException(
+                        String.format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
             }
             if (algorithmFamily == AlgorithmFamily.AES) {
                 return new AESEncrypter(sharedSymmetricKey);
@@ -171,8 +173,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         }
     }
 
-    public static Payload createPayload(Jwe jwe)
-            throws ParseException, InvalidJwtException, UnsupportedEncodingException {
+    public static Payload createPayload(Jwe jwe) throws ParseException, InvalidJwtException, UnsupportedEncodingException {
         if (jwe.getSignedJWTPayload() != null) {
             return new Payload(SignedJWT.parse(jwe.getSignedJWTPayload().toString()));
         }
@@ -188,8 +189,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 jwe.getHeader().setContentType(JwtType.JWT);
             }
 
-            JWEObject jweObject = new JWEObject(JWEHeader.parse(jwe.getHeader().toJsonObject().toString()),
-                    createPayload(jwe));
+            JWEObject jweObject = new JWEObject(JWEHeader.parse(jwe.getHeader().toJsonObject().toString()), createPayload(jwe));
 
             jweObject.encrypt(encrypter);
             String encryptedJwe = jweObject.serialize();
