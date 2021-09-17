@@ -32,7 +32,7 @@ import io.jans.as.model.util.Base64Util;
  */
 public class EDDSASigner extends AbstractJwsSigner {
 
-    public static final String defBC = "BC";
+    public static final String DEF_BC = "BC";
 
     private EDDSAPrivateKey eddsaPrivateKey;
     private EDDSAPublicKey eddsaPublicKey;
@@ -90,7 +90,7 @@ public class EDDSASigner extends AbstractJwsSigner {
             PKCS8EncodedKeySpec privateKeySpec = eddsaPrivateKey.getPrivateKeySpec();
             java.security.KeyFactory keyFactory = java.security.KeyFactory.getInstance(signatureAlgorithm.getName());
             BCEdDSAPrivateKey privateKey = (BCEdDSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
-            Signature signer = Signature.getInstance(signatureAlgorithm.getName(), defBC);
+            Signature signer = Signature.getInstance(signatureAlgorithm.getName(), DEF_BC);
             signer.initSign(privateKey);
             signer.update(signingInput.getBytes());
             byte[] signature = signer.sign();
