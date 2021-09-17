@@ -77,8 +77,8 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signature algorithm is null");
         }
         if (!signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
-            throw new SignatureException(String.format("Wrong value of the signature algorithm: %s",
-                    signatureAlgorithm.getFamily().toString()));
+            throw new SignatureException(
+                    String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
         }
         if (eddsaPrivateKey == null) {
             throw new SignatureException("The EDDSA private key is null");
@@ -95,17 +95,11 @@ public class EDDSASigner extends AbstractJwsSigner {
             signer.update(signingInput.getBytes());
             byte[] signature = signer.sign();
             return Base64Util.base64urlencode(signature);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignatureException(e);
-        } catch (NoSuchProviderException e) {
-            throw new SignatureException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new SignatureException(e);
-        } catch (InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | InvalidKeyException
+                | IllegalArgumentException e) {
             throw new SignatureException(e);
         }
     }
-
 
     /**
      * 
@@ -117,8 +111,8 @@ public class EDDSASigner extends AbstractJwsSigner {
             throw new SignatureException("The signature algorithm is null");
         }
         if (!signatureAlgorithm.getFamily().equals(AlgorithmFamily.ED)) {
-            throw new SignatureException(String.format("Wrong value of the signature algorithm: %s",
-                    signatureAlgorithm.getFamily().toString()));
+            throw new SignatureException(
+                    String.format("Wrong value of the signature algorithm: %s", signatureAlgorithm.getFamily().toString()));
         }
         if (eddsaPublicKey == null) {
             throw new SignatureException("The EDDSA public key is null");
@@ -134,15 +128,8 @@ public class EDDSASigner extends AbstractJwsSigner {
             virifier.initVerify(publicKey);
             virifier.update(signingInput.getBytes());
             return virifier.verify(Base64Util.base64urldecode(signature));
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignatureException(e);
-        } catch (NoSuchProviderException e) {
-            throw new SignatureException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new SignatureException(e);
-        } catch (InvalidKeyException e) {
-            throw new SignatureException(e);
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | InvalidKeyException
+                | IllegalArgumentException e) {
             throw new SignatureException(e);
         }
     }
