@@ -40,7 +40,7 @@ import io.jans.as.model.jwk.JSONWebKey;
 @Deprecated
 public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
 
-    public static int DEF_KEY_LENGTH = 2048;
+    public static int DEF_KEYLENGTH = 2048;
 
     private RSAPrivateKey rsaPrivateKey;
     private RSAPublicKey rsaPublicKey;
@@ -55,7 +55,7 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
         }
 
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-        keyGen.initialize(RSAKeyFactory.DEF_KEY_LENGTH, new SecureRandom());
+        keyGen.initialize(RSAKeyFactory.DEF_KEYLENGTH, new SecureRandom());
 
         KeyPair keyPair = keyGen.generateKeyPair();
 
