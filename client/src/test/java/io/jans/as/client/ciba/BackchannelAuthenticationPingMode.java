@@ -2933,8 +2933,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.INVALID_REQUEST,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.INVALID_REQUEST);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
@@ -3055,8 +3054,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.UNKNOWN_USER_ID,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.UNKNOWN_USER_ID);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
@@ -3120,8 +3118,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.UNKNOWN_USER_ID,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.UNKNOWN_USER_ID);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
@@ -3184,8 +3181,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.INVALID_REQUEST,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.INVALID_REQUEST);        
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
@@ -3251,8 +3247,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.INVALID_USER_CODE,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.INVALID_USER_CODE);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
@@ -3322,8 +3317,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.INVALID_BINDING_MESSAGE,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.INVALID_BINDING_MESSAGE);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 
