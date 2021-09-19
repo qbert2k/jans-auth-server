@@ -53,6 +53,7 @@ public abstract class AbstractCryptoProvider {
 
     private static final String DEF_EXPIRESON = "\n\tExpires On: ";
     private static final String DEF_TODAYSDATE = "\n\tToday's Date: ";
+    private static final String DEF_DAYS = " days";
 
     private int keyRegenerationIntervalInDays = -1;
 
@@ -128,13 +129,12 @@ public abstract class AbstractCryptoProvider {
         for (Algorithm alg : Algorithm.values()) {
             try {
                 if (!allowedAlgs.isEmpty() && !allowedAlgs.contains(alg.getParamName())) {
-                    LOG.debug("Key generation for " + alg
-                            + " is skipped because it's not allowed by keyAlgsAllowedForGeneration configuration property.");
+                    LOG.debug(String.format("Key generation for %s is skipped because it's not allowed by keyAlgsAllowedForGeneration configuration property.", alg.toString()));
                     continue;
                 }
                 keys.put(cryptoProvider.generateKey(alg, expiration, alg.getUse()));
             } catch (Exception ex) {
-                LOG.error("Algorithm: " + alg + ex.getMessage(), ex);
+                LOG.error(String.format("Algorithm: %s", alg), ex);
             }
         }
 
@@ -214,7 +214,7 @@ public abstract class AbstractCryptoProvider {
             break;
         }
         default: {
-            throw new Exception("Wrong AlgorithmFamily value: " + algorithmFamily);
+            throw new Exception(String.format("Wrong AlgorithmFamily value: %s", algorithmFamily));
         }
         }
 
@@ -245,15 +245,15 @@ public abstract class AbstractCryptoProvider {
             // re-generation interval is unknown, therefore we default to 30 days period
             // warning
             if (keyRegenerationIntervalInDays <= 0 && expiresInDays < 30) {
-                LOG.warn("\nWARNING! Key with alias: " + alias + "\n\tExpires In: " + expiresInDays + " days"
+                LOG.warn("\nWARNING! Key with alias: " + alias + "\n\tExpires In: " + expiresInDays + DEF_DAYS
                         + DEF_EXPIRESON + ft.format(expirationDate) + DEF_TODAYSDATE + ft.format(today));
                 return;
             }
 
             if (expiresInDays < keyRegenerationIntervalInDays) {
-                LOG.warn("\nWARNING! Key with alias: " + alias + "\n\tExpires In: " + expiresInDays + " days"
+                LOG.warn("\nWARNING! Key with alias: " + alias + "\n\tExpires In: " + expiresInDays + DEF_DAYS
                         + DEF_EXPIRESON + ft.format(expirationDate) + "\n\tKey Regeneration In: "
-                        + keyRegenerationIntervalInDays + " days" + DEF_TODAYSDATE + ft.format(today));
+                        + keyRegenerationIntervalInDays + DEF_DAYS + DEF_TODAYSDATE + ft.format(today));
             }
         } catch (Exception e) {
             LOG.error("Failed to check key expiration.", e);

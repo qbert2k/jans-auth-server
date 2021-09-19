@@ -38,7 +38,6 @@ import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.token.JsonWebResponse;
 import io.jans.as.model.userinfo.UserInfoErrorResponseType;
 import io.jans.as.model.util.JwtUtil;
-import io.jans.as.model.util.Util;
 import io.jans.as.persistence.model.Scope;
 import io.jans.as.server.audit.ApplicationAuditLogger;
 import io.jans.as.server.model.audit.Action;
