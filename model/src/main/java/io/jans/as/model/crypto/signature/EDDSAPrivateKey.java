@@ -37,7 +37,7 @@ public class EDDSAPrivateKey extends PrivateKey {
     private byte[] xEncoded;
 
     /**
-     * 
+     * Constructor
      * @param signatureAlgorithm
      * @param dEncoded
      * @param xEncoded
@@ -46,6 +46,20 @@ public class EDDSAPrivateKey extends PrivateKey {
         super(null, signatureAlgorithm);
         this.dEncoded = dEncoded.clone();
         this.xEncoded = xEncoded.clone();
+    }
+    
+    /**
+     * Copy Constructor
+     * @param eddsaPrivateKey
+     */
+    public EDDSAPrivateKey(final EDDSAPrivateKey eddsaPrivateKey) {
+        super(null, eddsaPrivateKey.getSignatureAlgorithm());
+
+        final byte[] dEncoded = eddsaPrivateKey.getPrivateKeyEncoded();
+        final byte[] xEncoded = eddsaPrivateKey.getPublicKeyEncoded();
+
+        this.dEncoded = dEncoded != null ? dEncoded.clone() : null;
+        this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
     }
 
     /**

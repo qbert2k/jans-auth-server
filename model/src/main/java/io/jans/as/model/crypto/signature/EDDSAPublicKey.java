@@ -31,7 +31,7 @@ public class EDDSAPublicKey extends PublicKey {
     private byte[] xEncoded;
 
     /**
-     * 
+     * Constructor 
      * @param signatureAlgorithm
      * @param publicKeyData
      */
@@ -39,6 +39,16 @@ public class EDDSAPublicKey extends PublicKey {
         setSignatureAlgorithm(signatureAlgorithm);
         this.xEncoded = xEncoded.clone();
     }
+
+    /**
+     * Copy Constructor  
+     * @param eddsaPublicKey
+     */
+    public EDDSAPublicKey(final EDDSAPublicKey eddsaPublicKey) {
+        setSignatureAlgorithm(eddsaPublicKey.getSignatureAlgorithm());
+        final byte[] xEncoded = eddsaPublicKey.getPublicKeyEncoded();        
+        this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
+    }    
 
     /**
      * get public key value array (X509 encoded) in X509EncodedKeySpec object;
