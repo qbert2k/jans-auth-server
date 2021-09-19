@@ -21,7 +21,7 @@ import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.StringUtils;
 
 /**
- * 
+ * EDDSAPublicKey
  *
  * @author Sergey Manoylo
  * @version July 23, 2021
