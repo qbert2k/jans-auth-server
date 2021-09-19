@@ -175,7 +175,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 return resResponse;
             }
             oAuth2AuditLog.updateOAuth2AuditLog(authorizationGrant, true);
-            requestUserInfoProc2(builder, accessToken, authorizationGrant);
+            requestUserInfoProc2(builder, authorizationGrant);
             return builder.build();            
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -422,8 +422,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         return jsonWebResponse.toString();
     }
 
-    public boolean validateRequesteClaim(GluuAttribute gluuAttribute, String[] clientAllowedClaims,
-            Collection<String> scopes) {
+    public boolean validateRequesteClaim(GluuAttribute gluuAttribute, String[] clientAllowedClaims, Collection<String> scopes) {
         if (gluuAttribute == null) {
             log.trace("gluuAttribute is null.");
             return false;
@@ -435,21 +434,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 }
             }
         }
-
-        for (String scopeName : scopes) {
-            Scope scope = scopeService.getScopeById(scopeName);
-
-            if (scope != null && scope.getClaims() != null) {
-                for (String claimDn : scope.getClaims()) {
-                    if (gluuAttribute.getDisplayName()
-                            .equals(attributeService.getAttributeByDn(claimDn).getDisplayName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        return validateRequesteClaimScopes(gluuAttribute, scopes);
     }
 
     public Map<String, Object> getClaims(User user, Scope scope) throws InvalidClaimException, ParseException {
@@ -555,11 +540,10 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
     /**
      * 
      * @param builder
-     * @param accessToken
      * @param authorizationGrant
      * @throws Exception
      */
-    private void requestUserInfoProc2(Response.ResponseBuilder builder, final String accessToken, final AuthorizationGrant authorizationGrant) throws Exception {
+    private void requestUserInfoProc2(Response.ResponseBuilder builder, final AuthorizationGrant authorizationGrant) throws Exception {
         
         builder.cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate());
         builder.header("Pragma", "no-cache");
@@ -591,5 +575,26 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             builder.type((MediaType.APPLICATION_JSON + ";charset=UTF-8"));
             builder.entity(getJSonResponse(currentUser, authorizationGrant, authorizationGrant.getScopes()));
         }     
+    }
+
+    /**
+     * 
+     * @param gluuAttribute
+     * @param scopes
+     * @return
+     */
+    private boolean validateRequesteClaimScopes(GluuAttribute gluuAttribute, Collection<String> scopes) {
+        for (String scopeName : scopes) {
+            Scope scope = scopeService.getScopeById(scopeName);
+            if (scope != null && scope.getClaims() != null) {
+                for (String claimDn : scope.getClaims()) {
+                    if (gluuAttribute.getDisplayName()
+                            .equals(attributeService.getAttributeByDn(claimDn).getDisplayName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }    
 }
