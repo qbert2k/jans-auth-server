@@ -175,10 +175,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 return resResponse;
             }
             oAuth2AuditLog.updateOAuth2AuditLog(authorizationGrant, true);
-            resResponse = requestUserInfoProc2(builder, accessToken, authorizationGrant);
-            if (resResponse != null) {
-                return resResponse;
-            }
+            requestUserInfoProc2(builder, accessToken, authorizationGrant);
             return builder.build();            
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -553,16 +550,15 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         }
         return null;
     }
-    
+
     /**
      * 
      * @param builder
      * @param accessToken
      * @param authorizationGrant
-     * @return
      * @throws Exception
      */
-    private Response requestUserInfoProc2(Response.ResponseBuilder builder, final String accessToken, final AuthorizationGrant authorizationGrant) throws Exception {
+    private void requestUserInfoProc2(Response.ResponseBuilder builder, final String accessToken, final AuthorizationGrant authorizationGrant) throws Exception {
         
         builder.cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate());
         builder.header("Pragma", "no-cache");
@@ -573,7 +569,6 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         } catch (EntryPersistenceException ex) {
             log.warn("Failed to reload user entry: '{}'", authorizationGrant.getUserDn());
         }
-
         if (authorizationGrant.getClient() != null
                 && authorizationGrant.getClient().getUserInfoEncryptedResponseAlg() != null
                 && authorizationGrant.getClient().getUserInfoEncryptedResponseEnc() != null) {
@@ -595,6 +590,5 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             builder.type((MediaType.APPLICATION_JSON + ";charset=UTF-8"));
             builder.entity(getJSonResponse(currentUser, authorizationGrant, authorizationGrant.getScopes()));
         }     
-        return null;        
     }    
 }
