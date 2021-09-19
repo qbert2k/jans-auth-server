@@ -55,8 +55,8 @@ public class EDDSAKeysTest {
         EDDSAPrivateKey privateKey2 = keyFactory2.getPrivateKey();
         EDDSAPublicKey publicKey2 = keyFactory2.getPublicKey();
         
-        EDDSAPrivateKey privateKey1Clone = privateKey1.clone();
-        EDDSAPublicKey publicKey1Clone = publicKey1.clone();
+        EDDSAPrivateKey privateKey1Clone = new EDDSAPrivateKey(privateKey1);
+        EDDSAPublicKey publicKey1Clone =  new EDDSAPublicKey(publicKey1);
         
         Assert.assertTrue(privateKey1.equals(privateKey1Clone));        
         Assert.assertTrue(publicKey1.equals(publicKey1Clone));        
@@ -80,8 +80,8 @@ public class EDDSAKeysTest {
         EDDSAPrivateKey privateKey2 = keyFactory2.getPrivateKey();
         EDDSAPublicKey publicKey2 = keyFactory2.getPublicKey();
         
-        EDDSAPrivateKey privateKey1Clone = privateKey1.clone();
-        EDDSAPublicKey publicKey1Clone = publicKey1.clone();
+        EDDSAPrivateKey privateKey1Clone = new EDDSAPrivateKey(privateKey1);
+        EDDSAPublicKey publicKey1Clone =  new EDDSAPublicKey(publicKey1);
         
         Assert.assertTrue(privateKey1.equals(privateKey1Clone));        
         Assert.assertTrue(publicKey1.equals(publicKey1Clone));        
