@@ -15,7 +15,6 @@ import static io.jans.as.model.jwk.JWKParameter.X;
 import static io.jans.as.model.jwk.JWKParameter.Y;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -270,9 +269,8 @@ public class KeyGenerator {
                         fosTestPropFile.write(rec.getBytes());
                         fosTestPropFile.write("\n".getBytes());
                     }
-                } catch (IOException e) {
-                    throw e;
                 }
+                finally {}
             }
             System.out.println(jwks);
         }

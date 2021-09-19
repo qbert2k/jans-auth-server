@@ -2992,8 +2992,7 @@ public class BackchannelAuthenticationPingMode extends BaseTest {
                 "Unexpected response code: " + backchannelAuthenticationResponse.getEntity());
         assertNotNull(backchannelAuthenticationResponse.getEntity(), "The entity is null");
         assertNotNull(backchannelAuthenticationResponse.getErrorType(), "The error type is null");
-        assertEquals(BackchannelAuthenticationErrorResponseType.INVALID_CLIENT,
-                backchannelAuthenticationResponse.getErrorType());
+        assertEquals(backchannelAuthenticationResponse.getErrorType(), BackchannelAuthenticationErrorResponseType.INVALID_CLIENT);
         assertNotNull(backchannelAuthenticationResponse.getErrorDescription(), "The error description is null");
     }
 

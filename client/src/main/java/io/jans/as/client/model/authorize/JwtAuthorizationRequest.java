@@ -8,6 +8,7 @@ package io.jans.as.client.model.authorize;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.text.ParseException;
@@ -647,7 +648,7 @@ public class JwtAuthorizationRequest {
                 jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey);
             } else {
                 jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                        sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
+                        sharedKey.getBytes(StandardCharsets.UTF_8));
             }
         }
 
