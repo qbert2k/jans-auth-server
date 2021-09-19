@@ -22,6 +22,7 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.error.ErrorResponseFactory;
 import io.jans.as.model.exception.InvalidClaimException;
 import io.jans.as.model.exception.InvalidJweException;
+import io.jans.as.model.exception.InvalidParameterException;
 import io.jans.as.model.json.JsonApplier;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwe.JweEncrypter;
@@ -155,6 +156,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         OAuth2AuditLog oAuth2AuditLog = new OAuth2AuditLog(ServerUtil.getIpAddress(request), Action.USER_INFO);
 
         try {
+            Response resResponse = null;
+            
             if (!UserInfoParamsValidator.validateParams(accessToken)) {
                 return response(400, UserInfoErrorResponseType.INVALID_REQUEST, "access token is not valid.");
             }
@@ -167,63 +170,16 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 return response(401, UserInfoErrorResponseType.INVALID_TOKEN);
             }
             oAuth2AuditLog.updateOAuth2AuditLog(authorizationGrant, false);
-
-            final AbstractToken accessTokenObject = authorizationGrant.getAccessToken(accessToken);
-            if (accessTokenObject == null || !accessTokenObject.isValid()) {
-                log.trace("Invalid access token object, access_token: {}, isNull: {}, isValid: {}", accessToken,
-                        accessTokenObject == null, false);
-                return response(401, UserInfoErrorResponseType.INVALID_TOKEN);
+            resResponse = requestUserInfoProc1(accessToken, authorizationGrant);
+            if (resResponse != null) {
+                return resResponse;
             }
-
-            if (authorizationGrant.getAuthorizationGrantType() == AuthorizationGrantType.CLIENT_CREDENTIALS) {
-                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
-                        "Grant object has client_credentials grant_type which is not valid.");
-            }
-            if (appConfiguration.getOpenidScopeBackwardCompatibility()
-                    && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())
-                    && !authorizationGrant.getScopes().contains(DefaultScope.PROFILE.toString())) {
-                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
-                        "Both openid and profile scopes are not present.");
-            }
-            if (!appConfiguration.getOpenidScopeBackwardCompatibility()
-                    && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
-                return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Missed openid scope.");
-            }
-
             oAuth2AuditLog.updateOAuth2AuditLog(authorizationGrant, true);
-
-            builder.cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate());
-            builder.header("Pragma", "no-cache");
-
-            User currentUser = authorizationGrant.getUser();
-            try {
-                currentUser = userService.getUserByDn(authorizationGrant.getUserDn());
-            } catch (EntryPersistenceException ex) {
-                log.warn("Failed to reload user entry: '{}'", authorizationGrant.getUserDn());
+            resResponse = requestUserInfoProc2(builder, accessToken, authorizationGrant);
+            if (resResponse != null) {
+                return resResponse;
             }
-
-            if (authorizationGrant.getClient() != null
-                    && authorizationGrant.getClient().getUserInfoEncryptedResponseAlg() != null
-                    && authorizationGrant.getClient().getUserInfoEncryptedResponseEnc() != null) {
-                KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
-                        .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseAlg());
-                BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm
-                        .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseEnc());
-                builder.type("application/jwt");
-                builder.entity(getJweResponse(keyEncryptionAlgorithm, blockEncryptionAlgorithm, currentUser,
-                        authorizationGrant, authorizationGrant.getScopes()));
-            } else if (authorizationGrant.getClient() != null
-                    && authorizationGrant.getClient().getUserInfoSignedResponseAlg() != null) {
-                SignatureAlgorithm algorithm = SignatureAlgorithm
-                        .fromString(authorizationGrant.getClient().getUserInfoSignedResponseAlg());
-                builder.type("application/jwt");
-                builder.entity(
-                        getJwtResponse(algorithm, currentUser, authorizationGrant, authorizationGrant.getScopes()));
-            } else {
-                builder.type((MediaType.APPLICATION_JSON + ";charset=UTF-8"));
-                builder.entity(getJSonResponse(currentUser, authorizationGrant, authorizationGrant.getScopes()));
-            }
-            return builder.build();
+            return builder.build();            
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()).build(); // 500
@@ -244,7 +200,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
     private String getJwtResponse(SignatureAlgorithm signatureAlgorithm, User user,
             AuthorizationGrant authorizationGrant, Collection<String> scopes) throws Exception {
-        log.trace("Building JWT reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+        log.trace("Building JWT reponse with next scopes {} for user {} and user custom attributes {}", scopes,
                 user.getUserId(), user.getCustomAttributes());
 
         Jwt jwt = new Jwt();
@@ -284,7 +240,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
     public String getJweResponse(KeyEncryptionAlgorithm keyEncryptionAlgorithm,
             BlockEncryptionAlgorithm blockEncryptionAlgorithm, User user, AuthorizationGrant authorizationGrant,
             Collection<String> scopes) throws Exception {
-        log.trace("Building JWE reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+        log.trace("Building JWE reponse with next scopes {} for user {} and user custom attributes {}", scopes,
                 user.getUserId(), user.getCustomAttributes());
 
         Jwe jwe = new Jwe();
@@ -297,7 +253,8 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         // Claims
         jwe.setClaims(createJwtClaims(user, authorizationGrant, scopes));
         final AlgorithmFamily keyEncryptionAlgorithmFamily = keyEncryptionAlgorithm.getFamily();
-        if (keyEncryptionAlgorithmFamily == AlgorithmFamily.RSA) {
+        switch(keyEncryptionAlgorithmFamily) {
+        case RSA: {
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
                     Algorithm.fromString(keyEncryptionAlgorithm.getName()), Use.ENCRYPTION);
@@ -308,8 +265,10 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 jwe = jweEncrypter.encrypt(jwe);
             } else {
                 throw new InvalidJweException("The public key is not valid");
-            }
-        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.EC) {
+            }            
+            break;
+        }
+        case EC: {
             JweEncrypter jweEncrypter = null;
             JSONObject jsonWebKeys = JwtUtil.getJSONWebKeys(authorizationGrant.getClient().getJwksUri());
             String keyId = new ServerCryptoProvider(cryptoProvider).getKeyId(JSONWebKeySet.fromJSONObject(jsonWebKeys),
@@ -329,23 +288,26 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             }
             jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, ecPublicKey);
             jwe = jweEncrypter.encrypt(jwe);
-        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.AES
-                || keyEncryptionAlgorithmFamily == AlgorithmFamily.DIR) {
+            break;
+        }
+        case AES:
+        case DIR: {
             byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret())
                     .getBytes(Util.UTF8_STRING_ENCODING);
-            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                    sharedSymmetricKey);
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,sharedSymmetricKey);
             jwe = jweEncrypter.encrypt(jwe);
-        } else if (keyEncryptionAlgorithmFamily == AlgorithmFamily.PASSW) {
+            break;
+        }
+        case PASSW: {
             String sharedSymmetricPassword = clientService
                     .decryptSecret(authorizationGrant.getClient().getClientSecret());
             log.info("sharedSymmetricPassword = " + sharedSymmetricPassword);
-            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,
-                    sharedSymmetricPassword);
+            JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricPassword);
             jwe = jweEncrypter.encrypt(jwe);
-            log.info("jwe = " + jwe.toString());
-        } else {
-            throw new InvalidJweException("wrong AlgorithmFamily value.");
+        }
+        default: {
+            throw new InvalidJweException("wrong AlgorithmFamily value.");            
+        }
         }
         return jwe.toString();
     }
@@ -355,7 +317,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
      */
     public String getJSonResponse(User user, AuthorizationGrant authorizationGrant, Collection<String> scopes)
             throws Exception {
-        log.trace("Building JSON reponse with next scopes {0} for user {1} and user custom attributes {0}", scopes,
+        log.trace("Building JSON reponse with next scopes {} for user {} and user custom attributes {}", scopes,
                 user.getUserId(), user.getCustomAttributes());
 
         JsonWebResponse jsonWebResponse = new JsonWebResponse();
@@ -374,7 +336,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                 continue;
             }
             if (scope == null) {
-                log.trace("Unable to find scope in persistence. Is it removed? Scope name: " + scopeName);
+                log.trace("Unable to find scope in persistence. Is it removed? Scope name: {}", scopeName);
             }
 
             if (scope != null && Boolean.TRUE.equals(scope.isGroupClaims())) {
@@ -502,7 +464,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
         final List<String> scopeClaims = scope.getClaims();
         if (scopeClaims == null) {
-            log.trace("No claims set for scope: " + scope.getId());
+            log.trace("No claims set for scope: {}", scope.getId());
             return claims;
         }
 
@@ -514,12 +476,11 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             Object attribute = null;
 
             if (StringUtils.isBlank(claimName)) {
-                log.error("Failed to get claim because claim name is not set for attribute, id: "
-                        + gluuAttribute.getDn());
+                log.error("Failed to get claim because claim name is not set for attribute, id: {}", gluuAttribute.getDn());
                 continue;
             }
             if (StringUtils.isBlank(ldapName)) {
-                log.error("Failed to get claim because name is not set for attribute, id: " + gluuAttribute.getDn());
+                log.error("Failed to get claim because name is not set for attribute, id: {}",gluuAttribute.getDn());
                 continue;
             }
 
@@ -558,4 +519,82 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
 
         return claims;
     }
+    
+    /**
+     * 
+     * @param accessToken
+     * @param authorizationGrant
+     * @return
+     * @throws InvalidParameterException 
+     */
+    private Response requestUserInfoProc1(final String accessToken, final AuthorizationGrant authorizationGrant) throws InvalidParameterException {
+        final AbstractToken accessTokenObject = authorizationGrant.getAccessToken(accessToken);
+        if (accessTokenObject == null || !accessTokenObject.isValid()) {
+            log.trace("Invalid access token object, access_token: {}, isNull: {}, isValid: {}", accessToken,
+                    accessTokenObject == null, false);
+            return response(401, UserInfoErrorResponseType.INVALID_TOKEN);
+        }
+        if (authorizationGrant.getAuthorizationGrantType() == AuthorizationGrantType.CLIENT_CREDENTIALS) {
+            return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
+                    "Grant object has client_credentials grant_type which is not valid.");
+        }
+        Boolean openidScopeBackwardCompatibility = appConfiguration.getOpenidScopeBackwardCompatibility();
+        if(openidScopeBackwardCompatibility == null) {
+            throw new InvalidParameterException("openidScopeBackwardCompatibility is null");
+        }
+        if (openidScopeBackwardCompatibility
+                && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())
+                && !authorizationGrant.getScopes().contains(DefaultScope.PROFILE.toString())) {
+            return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
+                    "Both openid and profile scopes are not present.");
+        }
+        if (!openidScopeBackwardCompatibility && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
+            return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Missed openid scope.");
+        }
+        return null;
+    }
+    
+    /**
+     * 
+     * @param builder
+     * @param accessToken
+     * @param authorizationGrant
+     * @return
+     * @throws Exception
+     */
+    private Response requestUserInfoProc2(Response.ResponseBuilder builder, final String accessToken, final AuthorizationGrant authorizationGrant) throws Exception {
+        
+        builder.cacheControl(ServerUtil.cacheControlWithNoStoreTransformAndPrivate());
+        builder.header("Pragma", "no-cache");
+
+        User currentUser = authorizationGrant.getUser();
+        try {
+            currentUser = userService.getUserByDn(authorizationGrant.getUserDn());
+        } catch (EntryPersistenceException ex) {
+            log.warn("Failed to reload user entry: '{}'", authorizationGrant.getUserDn());
+        }
+
+        if (authorizationGrant.getClient() != null
+                && authorizationGrant.getClient().getUserInfoEncryptedResponseAlg() != null
+                && authorizationGrant.getClient().getUserInfoEncryptedResponseEnc() != null) {
+            KeyEncryptionAlgorithm keyEncryptionAlgorithm = KeyEncryptionAlgorithm
+                    .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseAlg());
+            BlockEncryptionAlgorithm blockEncryptionAlgorithm = BlockEncryptionAlgorithm
+                    .fromName(authorizationGrant.getClient().getUserInfoEncryptedResponseEnc());
+            builder.type("application/jwt");
+            builder.entity(getJweResponse(keyEncryptionAlgorithm, blockEncryptionAlgorithm, currentUser,
+                    authorizationGrant, authorizationGrant.getScopes()));
+        } else if (authorizationGrant.getClient() != null
+                && authorizationGrant.getClient().getUserInfoSignedResponseAlg() != null) {
+            SignatureAlgorithm algorithm = SignatureAlgorithm
+                    .fromString(authorizationGrant.getClient().getUserInfoSignedResponseAlg());
+            builder.type("application/jwt");
+            builder.entity(
+                    getJwtResponse(algorithm, currentUser, authorizationGrant, authorizationGrant.getScopes()));
+        } else {
+            builder.type((MediaType.APPLICATION_JSON + ";charset=UTF-8"));
+            builder.entity(getJSonResponse(currentUser, authorizationGrant, authorizationGrant.getScopes()));
+        }     
+        return null;        
+    }    
 }
