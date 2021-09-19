@@ -73,6 +73,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.text.ParseException;
 import java.util.*;
@@ -290,7 +291,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         case AES:
         case DIR: {
             byte[] sharedSymmetricKey = clientService.decryptSecret(authorizationGrant.getClient().getClientSecret())
-                    .getBytes(Util.UTF8_STRING_ENCODING);
+                    .getBytes(StandardCharsets.UTF_8);
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm,sharedSymmetricKey);
             jwe = jweEncrypter.encrypt(jwe);
             break;
@@ -298,9 +299,10 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         case PASSW: {
             String sharedSymmetricPassword = clientService
                     .decryptSecret(authorizationGrant.getClient().getClientSecret());
-            log.info("sharedSymmetricPassword = " + sharedSymmetricPassword);
+            log.info("sharedSymmetricPassword = {}", sharedSymmetricPassword);
             JweEncrypter jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedSymmetricPassword);
             jwe = jweEncrypter.encrypt(jwe);
+            break;
         }
         default: {
             throw new InvalidJweException("wrong AlgorithmFamily value.");            
