@@ -38,8 +38,7 @@ public class HashUtil {
                 case HS384:
                 case RS384:
                 case PS384:
-                case ES384:
-                default: {
+                case ES384: {
                     digest = JwtUtil.getMessageDigestSHA384(input);
                     break;
                 }
@@ -51,6 +50,10 @@ public class HashUtil {
                 case ED448: {
                     digest = JwtUtil.getMessageDigestSHA512(input);
                     break;
+                }
+                default: {
+                    digest = JwtUtil.getMessageDigestSHA384(input);
+                    break;                    
                 }
                 }
             } else {
