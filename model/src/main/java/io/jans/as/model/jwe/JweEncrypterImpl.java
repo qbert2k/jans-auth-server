@@ -156,7 +156,9 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         final BlockEncryptionAlgorithm blockEncryptionAlgorithm = getBlockEncryptionAlgorithm();
         final AlgorithmFamily algorithmFamily = keyEncryptionAlgorithm.getFamily();
         int keyLength = 0;
-        if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A128GCMKW) {
+        switch(keyEncryptionAlgorithm) {
+        case A128KW:
+        case A128GCMKW: {
             keyLength = 16;
             if (sharedSymmetricKey.length != keyLength) {
                 Digest hashCalc = new MD5Digest(); // hash length == 128 bits
@@ -164,7 +166,10 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
                 hashCalc.doFinal(sharedSymmetricKey, 0);
             }
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A192GCMKW) {
+            break;
+        }
+        case A192KW:
+        case A192GCMKW: {
             keyLength = 24;
             if (sharedSymmetricKey.length != keyLength) {
                 Digest hashCalc = new TigerDigest(); // hash length == 192 bits
@@ -172,15 +177,20 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
                 hashCalc.doFinal(sharedSymmetricKey, 0);
             }
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256KW || keyEncryptionAlgorithm == KeyEncryptionAlgorithm.A256GCMKW) {
+            break;
+        }
+        case A256KW:
+        case A256GCMKW: {
             keyLength = 32;
             if (sharedSymmetricKey.length != keyLength) {
                 Digest hashCalc = new SHA256Digest(); // hash length == 256 bits
                 hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
                 sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
                 hashCalc.doFinal(sharedSymmetricKey, 0);
-            }
-        } else if (keyEncryptionAlgorithm == KeyEncryptionAlgorithm.DIR) {
+            }            
+            break;
+        }
+        case DIR: {
             keyLength = blockEncryptionAlgorithm.getCmkLength() / 8; // 128, 192, 256, 384, 512
             if (sharedSymmetricKey.length != keyLength) {
                 Digest hashCalc = null;
@@ -213,14 +223,17 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
                 sharedSymmetricKey = new byte[hashCalc.getDigestSize()];
                 hashCalc.doFinal(sharedSymmetricKey, 0);
             }
-        } else {
+            break;
+        }
+        default: {
             throw new InvalidJweException(
                     String.format("Wrong value of the key encryption algorithm: %s", keyEncryptionAlgorithm.toString()));
+        }
         }
         if (algorithmFamily == AlgorithmFamily.AES) {
             return new AESEncrypter(sharedSymmetricKey);
         } else { // if algorithmFamily == AlgorithmFamily.DIR
             return new DirectEncrypter(sharedSymmetricKey);
         }
-    }
+     }
 }
