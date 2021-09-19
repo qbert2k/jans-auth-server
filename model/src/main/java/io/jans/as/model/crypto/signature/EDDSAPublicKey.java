@@ -48,6 +48,8 @@ public class EDDSAPublicKey extends PublicKey {
         setSignatureAlgorithm(eddsaPublicKey.getSignatureAlgorithm());
         final byte[] xEncoded = eddsaPublicKey.getPublicKeyEncoded();        
         this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
+        setKeyId(eddsaPublicKey.getKeyId());
+        setCertificate(eddsaPublicKey.getCertificate());
     }    
 
     /**
@@ -110,16 +112,6 @@ public class EDDSAPublicKey extends PublicKey {
         } catch (Exception e) {
             return StringUtils.EMPTY_STRING;
         }
-    }
-
-    /**
-     * 
-     */
-    @Override
-    public EDDSAPublicKey clone() {
-        EDDSAPublicKey newObj = new EDDSAPublicKey(getSignatureAlgorithm(), this.xEncoded);
-        newObj.setKeyId(getKeyId());
-        return newObj;
     }
     
     /**

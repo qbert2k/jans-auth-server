@@ -60,6 +60,8 @@ public class EDDSAPrivateKey extends PrivateKey {
 
         this.dEncoded = dEncoded != null ? dEncoded.clone() : null;
         this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
+        
+        setKeyId(eddsaPrivateKey.getKeyId());
     }
 
     /**
@@ -151,14 +153,6 @@ public class EDDSAPrivateKey extends PrivateKey {
         } catch (Exception e) {
             return StringUtils.EMPTY_STRING;
         }
-    }
-
-    /**
-     * 
-     */
-    @Override
-    public EDDSAPrivateKey clone() {
-        return new EDDSAPrivateKey(getSignatureAlgorithm(), this.dEncoded, this.xEncoded);
     }
 
     /**
