@@ -158,7 +158,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                             break;
                         }
                         default: {
-                            throw new InvalidJweException(String.format("Wrong value of the key length: " + keyLength));
+                            throw new InvalidJweException(String.format("Wrong value of the key length: %d", keyLength));
                         }
                         }
                         hashCalc.update(sharedSymmetricKey, 0, sharedSymmetricKey.length);
@@ -167,7 +167,7 @@ public class JweDecrypterImpl extends AbstractJweDecrypter {
                     }
                 } else {
                     throw new InvalidJweException(
-                            String.format("Wrong value of the key encryption algorithm: " + keyEncryptionAlgorithm.toString()));
+                            String.format("Wrong value of the key encryption algorithm: %s", keyEncryptionAlgorithm.toString()));
                 }
                 encriptionKey = new SecretKeySpec(sharedSymmetricKey, 0, sharedSymmetricKey.length, "AES");
             } else if (algorithmFamily == AlgorithmFamily.PASSW) {
