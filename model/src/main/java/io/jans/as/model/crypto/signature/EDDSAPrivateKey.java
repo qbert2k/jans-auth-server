@@ -55,11 +55,11 @@ public class EDDSAPrivateKey extends PrivateKey {
     public EDDSAPrivateKey(final EDDSAPrivateKey eddsaPrivateKey) {
         super(null, eddsaPrivateKey.getSignatureAlgorithm());
 
-        final byte[] dEncoded = eddsaPrivateKey.getPrivateKeyEncoded();
-        final byte[] xEncoded = eddsaPrivateKey.getPublicKeyEncoded();
+        final byte[] inDEncoded = eddsaPrivateKey.getPrivateKeyEncoded();
+        final byte[] inXEncoded = eddsaPrivateKey.getPublicKeyEncoded();
 
-        this.dEncoded = dEncoded != null ? dEncoded.clone() : null;
-        this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
+        this.dEncoded = inDEncoded != null ? inDEncoded.clone() : null;
+        this.xEncoded = inXEncoded != null ? inXEncoded.clone() : null;
         
         setKeyId(eddsaPrivateKey.getKeyId());
     }
@@ -107,7 +107,7 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @return
      */
     public byte[] getPrivateKeyEncoded() {
-        return this.dEncoded;
+        return this.dEncoded != null ? this.dEncoded : new byte[] {};
     }
 
     /**
@@ -116,8 +116,13 @@ public class EDDSAPrivateKey extends PrivateKey {
      * @return original array (decoded) of the public key (ED25519 - 32 byte, ED448 - 56 bytes);
      */
     public byte[] getPublicKeyDecoded() {
-        SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
-        return subjPubKeyInfo.getPublicKeyData().getOctets();       
+        if(this.xEncoded == null) {
+            return new byte[] {};
+        }
+        else {
+            SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
+            return subjPubKeyInfo.getPublicKeyData().getOctets();       
+        }
     }
 
     /**

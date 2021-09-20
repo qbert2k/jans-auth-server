@@ -46,8 +46,8 @@ public class EDDSAPublicKey extends PublicKey {
      */
     public EDDSAPublicKey(final EDDSAPublicKey eddsaPublicKey) {
         setSignatureAlgorithm(eddsaPublicKey.getSignatureAlgorithm());
-        final byte[] xEncoded = eddsaPublicKey.getPublicKeyEncoded();        
-        this.xEncoded = xEncoded != null ? xEncoded.clone() : null;
+        final byte[] inXEncoded = eddsaPublicKey.getPublicKeyEncoded();        
+        this.xEncoded = inXEncoded != null ? inXEncoded.clone() : null;
         setKeyId(eddsaPublicKey.getKeyId());
         setCertificate(eddsaPublicKey.getCertificate());
     }    
@@ -72,7 +72,7 @@ public class EDDSAPublicKey extends PublicKey {
      */
     public byte[] getPublicKeyDecoded() {
         if(this.xEncoded == null) {
-            return null;
+            return new byte[] {};
         }
         else {
             SubjectPublicKeyInfo subjPubKeyInfo = SubjectPublicKeyInfo.getInstance(this.xEncoded);
@@ -85,7 +85,7 @@ public class EDDSAPublicKey extends PublicKey {
      * @return
      */
     public byte[] getPublicKeyEncoded() {
-        return this.xEncoded; 
+        return this.xEncoded != null ? this.xEncoded : new byte[] {};
     }
 
     /**

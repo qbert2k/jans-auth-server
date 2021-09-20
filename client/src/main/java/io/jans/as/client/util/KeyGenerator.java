@@ -270,7 +270,6 @@ public class KeyGenerator {
                         fosTestPropFile.write("\n".getBytes());
                     }
                 }
-                finally {}
             }
             System.out.println(jwks);
         }
