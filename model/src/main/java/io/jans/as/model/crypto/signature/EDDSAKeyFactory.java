@@ -144,7 +144,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
             throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException,
             NoSuchAlgorithmException, SignatureException {
         // Create certificate
-        Certificate certificate = null;
+        Certificate resCertificate = null;
         try {
             BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
             BigInteger serialNumber = new BigInteger(1024, new SecureRandom()); // serial number for certificate
@@ -155,7 +155,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
                     .build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
                             .build(keyPair.getPrivate()));
             X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
-            certificate = new Certificate(signatureAlgorithm, cert);
+            resCertificate = new Certificate(signatureAlgorithm, cert);
         } catch (OperatorCreationException e) {
             throw new SignatureException(e);
         } catch (CertificateException e) {
@@ -163,7 +163,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
         } catch (Exception e) {
             throw new SignatureException(e);
         }
-        return certificate;
+        return resCertificate;
     }
 
     /**
