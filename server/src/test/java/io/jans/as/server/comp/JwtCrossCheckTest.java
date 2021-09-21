@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.testng.ITestContext;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -74,34 +76,62 @@ public class JwtCrossCheckTest extends BaseTest {
     
     /**
      * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
+     * @param context
+     * @return
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })    
-    @Test
-    public void loadJWK_RS256Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
+    @DataProvider(name = "loadJWKDataProvider")
+    public Object[][] loadJWKDataProvider(ITestContext context) {
         
-        showTitle("loadJWK_RS256Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
+        String dnName = context.getCurrentXmlTest().getParameter("dnName");
+        String keyStoreFile = context.getCurrentXmlTest().getParameter("keyStoreFile");
+        String keyStoreSecret = context.getCurrentXmlTest().getParameter("keyStoreSecret");
 
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
+        return new Object[][]{
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("RS256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("RS384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("RS512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ES256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ES256K_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ES256K_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ES384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ES512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("PS256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("PS384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("PS512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("RSA1_5_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("RSA_OAEP_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ECDH_ES_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ECDH_ES_PLUS_A128KW_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ECDH_ES_PLUS_A192KW_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, context.getCurrentXmlTest().getParameter("ECDH_ES_PLUS_A256KW_keyId")}
+        };
+    }
+    
+    /**
+     * 
+     * @param context
+     * @return
+     */
+    @DataProvider(name = "crossCheckDataProvider")
+    public Object[][] crossCheckDataProvider(ITestContext context) {
+        
+        String dnName = context.getCurrentXmlTest().getParameter("dnName");
+        String keyStoreFile = context.getCurrentXmlTest().getParameter("keyStoreFile");
+        String keyStoreSecret = context.getCurrentXmlTest().getParameter("keyStoreSecret");
+
+        return new Object[][]{
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.RS256, context.getCurrentXmlTest().getParameter("RS256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.RS384, context.getCurrentXmlTest().getParameter("RS384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.RS512, context.getCurrentXmlTest().getParameter("RS512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.ES256, context.getCurrentXmlTest().getParameter("ES256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.ES256K, context.getCurrentXmlTest().getParameter("ES256K_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.ES384, context.getCurrentXmlTest().getParameter("ES384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.ES512, context.getCurrentXmlTest().getParameter("ES512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.PS256, context.getCurrentXmlTest().getParameter("PS256_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.PS384, context.getCurrentXmlTest().getParameter("PS384_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.PS512, context.getCurrentXmlTest().getParameter("PS512_keyId")},
+                {dnName, keyStoreFile, keyStoreSecret, SignatureAlgorithm.EDDSA, context.getCurrentXmlTest().getParameter("Ed25519_keyId")},
+        };
     }
     
     /**
@@ -112,60 +142,23 @@ public class JwtCrossCheckTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS384_keyId" })    
-    @Test
-    public void loadJWK_RS384Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_RS384Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
+    @Test(dataProvider = "loadJWKDataProvider")
+    public void loadJWK_Test(final String dnName, final String keyStoreFile, final String keyStoreSecret, final String kid) throws Exception {
+        showTitle("loadJWK_Test");
+
+        System.out.println("dnName          = " + dnName);
+        System.out.println("keyStoreFile    = " + keyStoreFile);
+        System.out.println("kid             = " + kid);
+
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
         JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
 
         assertTrue(jwk != null);
         assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
-    }    
+        assertTrue(jwk.toString().length() != 0);
 
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS512_keyId" })    
-    @Test
-    public void loadJWK_RS512Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_RS512Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());
+        System.out.println("jwk.toString() = " + jwk.toString());
     }
     
     /**
@@ -176,178 +169,49 @@ public class JwtCrossCheckTest extends BaseTest {
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })    
-    @Test
-    public void loadJWK_ES256Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_ES256Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
-    }    
-
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })    
-    @Test
-    public void loadJWK_ES256KTest(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_ES256KTest");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
-    }    
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })    
-    @Test
-    public void loadJWK_ES384Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_ES384Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
-    }
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })    
-    @Test
-    public void loadJWK_ES512Test(final String dnName,
-            final String keyStoreFile,
-            final String keyStoreSecret,
-            final String kid) throws Exception {
-        
-        showTitle("loadJWK_ES512Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
-        AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        JWK jwk = JWK.load(authCryptoProvider.getKeyStore(), kid, keyStoreSecret.toCharArray());
-
-        assertTrue(jwk != null);
-        assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());        
-    }  
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })    
+    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
     @Test
     public void loadJWK_ED25519Test(final String dnName,
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        
+
         showTitle("loadJWK_ED25519Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
+
+        System.out.println("dnName          = " + dnName);
+        System.out.println("keyStoreFile    = " + keyStoreFile);
+        System.out.println("kid             = " + kid);
+
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        
+
         Key key = authCryptoProvider.getKeyStore().getKey(kid, keyStoreSecret.toCharArray());
         BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
         BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
-        
+
         Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);
-        
+
         EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED25519, bcEdPubKey.getEncoded());        
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED25519, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
 
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
         Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());
-        
+
         List<Base64> edCerts = new ArrayList<Base64>();
         edCerts.add(Base64.encode(certificate.getEncoded()));
-        
+
         OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed25519, edPubKeyBase64).d(edPrivKeyBase64).
                 algorithm(JWSAlgorithm.EdDSA).keyID(kid).x509CertChain(edCerts).build();
-        
+
         JWK jwk = octetKeyPair;
-        
+
         assertTrue(jwk != null);
         assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());             
-    } 
-    
-    /**
+        assertTrue(jwk.toString().length() != 0);
+
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());
+        System.out.println("jwk.toString() = " + jwk.toString());
+    }
+        /**
      * 
      * @param dnName
      * @param keyStoreFile
@@ -361,203 +225,66 @@ public class JwtCrossCheckTest extends BaseTest {
             final String keyStoreFile,
             final String keyStoreSecret,
             final String kid) throws Exception {
-        
+
         showTitle("loadJWK_ED448Test");
-        
-        System.out.println("dnName          = " + dnName);        
-        System.out.println("keyStoreFile    = " + keyStoreFile);        
-        System.out.println("kid             = " + kid);        
-        
+
+        System.out.println("dnName          = " + dnName);
+        System.out.println("keyStoreFile    = " + keyStoreFile);
+        System.out.println("kid             = " + kid);
+
         AuthCryptoProvider authCryptoProvider = new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName);
-        
+
         Key key = authCryptoProvider.getKeyStore().getKey(kid, keyStoreSecret.toCharArray());
         BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
         BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
-        
-        Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);        
-        
-        EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());        
+
+        Certificate certificate = authCryptoProvider.getKeyStore().getCertificate(kid);
+
+        EDDSAPublicKey edPubKey = new EDDSAPublicKey(SignatureAlgorithm.ED448, bcEdPubKey.getEncoded());
         EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(SignatureAlgorithm.ED448, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());
-        
+
         Base64URL edPubKeyBase64 = Base64URL.encode(edPubKey.getPublicKeyEncoded());
-        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());        
-        
+        Base64URL edPrivKeyBase64 = Base64URL.encode(edPrivKey.getPrivateKeyEncoded());
+
         List<Base64> edCerts = new ArrayList<Base64>();
-        edCerts.add(Base64.encode(certificate.getEncoded()));        
-        
+        edCerts.add(Base64.encode(certificate.getEncoded()));
+
         OctetKeyPair octetKeyPair = new OctetKeyPair.Builder(Curve.Ed448, edPubKeyBase64).d(edPrivKeyBase64).
                 algorithm(JWSAlgorithm.EdDSA).keyID(kid).x509CertChain(edCerts).build();
-        
+
         JWK jwk = octetKeyPair;
-        
+
         assertTrue(jwk != null);
         assertTrue(jwk.toJSONString().length() != 0);
-        assertTrue(jwk.toString().length() != 0);        
-       
-        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());        
-        System.out.println("jwk.toString() = " + jwk.toString());                     
-    }          
+        assertTrue(jwk.toString().length() != 0);
+
+        System.out.println("jwk.toJSONString() = " + jwk.toJSONString());
+        System.out.println("jwk.toString() = " + jwk.toString());
+    }
 
     /**
      * 
      * @param dnName
      * @param keyStoreFile
      * @param keyStoreSecret
+     * @param signatureAlgorithm
      * @param kid
      * @throws Exception
      */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS256_keyId" })
-    @Test
-    public void rs256CrossCheck(final String dnName,
+    @Test(dataProvider = "crossCheckDataProvider")
+    public void crossCheckTest(final String dnName,
                               final String keyStoreFile,
                               final String keyStoreSecret,
+                              final SignatureAlgorithm signatureAlgorithm,
                               final String kid) throws Exception {
-        showTitle("rs256CrossCheck");             
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS256, kid);
-    }
+        showTitle("crossCheckTest");
 
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS384_keyId" })
-    @Test
-    public void rs384CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("rs384CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS384, kid);
-    }
+        System.out.println("dnName              = " + dnName);
+        System.out.println("keyStoreFile        = " + keyStoreFile);
+        System.out.println("signatureAlgorithm  = " + signatureAlgorithm);
+        System.out.println("kid                 = " + kid);
 
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "RS512_keyId"  })
-    @Test
-    public void rs512CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("rs512CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.RS512, kid);
-    }
-
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256_keyId" })
-    @Test
-    public void es256CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("es256CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256, kid);
-    }
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES256K_keyId" })
-    @Test
-    public void es256KCrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("es256KCrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES256K, kid);
-    }    
-
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES384_keyId" })
-    @Test
-    public void es384CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("es384CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES384, kid);
-    }
-
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "ES512_keyId" })
-    @Test
-    public void es512CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("es512CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ES512, kid);
-    }
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
-    @Test
-    public void edDsaCrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("edDsaCrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.EDDSA, kid);
-    }
-    
-    /**
-     * 
-     * @param dnName
-     * @param keyStoreFile
-     * @param keyStoreSecret
-     * @param kid
-     * @throws Exception
-     */
-    @Parameters({ "dnName", "keyStoreFile", "keyStoreSecret", "Ed25519_keyId" })
-    //  @Test
-    public void ed25519CrossCheck(final String dnName,
-                                final String keyStoreFile,
-                                final String keyStoreSecret,
-                                final String kid) throws Exception {
-        showTitle("ed25519CrossCheck");        
-        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), SignatureAlgorithm.ED25519, kid);
+        crossCheck(new AuthCryptoProvider(keyStoreFile, keyStoreSecret, dnName), signatureAlgorithm, kid);
     }
 
     /**
@@ -600,7 +327,7 @@ public class JwtCrossCheckTest extends BaseTest {
             }
             case ED: {
                 switch(signatureAlgorithm) {
-                case EDDSA:                    
+                case EDDSA:
                 case ED25519: {
                     Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                     BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
@@ -613,7 +340,7 @@ public class JwtCrossCheckTest extends BaseTest {
                 }
                 default:
                     throw new SignatureException(String.format("wrong type of the SignatureAlgorithm: %s", signatureAlgorithm.toString()));
-                }                
+                }
                 break;
             }
             case RSA: {
@@ -664,14 +391,14 @@ public class JwtCrossCheckTest extends BaseTest {
             }
             case ED: {
                 switch(signatureAlgorithm) {
-                case EDDSA:                    
+                case EDDSA:
                 case ED25519: {
                     Key key = cryptoProvider.getKeyStore().getKey(kid, cryptoProvider.getKeyStoreSecret().toCharArray());
                     BCEdDSAPrivateKey bcEdPrivKey = (BCEdDSAPrivateKey)key;
                     BCEdDSAPublicKey bcEdPubKey = (BCEdDSAPublicKey) bcEdPrivKey.getPublicKey();
                     EDDSAPrivateKey edPrivKey = new EDDSAPrivateKey(signatureAlgorithm, bcEdPrivKey.getEncoded(), bcEdPubKey.getEncoded());                
                     OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(edPrivKey.getPublicKeyDecoded())).d(Base64URL.encode(edPrivKey.getPrivateKeyDecoded())).build();
-                    signer = new Ed25519Signer(okp);                
+                    signer = new Ed25519Signer(okp);
                     break;
                 }
                 default:
