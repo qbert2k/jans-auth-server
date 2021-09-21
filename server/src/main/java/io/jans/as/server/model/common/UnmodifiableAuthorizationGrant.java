@@ -10,8 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import com.google.common.base.Function;
+import java.util.function.Function;
 
 import io.jans.as.common.model.common.User;
 import io.jans.as.common.model.registration.Client;

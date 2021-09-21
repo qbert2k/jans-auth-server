@@ -6,7 +6,6 @@
 
 package io.jans.as.server.model.token;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import io.jans.as.common.claims.Audience;
 import io.jans.as.common.model.common.User;
@@ -60,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static io.jans.as.model.common.ScopeType.DYNAMIC;
 

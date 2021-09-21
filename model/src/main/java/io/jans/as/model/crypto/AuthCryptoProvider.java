@@ -212,7 +212,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
     public String sign(String signingInput, String alias, String sharedSecret, SignatureAlgorithm signatureAlgorithm)
             throws NoSuchAlgorithmException, InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException,
             SignatureException, JOSEException {
-        // throws Exception {
         if (signatureAlgorithm == SignatureAlgorithm.NONE) {
             return "";
         } else if (AlgorithmFamily.HMAC.equals(signatureAlgorithm.getFamily())) {
@@ -295,6 +294,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         return publicKey;
     }
 
+    @Override
     public String getKeyId(JSONWebKeySet jsonWebKeySet, Algorithm algorithm, Use use)
             throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
         if (algorithm == null || AlgorithmFamily.HMAC.equals(algorithm.getFamily())) {

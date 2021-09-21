@@ -6,7 +6,6 @@
 
 package io.jans.as.server.model.token;
 
-import com.google.common.base.Function;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 
@@ -43,6 +42,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
+import java.util.function.Function;
 
 import static io.jans.as.model.jwt.JwtHeaderName.ALGORITHM;
 

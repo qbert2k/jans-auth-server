@@ -6,7 +6,6 @@
 
 package io.jans.as.server.token.ws.rs;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import io.jans.as.common.model.common.User;
 import io.jans.as.common.model.registration.Client;
@@ -61,6 +60,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.SecurityContext;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * Provides interface for token REST web services
