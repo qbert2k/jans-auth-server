@@ -52,7 +52,7 @@ public class JwtVerifier {
      * @param jwt
      * @param clientSecret
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
     public boolean verifyJwt(final Jwt jwt, final String clientSecret) throws Exception {
 
@@ -70,17 +70,7 @@ public class JwtVerifier {
 
         final AlgorithmFamily algorithmFamily = signatureAlgorithm.getFamily();
 
-        PublicKey publicKey = null;
-        if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
-                || AlgorithmFamily.ED.equals(algorithmFamily)) {
-            if (signKeyId == null) {
-                throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
-            }
-            publicKey = cryptoProvider.getPublicKey(signKeyId, jwks, null);
-            if (publicKey == null) {
-                throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");
-            }
-        }
+        PublicKey publicKey = getPublicKey(algorithmFamily, signKeyId);        
 
         JwsSigner signer = null;
         switch (signatureAlgorithm.getFamily()) {
@@ -139,6 +129,28 @@ public class JwtVerifier {
      */
     public boolean verifyJwt(final Jwt jwt) throws Exception {
         return verifyJwt(jwt, null);
+    }
+
+    /**
+     * 
+     * @param algorithmFamily
+     * @param signKeyId
+     * @return
+     * @throws Exception
+     */
+    private PublicKey getPublicKey(final AlgorithmFamily algorithmFamily, final String signKeyId) throws Exception {
+        PublicKey publicKey = null;
+        if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
+                || AlgorithmFamily.ED.equals(algorithmFamily)) {
+            if (signKeyId == null) {
+                throw new InvalidJwtException("JwtVerifyer: signKeyId == null (signKeyId  isn't defined)");
+            }
+            publicKey = cryptoProvider.getPublicKey(signKeyId, jwks, null);
+            if (publicKey == null) {
+                throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");
+            }
+        }        
+        return publicKey;
     }
 
 }
