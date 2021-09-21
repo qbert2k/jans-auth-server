@@ -20,6 +20,12 @@ public abstract class JwkUtil {
 
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(JwkUtil.class);
+    
+    /**
+     * 
+     */
+    private JwkUtil() {
+    }
 
     /**
      * 
