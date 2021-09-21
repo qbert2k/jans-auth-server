@@ -122,32 +122,30 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
                 File f = new File(keyStoreFile);
                 if (!f.exists()) {
                     keyStore.load(null, keyStoreSecret.toCharArray());
-                    try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
-                        keyStore.store(fos, keyStoreSecret.toCharArray());
-                    } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-                        throw e;
-                    }
+                    store();
                 }
-                try (final InputStream is = new FileInputStream(keyStoreFile)) {
-                    keyStore.load(is, keyStoreSecret.toCharArray());
-                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-                    throw e;
-                }
+                load();
           } catch (Exception e) {
               LOG.error(e.getMessage(), e);
           }
         }
     }
 
-    public void load(String keyStoreSecret) {
-        this.keyStoreSecret = keyStoreSecret;
+    private void store() throws Exception {
+        try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
+            keyStore.store(fos, keyStoreSecret.toCharArray());
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+            throw e;
+        }
+    }
+
+    public void load() throws Exception {
         try (InputStream is = new FileInputStream(keyStoreFile)) {
-            keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(is, keyStoreSecret.toCharArray());
             LOG.debug("Loaded keys from JKS.");
             LOG.trace("Loaded keys:" + getKeys());
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+            throw e;
         }
     }
 
@@ -386,6 +384,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         return cert;
     }
 
+    @Override
     public List<String> getKeys() {
         try {
             return Collections.list(this.keyStore.aliases());
