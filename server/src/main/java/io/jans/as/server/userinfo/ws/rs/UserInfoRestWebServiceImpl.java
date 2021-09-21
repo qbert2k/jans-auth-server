@@ -525,13 +525,13 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         if(openidScopeBackwardCompatibility == null) {
             throw new InvalidParameterException("openidScopeBackwardCompatibility is null");
         }
-        if (openidScopeBackwardCompatibility
+        if (Boolean.TRUE.equals(openidScopeBackwardCompatibility)
                 && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())
                 && !authorizationGrant.getScopes().contains(DefaultScope.PROFILE.toString())) {
             return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE,
                     "Both openid and profile scopes are not present.");
         }
-        if (!openidScopeBackwardCompatibility && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
+        if (Boolean.FALSE.equals(openidScopeBackwardCompatibility) && !authorizationGrant.getScopes().contains(DefaultScope.OPEN_ID.toString())) {
             return response(403, UserInfoErrorResponseType.INSUFFICIENT_SCOPE, "Missed openid scope.");
         }
         return null;

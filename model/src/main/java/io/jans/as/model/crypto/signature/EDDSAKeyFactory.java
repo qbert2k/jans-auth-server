@@ -7,7 +7,6 @@ package io.jans.as.model.crypto.signature;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
@@ -17,7 +16,6 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,7 +35,6 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -67,17 +64,9 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
      * 
      * @param signatureAlgorithm
      * @param dnName
-     * @throws InvalidParameterException
-     * @throws NoSuchProviderException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidAlgorithmParameterException
      * @throws SignatureException
-     * @throws InvalidKeyException
-     * @throws CertificateEncodingException
      */
-    public EDDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName)
-            throws InvalidParameterException, NoSuchProviderException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, SignatureException, InvalidKeyException, CertificateEncodingException {
+    public EDDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName) throws SignatureException {
         if (signatureAlgorithm == null) {
             throw new InvalidParameterException("The signature algorithm cannot be null");
         }
@@ -118,10 +107,6 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
                 X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
                 this.certificate = new Certificate(signatureAlgorithm, cert);
             }
-        } catch (OperatorCreationException e) {
-            throw new SignatureException(e);
-        } catch (CertificateException e) {
-            throw new SignatureException(e);
         } catch (Exception e) {
             throw new SignatureException(e);
         }
@@ -140,9 +125,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
      * @throws NoSuchAlgorithmException
      * @throws SignatureException
      */
-    public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName)
-            throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException,
-            NoSuchAlgorithmException, SignatureException {
+    public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName) throws SignatureException {
         // Create certificate
         Certificate resCertificate = null;
         try {
@@ -156,10 +139,6 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
                             .build(keyPair.getPrivate()));
             X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
             resCertificate = new Certificate(signatureAlgorithm, cert);
-        } catch (OperatorCreationException e) {
-            throw new SignatureException(e);
-        } catch (CertificateException e) {
-            throw new SignatureException(e);
         } catch (Exception e) {
             throw new SignatureException(e);
         }
@@ -195,10 +174,9 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
      * @param signatureAlgorithm
      * @param decodedPublicKey
      * @return
-     * @throws IOException
-     * @throws SignatureException 
+     * @throws SignatureException
      */
-    public static EDDSAPublicKey createEDDSAPublicKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPublicKey) throws IOException, SignatureException {
+    public static EDDSAPublicKey createEDDSAPublicKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPublicKey) throws SignatureException {
         byte[] encodedPubKey = null; 
         switch(signatureAlgorithm) {
         case EDDSA:
@@ -220,17 +198,17 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
         }
         return new EDDSAPublicKey(signatureAlgorithm, encodedPubKey);        
     }
-    
+
     /**
      * 
      * @param signatureAlgorithm
      * @param decodedPrivateKey
      * @param decodedPublicKey
      * @return
-     * @throws IOException 
-     * @throws SignatureException 
+     * @throws SignatureException
+     * @throws IOException
      */
-    public static EDDSAPrivateKey createEDDSAPrivateKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPrivateKey, byte [] decodedPublicKey) throws IOException, SignatureException {
+    public static EDDSAPrivateKey createEDDSAPrivateKeyFromDecodedKey(SignatureAlgorithm signatureAlgorithm, byte [] decodedPrivateKey, byte [] decodedPublicKey) throws SignatureException, IOException {
         byte[] encodedPubKey = null; 
         if(decodedPublicKey != null) {
             switch(signatureAlgorithm) {

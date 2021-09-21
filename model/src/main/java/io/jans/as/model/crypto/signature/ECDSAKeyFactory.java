@@ -7,17 +7,11 @@
 package io.jans.as.model.crypto.signature;
 
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.SignatureException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +28,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import io.jans.as.model.crypto.Certificate;
@@ -59,9 +52,8 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
     private ECDSAPublicKey ecdsaPublicKey;
     private Certificate certificate;
 
-    public ECDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName)
-            throws InvalidParameterException, NoSuchProviderException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, SignatureException, InvalidKeyException, CertificateEncodingException {
+    public ECDSAKeyFactory(SignatureAlgorithm signatureAlgorithm, String dnName) throws SignatureException
+             {
         if (signatureAlgorithm == null) {
             throw new InvalidParameterException("The signature algorithm cannot be null");
         }
@@ -101,20 +93,14 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
                 this.certificate = new Certificate(signatureAlgorithm, cert);
             }
 
-        } catch (OperatorCreationException e) {
-            throw new SignatureException(e);
-        } catch (CertificateException e) {
-            throw new SignatureException(e);
         } catch (Exception e) {
-            throw new SignatureException(e);
+            throw new SignatureException(e.getMessage(), e);
         }
     }
 
-    public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName)
-            throws CertificateEncodingException, InvalidKeyException, IllegalStateException, NoSuchProviderException,
-            NoSuchAlgorithmException, SignatureException {
+    public Certificate generateV3Certificate(Date startDate, Date expirationDate, String dnName) throws SignatureException {
         // Create certificate
-        Certificate certificate = null;
+        Certificate resCertificate = null;
         try {
             BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
             BigInteger serialNumber = new BigInteger(1024, new SecureRandom()); // serial number for certificate
@@ -125,15 +111,11 @@ public class ECDSAKeyFactory extends KeyFactory<ECDSAPrivateKey, ECDSAPublicKey>
                     .build(new JcaContentSignerBuilder(signatureAlgorithm.getAlgorithm()).setProvider(DEF_BC)
                             .build(keyPair.getPrivate()));
             X509Certificate cert = new JcaX509CertificateConverter().setProvider(DEF_BC).getCertificate(certHolder);
-            certificate = new Certificate(signatureAlgorithm, cert);
-        } catch (OperatorCreationException e) {
-            throw new SignatureException(e);
-        } catch (CertificateException e) {
-            throw new SignatureException(e);
+            resCertificate = new Certificate(signatureAlgorithm, cert);
         } catch (Exception e) {
-            throw new SignatureException(e);
+            throw new SignatureException(e.getMessage(), e);
         }
-        return certificate;
+        return resCertificate;
     }
 
     @Override

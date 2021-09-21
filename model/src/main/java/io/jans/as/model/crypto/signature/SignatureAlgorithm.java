@@ -106,10 +106,6 @@ public enum SignatureAlgorithm {
         this(name, family, algorithm, null, jwsAlgorithm);
     }
 
-    SignatureAlgorithm(String name) {
-        this(name, null, null, null, null);
-    }
-
     public Algorithm getAlg() {
         return alg;
     }

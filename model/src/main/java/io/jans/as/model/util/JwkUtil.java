@@ -16,7 +16,7 @@ import io.jans.as.model.jwk.KeyType;
  * @version August 24, 2021
  *
  */
-public class JwkUtil {
+public abstract class JwkUtil {
 
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(JwkUtil.class);

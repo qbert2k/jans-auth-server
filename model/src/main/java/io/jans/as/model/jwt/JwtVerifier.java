@@ -31,7 +31,7 @@ import io.jans.as.model.jws.RSASigner;
 public class JwtVerifier {
 
     @SuppressWarnings("unused")
-    private final static Logger log = LoggerFactory.getLogger(JwtVerifier.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtVerifier.class);
 
     private AbstractCryptoProvider cryptoProvider;
 

@@ -179,7 +179,7 @@ public class JwtUtil {
                 throw new InvalidParameterException("Wrong value of the AlgorithmFamily: algorithmFamily = " + algorithmFamily);
             }
 
-            if (publicKey != null && jsonKeyValue.has(CERTIFICATE_CHAIN)) {
+            if (jsonKeyValue.has(CERTIFICATE_CHAIN)) {
                 final String BEGIN = "-----BEGIN CERTIFICATE-----";
                 final String END = "-----END CERTIFICATE-----";
 
@@ -191,10 +191,9 @@ public class JwtUtil {
                 io.jans.as.model.crypto.Certificate certificate = new Certificate(signatureAlgorithm, cert);
                 publicKey.setCertificate(certificate);
             }
-            if (publicKey != null) {
-                publicKey.setKeyId(resultKeyId);
-                publicKey.setSignatureAlgorithm(signatureAlgorithm);
-            }
+            
+            publicKey.setKeyId(resultKeyId);
+            publicKey.setSignatureAlgorithm(signatureAlgorithm);
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
@@ -273,13 +272,13 @@ public class JwtUtil {
         return jwks;
     }
 
-	public static JSONObject fromJson(String json) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JsonOrgModule());
-		return mapper.readValue(json, JSONObject.class);
-	}
+    public static JSONObject fromJson(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JsonOrgModule());
+        return mapper.readValue(json, JSONObject.class);
+    }
 
-	public static void transferIntoJwtClaims(JSONObject jsonObject, Jwt jwt) {
+    public static void transferIntoJwtClaims(JSONObject jsonObject, Jwt jwt) {
         if (jsonObject == null || jwt == null) {
             return;
         }

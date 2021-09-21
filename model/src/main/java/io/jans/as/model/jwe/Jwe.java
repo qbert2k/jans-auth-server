@@ -81,10 +81,7 @@ public class Jwe extends JsonWebResponse {
     }
 
     public String getAdditionalAuthenticatedData() {
-        String additionalAuthenticatedData = encodedHeader + "." + encodedEncryptedKey + "."
-                + encodedInitializationVector;
-
-        return additionalAuthenticatedData;
+        return encodedHeader + "." + encodedEncryptedKey + "." + encodedInitializationVector;
     }
 
     public static Jwe parse(String encodedJwe, PrivateKey privateKey, byte[] sharedSymmetricKey,
