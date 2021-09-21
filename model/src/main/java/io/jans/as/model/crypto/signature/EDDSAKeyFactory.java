@@ -50,8 +50,9 @@ import io.jans.as.model.crypto.KeyFactory;
 public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey> {
 
     public static final String DEF_BC = "BC";
-    public static final byte[] Ed448Prefix = Hex.decode("3043300506032b6571033a00");
-    public static final byte[] Ed25519Prefix = Hex.decode("302a300506032b6570032100");        
+
+    protected static final byte[] Ed448Prefix = Hex.decode("3043300506032b6571033a00");
+    protected static final byte[] Ed25519Prefix = Hex.decode("302a300506032b6570032100");
 
     private SignatureAlgorithm signatureAlgorithm;
 
@@ -196,7 +197,7 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
             throw new SignatureException(String.format("Wrong type of the signature algorithm (SignatureAlgorithm): %s", signatureAlgorithm.toString()));     
         }
         }
-        return new EDDSAPublicKey(signatureAlgorithm, encodedPubKey);        
+        return new EDDSAPublicKey(signatureAlgorithm, encodedPubKey);
     }
 
     /**
@@ -233,6 +234,6 @@ public class EDDSAKeyFactory extends KeyFactory<EDDSAPrivateKey, EDDSAPublicKey>
         Ed25519PrivateKeyParameters privKeysParams = new Ed25519PrivateKeyParameters(decodedPrivateKey);
         PrivateKeyInfo privKeyInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(privKeysParams, null);
         return new EDDSAPrivateKey(signatureAlgorithm, privKeyInfo.getEncoded(), encodedPubKey);
-    }    
+    }
     
 }

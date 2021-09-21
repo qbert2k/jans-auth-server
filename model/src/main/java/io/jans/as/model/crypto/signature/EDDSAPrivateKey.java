@@ -153,8 +153,6 @@ public class EDDSAPrivateKey extends PrivateKey {
     public String toString() {
         try {
             return toJSONObject().toString(4);
-        } catch (JSONException e) {
-            return StringUtils.EMPTY_STRING;
         } catch (Exception e) {
             return StringUtils.EMPTY_STRING;
         }

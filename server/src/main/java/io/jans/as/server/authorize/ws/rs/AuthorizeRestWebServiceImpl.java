@@ -560,7 +560,7 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
                         codeChallenge, codeChallengeMethod, sessionId, claims, authReqId, customParameters, oAuth2AuditLog, httpRequest);
             }
 
-            if (prompts.contains(io.jans.as.model.common.Prompt.CONSENT) || !sessionUser.isPermissionGrantedForClient(clientId)) {
+            if (prompts.contains(io.jans.as.model.common.Prompt.CONSENT) || Boolean.FALSE.equals(sessionUser.isPermissionGrantedForClient(clientId))) {
                 if (!clientAuthorizationFetched) {
                     clientAuthorization = clientAuthorizationsService.find(user.getAttribute("inum"), client.getClientId());
                 }
@@ -654,7 +654,7 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
                 redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.ID_TOKEN, idToken.getCode());
             }
 
-            if (authorizationGrant != null && StringHelper.isNotEmpty(acrValuesStr) && !appConfiguration.getFapiCompatibility()) {
+            if (authorizationGrant != null && StringHelper.isNotEmpty(acrValuesStr) && Boolean.FALSE.equals(appConfiguration.getFapiCompatibility())) {
                 redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.ACR_VALUES, acrValuesStr);
             }
 
@@ -664,15 +664,15 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
                 sessionUser.setId(newSessionId);
                 log.trace("newSessionId = {}", newSessionId);
             }
-            if (!appConfiguration.getFapiCompatibility() && appConfiguration.getSessionIdRequestParameterEnabled()) {
+            if (Boolean.FALSE.equals(appConfiguration.getFapiCompatibility()) && Boolean.TRUE.equals(appConfiguration.getSessionIdRequestParameterEnabled())) {
                 redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.SESSION_ID, sessionUser.getId());
             }
-            if (appConfiguration.getIncludeSidInResponse()) { // by defalut we do not include sid in response. It should be read by RP from id_token
+            if (Boolean.TRUE.equals(appConfiguration.getIncludeSidInResponse())) { // by defalut we do not include sid in response. It should be read by RP from id_token
                 redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.SID, sessionUser.getOutsideSid());
             }
             redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.SESSION_STATE, sessionIdService.computeSessionState(sessionUser, clientId, redirectUri));
             redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.STATE, state);
-            if (scope != null && !scope.isEmpty() && authorizationGrant != null && !appConfiguration.getFapiCompatibility()) {
+            if (scope != null && !scope.isEmpty() && authorizationGrant != null && Boolean.FALSE.equals(appConfiguration.getFapiCompatibility())) {
                 scope = authorizationGrant.checkScopesPolicy(scope);
 
                 redirectUriResponse.getRedirectUri().addResponseParameter(AuthorizeResponseParam.SCOPE, scope);
@@ -740,7 +740,7 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
 
             builder = RedirectUtil.getRedirectResponseBuilder(redirectUriResponse.getRedirectUri(), httpRequest);
 
-            if (appConfiguration.getCustomHeadersWithAuthorizationResponse()) {
+            if (Boolean.TRUE.equals(appConfiguration.getCustomHeadersWithAuthorizationResponse())) {
                 for (String key : customResponseHeaders.keySet()) {
                     builder.header(key, customResponseHeaders.get(key));
                 }
@@ -988,7 +988,7 @@ public class AuthorizeRestWebServiceImpl implements AuthorizeRestWebService {
         if (StringUtils.isNotBlank(codeChallengeMethod)) {
             redirectUriResponse.addResponseParameter(io.jans.as.model.authorize.AuthorizeRequestParam.CODE_CHALLENGE_METHOD, codeChallengeMethod);
         }
-        if (StringUtils.isNotBlank(sessionId) && appConfiguration.getSessionIdRequestParameterEnabled()) {
+        if (StringUtils.isNotBlank(sessionId) && Boolean.TRUE.equals(appConfiguration.getSessionIdRequestParameterEnabled())) {
             redirectUriResponse.addResponseParameter(io.jans.as.model.authorize.AuthorizeRequestParam.SESSION_ID, sessionId);
         }
         if (StringUtils.isNotBlank(claims)) {
