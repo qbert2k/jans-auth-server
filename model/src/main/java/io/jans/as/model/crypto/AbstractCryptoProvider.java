@@ -37,6 +37,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -118,8 +119,8 @@ public abstract class AbstractCryptoProvider {
 
     public static JSONObject generateJwks(AbstractCryptoProvider cryptoProvider, AppConfiguration configuration) {
         GregorianCalendar expirationTime = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-        expirationTime.add(GregorianCalendar.HOUR, configuration.getKeyRegenerationInterval());
-        expirationTime.add(GregorianCalendar.SECOND, configuration.getIdTokenLifetime());
+        expirationTime.add(Calendar.HOUR, configuration.getKeyRegenerationInterval());
+        expirationTime.add(Calendar.SECOND, configuration.getIdTokenLifetime());
 
         long expiration = expirationTime.getTimeInMillis();
 

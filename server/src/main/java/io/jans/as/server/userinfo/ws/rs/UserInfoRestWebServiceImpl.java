@@ -166,7 +166,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
                     .getAuthorizationGrantByAccessToken(accessToken);
 
             if (authorizationGrant == null) {
-                log.trace("Failed to find authorization grant by access_token: " + accessToken);
+                log.trace("Failed to find authorization grant by access_token: {}", accessToken);
                 return response(401, UserInfoErrorResponseType.INVALID_TOKEN);
             }
             oAuth2AuditLog.updateOAuth2AuditLog(authorizationGrant, false);
@@ -321,92 +321,16 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         JsonWebResponse jsonWebResponse = new JsonWebResponse();
 
         // Claims
-        List<Scope> dynamicScopes = new ArrayList<Scope>();
-        for (String scopeName : scopes) {
-            Scope scope = scopeService.getScopeById(scopeName);
-            if ((scope != null) && (ScopeType.DYNAMIC == scope.getScopeType())) {
-                dynamicScopes.add(scope);
-                continue;
-            }
-
-            Map<String, Object> claims = getClaims(user, scope);
-            if (claims == null) {
-                continue;
-            }
-            if (scope == null) {
-                log.trace("Unable to find scope in persistence. Is it removed? Scope name: {}", scopeName);
-            }
-
-            if (scope != null && Boolean.TRUE.equals(scope.isGroupClaims())) {
-                JwtSubClaimObject groupClaim = new JwtSubClaimObject();
-                groupClaim.setName(scope.getId());
-                for (Map.Entry<String, Object> entry : claims.entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    if (value instanceof List) {
-                        groupClaim.setClaim(key, (List<String>) value);
-                    } else {
-                        groupClaim.setClaim(key, String.valueOf(value));
-                    }
-                }
-
-                jsonWebResponse.getClaims().setClaim(scope.getId(), groupClaim);
-            } else {
-                for (Map.Entry<String, Object> entry : claims.entrySet()) {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    if (value instanceof List) {
-                        jsonWebResponse.getClaims().setClaim(key, (List<String>) value);
-                    } else if (value instanceof Boolean) {
-                        jsonWebResponse.getClaims().setClaim(key, (Boolean) value);
-                    } else if (value instanceof Date) {
-                        jsonWebResponse.getClaims().setClaim(key, ((Date) value).getTime() / 1000);
-                    } else {
-                        jsonWebResponse.getClaims().setClaim(key, String.valueOf(value));
-                    }
-                }
-            }
-        }
+        List<Scope> dynamicScopes = new ArrayList<Scope>();        
+        getJSonResponseClaimScopes(jsonWebResponse, user, scopes, dynamicScopes);        
 
         if (authorizationGrant.getClaims() != null) {
-            JSONObject claimsObj = new JSONObject(authorizationGrant.getClaims());
-            if (claimsObj.has("userinfo")) {
-                JSONObject userInfoObj = claimsObj.getJSONObject("userinfo");
-                for (Iterator<String> it = userInfoObj.keys(); it.hasNext();) {
-                    String claimName = it.next();
-                    boolean optional = true; // ClaimValueType.OPTIONAL.equals(claim.getClaimValue().getClaimValueType());
-                    GluuAttribute gluuAttribute = attributeService.getByClaimName(claimName);
-
-                    if (gluuAttribute != null) {
-                        String ldapClaimName = gluuAttribute.getName();
-
-                        Object attribute = user.getAttribute(ldapClaimName, optional,
-                                gluuAttribute.getOxMultiValuedAttribute());
-                        jsonWebResponse.getClaims().setClaimFromJsonObject(claimName, attribute);
-                    }
-                }
-            }
+            getJSonResponseClaimUserInfo(jsonWebResponse, user, authorizationGrant);            
         }
 
         if (authorizationGrant.getJwtAuthorizationRequest() != null
                 && authorizationGrant.getJwtAuthorizationRequest().getUserInfoMember() != null) {
-            for (Claim claim : authorizationGrant.getJwtAuthorizationRequest().getUserInfoMember().getClaims()) {
-                boolean optional = true; // ClaimValueType.OPTIONAL.equals(claim.getClaimValue().getClaimValueType());
-                GluuAttribute gluuAttribute = attributeService.getByClaimName(claim.getName());
-
-                if (gluuAttribute != null) {
-                    Client client = authorizationGrant.getClient();
-
-                    if (validateRequesteClaim(gluuAttribute, client.getClaims(), scopes)) {
-                        String ldapClaimName = gluuAttribute.getName();
-                        Object attribute = user.getAttribute(ldapClaimName, optional,
-                                gluuAttribute.getOxMultiValuedAttribute());
-                        jsonWebResponse.getClaims().setClaimFromJsonObject(claim.getName(), attribute);
-                    }
-                }
-            }
+            getJSonResponseClaimGluuAttr(jsonWebResponse, user, authorizationGrant, scopes);            
         }
 
         jsonWebResponse.getClaims().setSubjectIdentifier(authorizationGrant.getSub());
@@ -596,5 +520,96 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             }
         }
         return false;
-    }    
+    }
+    
+    private void getJSonResponseClaimScopes(JsonWebResponse jsonWebResponse, User user, Collection<String> scopes, List<Scope> dynamicScopes) throws ParseException, InvalidClaimException {
+        
+        // Claims
+        for (String scopeName : scopes) {
+            Scope scope = scopeService.getScopeById(scopeName);
+            if ((scope != null) && (ScopeType.DYNAMIC == scope.getScopeType())) {
+                dynamicScopes.add(scope);
+                continue;
+            }
+
+            Map<String, Object> claims = getClaims(user, scope);
+            if (claims == null) {
+                continue;
+            }
+            if (scope == null) {
+                log.trace("Unable to find scope in persistence. Is it removed? Scope name: {}", scopeName);
+            }
+
+            if (scope != null && Boolean.TRUE.equals(scope.isGroupClaims())) {
+                JwtSubClaimObject groupClaim = new JwtSubClaimObject();
+                groupClaim.setName(scope.getId());
+                for (Map.Entry<String, Object> entry : claims.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    if (value instanceof List) {
+                        groupClaim.setClaim(key, (List<String>) value);
+                    } else {
+                        groupClaim.setClaim(key, String.valueOf(value));
+                    }
+                }
+
+                jsonWebResponse.getClaims().setClaim(scope.getId(), groupClaim);
+            } else {
+                for (Map.Entry<String, Object> entry : claims.entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    if (value instanceof List) {
+                        jsonWebResponse.getClaims().setClaim(key, (List<String>) value);
+                    } else if (value instanceof Boolean) {
+                        jsonWebResponse.getClaims().setClaim(key, (Boolean) value);
+                    } else if (value instanceof Date) {
+                        jsonWebResponse.getClaims().setClaim(key, ((Date) value).getTime() / 1000);
+                    } else {
+                        jsonWebResponse.getClaims().setClaim(key, String.valueOf(value));
+                    }
+                }
+            }
+        }        
+    }
+    
+    private void getJSonResponseClaimUserInfo(JsonWebResponse jsonWebResponse, User user, AuthorizationGrant authorizationGrant) throws InvalidClaimException {
+        JSONObject claimsObj = new JSONObject(authorizationGrant.getClaims());
+        if (claimsObj.has("userinfo")) {
+            JSONObject userInfoObj = claimsObj.getJSONObject("userinfo");
+            for (Iterator<String> it = userInfoObj.keys(); it.hasNext();) {
+                String claimName = it.next();
+                boolean optional = true; // ClaimValueType.OPTIONAL.equals(claim.getClaimValue().getClaimValueType());
+                GluuAttribute gluuAttribute = attributeService.getByClaimName(claimName);
+
+                if (gluuAttribute != null) {
+                    String ldapClaimName = gluuAttribute.getName();
+
+                    Object attribute = user.getAttribute(ldapClaimName, optional,
+                            gluuAttribute.getOxMultiValuedAttribute());
+                    jsonWebResponse.getClaims().setClaimFromJsonObject(claimName, attribute);
+                }
+            }
+        }
+    }
+    
+    private void getJSonResponseClaimGluuAttr(JsonWebResponse jsonWebResponse, User user, AuthorizationGrant authorizationGrant, Collection<String> scopes) throws InvalidClaimException {
+        for (Claim claim : authorizationGrant.getJwtAuthorizationRequest().getUserInfoMember().getClaims()) {
+            boolean optional = true; // ClaimValueType.OPTIONAL.equals(claim.getClaimValue().getClaimValueType());
+            GluuAttribute gluuAttribute = attributeService.getByClaimName(claim.getName());
+
+            if (gluuAttribute != null) {
+                Client client = authorizationGrant.getClient();
+
+                if (validateRequesteClaim(gluuAttribute, client.getClaims(), scopes)) {
+                    String ldapClaimName = gluuAttribute.getName();
+                    Object attribute = user.getAttribute(ldapClaimName, optional,
+                            gluuAttribute.getOxMultiValuedAttribute());
+                    jsonWebResponse.getClaims().setClaimFromJsonObject(claim.getName(), attribute);
+                }
+            }
+        }        
+    }
+    
 }

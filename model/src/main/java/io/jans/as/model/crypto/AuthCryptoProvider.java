@@ -618,8 +618,6 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             try {
                 return verifier.verify(signatureDer);
             } catch (SignatureException e) {
-                // Fall back to old format
-                // TODO: remove in Gluu 5.0
                 return verifier.verify(signature);
             }
         } catch (Exception e) {
