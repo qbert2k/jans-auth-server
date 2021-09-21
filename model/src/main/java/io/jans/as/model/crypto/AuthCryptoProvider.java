@@ -47,6 +47,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,29 +111,32 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
     }
 
     public AuthCryptoProvider(String keyStoreFile, String keyStoreSecret, String dnName, boolean rejectNoneAlg,
-            KeySelectionStrategy keySelectionStrategy) throws Exception {
+            KeySelectionStrategy keySelectionStrategy) throws KeyStoreException {
         this.rejectNoneAlg = rejectNoneAlg;
         this.keySelectionStrategy = keySelectionStrategy != null ? keySelectionStrategy : AppConfiguration.DEFAULT_KEY_SELECTION_STRATEGY;
-        if (!Util.isNullOrEmpty(keyStoreFile) && !Util.isNullOrEmpty(keyStoreSecret) /* && !Util.isNullOrEmpty(dnName) */) {
+        if (!Util.isNullOrEmpty(keyStoreFile) && !Util.isNullOrEmpty(keyStoreSecret)) {
             this.keyStoreFile = keyStoreFile;
             this.keyStoreSecret = keyStoreSecret;
             this.dnName = dnName;
-
             keyStore = KeyStore.getInstance("PKCS12");
             try {
                 File f = new File(keyStoreFile);
                 if (!f.exists()) {
                     keyStore.load(null, keyStoreSecret.toCharArray());
-                    FileOutputStream fos = new FileOutputStream(keyStoreFile);
-                    keyStore.store(fos, keyStoreSecret.toCharArray());
-                    fos.close();
+                    try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
+                        keyStore.store(fos, keyStoreSecret.toCharArray());
+                    } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
+                        throw e;
+                    }
                 }
-                final InputStream is = new FileInputStream(keyStoreFile);
-                keyStore.load(is, keyStoreSecret.toCharArray());
-                is.close();
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-            }
+                try (final InputStream is = new FileInputStream(keyStoreFile)) {
+                    keyStore.load(is, keyStoreSecret.toCharArray());
+                } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+                    throw e;
+                }
+          } catch (Exception e) {
+              LOG.error(e.getMessage(), e);
+          }
         }
     }
 

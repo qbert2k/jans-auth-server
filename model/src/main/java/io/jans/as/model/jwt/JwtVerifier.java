@@ -83,40 +83,41 @@ public class JwtVerifier {
         }
 
         JwsSigner signer = null;
-
-        switch (signatureAlgorithm.getFamily()) {
-        case NONE: {
-            return true;
-        }
-        case HMAC: {
-            if (clientSecret == null) {
-                throw new InvalidJwtException("JwtVerifyer: clientSecret == null (clientSecret isn't  defined)");
+        if (publicKey != null) {
+            switch (signatureAlgorithm.getFamily()) {
+            case NONE: {
+                return true;
             }
-            signer = new HMACSigner(signatureAlgorithm, clientSecret);
-            break;
-        }
-        case RSA: {
-            java.security.interfaces.RSAPublicKey jrsaPublicKey = (java.security.interfaces.RSAPublicKey) publicKey;
-            RSAPublicKey rsaPublicKey = new RSAPublicKey(jrsaPublicKey.getModulus(), jrsaPublicKey.getPublicExponent());
-            signer = new RSASigner(signatureAlgorithm, rsaPublicKey);
-            break;
-        }
-        case EC: {
-            ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
-            ECDSAPublicKey ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, ecPublicKey.getW().getAffineX(),
-                    ecPublicKey.getW().getAffineY());
-            signer = new ECDSASigner(signatureAlgorithm, ecdsaPublicKey);
-            break;
-        }
-        case ED: {
-            BCEdDSAPublicKey bceddsaPublicKey = (BCEdDSAPublicKey) publicKey;
-            EDDSAPublicKey eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, bceddsaPublicKey.getEncoded());
-            signer = new EDDSASigner(signatureAlgorithm, eddsaPublicKey);
-            break;
-        }
-        default: {
-            break;
-        }
+            case HMAC: {
+                if (clientSecret == null) {
+                    throw new InvalidJwtException("JwtVerifyer: clientSecret == null (clientSecret isn't  defined)");
+                }
+                signer = new HMACSigner(signatureAlgorithm, clientSecret);
+                break;
+            }
+            case RSA: {
+                java.security.interfaces.RSAPublicKey jrsaPublicKey = (java.security.interfaces.RSAPublicKey) publicKey;
+                RSAPublicKey rsaPublicKey = new RSAPublicKey(jrsaPublicKey.getModulus(), jrsaPublicKey.getPublicExponent());
+                signer = new RSASigner(signatureAlgorithm, rsaPublicKey);
+                break;
+            }
+            case EC: {
+                ECPublicKey ecPublicKey = (ECPublicKey) publicKey;
+                ECDSAPublicKey ecdsaPublicKey = new ECDSAPublicKey(signatureAlgorithm, ecPublicKey.getW().getAffineX(),
+                        ecPublicKey.getW().getAffineY());
+                signer = new ECDSASigner(signatureAlgorithm, ecdsaPublicKey);
+                break;
+            }
+            case ED: {
+                BCEdDSAPublicKey bceddsaPublicKey = (BCEdDSAPublicKey) publicKey;
+                EDDSAPublicKey eddsaPublicKey = new EDDSAPublicKey(signatureAlgorithm, bceddsaPublicKey.getEncoded());
+                signer = new EDDSASigner(signatureAlgorithm, eddsaPublicKey);
+                break;
+            }
+            default: {
+                break;
+            }
+            }
         }
 
         if (signer == null) {
