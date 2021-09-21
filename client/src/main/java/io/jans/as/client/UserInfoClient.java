@@ -15,6 +15,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +37,9 @@ import io.jans.as.model.util.JwtUtil;
  * @version September 13, 2021
  */
 public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse> {
-    
+
+    private static final Logger LOG = Logger.getLogger(UserInfoClient.class);
+
     public static final String DEF_ERROR = "error";
     public static final String DEF_ERROR_DESCRIPTION = "error_description";
     public static final String DEF_ERROR_URI = "error_uri";    
@@ -191,12 +194,12 @@ public class UserInfoClient extends BaseClient<UserInfoRequest, UserInfoResponse
                             getResponse().getClaims().put(key, values);
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        LOG.error(e.getMessage(), e);
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } finally {
             closeConnection();
         }
