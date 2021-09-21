@@ -80,8 +80,6 @@ public class JwtVerifier {
             if (publicKey == null) {
                 throw new InvalidJwtException("JwtVerifyer: publicKey == null (publicKey isn't  defined)");
             }
-        } else {
-            throw new InvalidJwtException("Wrong AlgorithmFamily value: " + algorithmFamily);
         }
 
         JwsSigner signer = null;
