@@ -94,10 +94,10 @@ public class JSONWebKeySet {
             return toPrettyJson(jwks).replace("\\/", "/");
         } catch (JSONException e) {
             LOG.error(e.getMessage(), e);
-            return null;
+            return "";
         } catch (JsonProcessingException e) {
             LOG.error(e.getMessage(), e);
-            return null;
+            return "";
         }
     }
 

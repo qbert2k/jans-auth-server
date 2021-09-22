@@ -53,7 +53,6 @@ import io.jans.as.model.util.Util;
  */
 public class JwtAuthorizationRequest {
 
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(JwtAuthorizationRequest.class);
 
     // Header
@@ -473,12 +472,9 @@ public class JwtAuthorizationRequest {
         String decodedJwt = null;
         try {
             decodedJwt = ClientUtil.toPrettyJson(payloadToJSONObject());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (JSONException | JsonProcessingException e) {
+            LOG.error(e.getMessage(), e);
         }
-
         return decodedJwt;
     }
 
