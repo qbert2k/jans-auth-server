@@ -33,7 +33,6 @@ import io.jans.as.model.util.StringUtils;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -1186,13 +1185,7 @@ public class TokenSignaturesHttpTest extends BaseTest {
             System.out.println("Expected: " + expectedResult);
 
             assertEquals(result, expectedResult);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
@@ -1215,13 +1208,7 @@ public class TokenSignaturesHttpTest extends BaseTest {
             System.out.println("Expected : " + expectedResult);
 
             assertEquals(result, expectedResult);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
@@ -1244,13 +1231,7 @@ public class TokenSignaturesHttpTest extends BaseTest {
             System.out.println("Expected : " + expectedResult);
 
             assertEquals(result, expectedResult);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }

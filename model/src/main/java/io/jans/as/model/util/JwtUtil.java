@@ -60,6 +60,9 @@ import static io.jans.as.model.jwk.JWKParameter.Y;
 public class JwtUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+    
+    private JwtUtil() {
+    }
 
     public static void printAlgorithmsAndProviders() {
         Set<String> algorithms = Security.getAlgorithms("Signature");
