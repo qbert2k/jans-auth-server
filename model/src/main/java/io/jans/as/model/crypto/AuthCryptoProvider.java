@@ -47,6 +47,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -131,21 +132,17 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         }
     }
 
-    private void store() throws Exception {
+    private void store() throws FileNotFoundException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
             keyStore.store(fos, keyStoreSecret.toCharArray());
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
-            throw e;
         }
     }
 
-    public void load() throws Exception {
+    public void load() throws FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException {
         try (InputStream is = new FileInputStream(keyStoreFile)) {
             keyStore.load(is, keyStoreSecret.toCharArray());
             LOG.debug("Loaded keys from JKS.");
             LOG.trace("Loaded keys:" + getKeys());
-        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-            throw e;
         }
     }
 
@@ -379,9 +376,7 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
 
         ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(privateKey);
         X509CertificateHolder holder = builder.build(signer);
-        X509Certificate cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(holder);
-
-        return cert;
+        return new JcaX509CertificateConverter().setProvider("BC").getCertificate(holder);
     }
 
     @Override
@@ -607,24 +602,27 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
             if (publicKey == null) {
                 return false;
             }
-
-            byte[] signature = Base64Util.base64urldecode(encodedSignature);
-            byte[] signatureDer = signature;
-            if (AlgorithmFamily.EC.equals(signatureAlgorithm.getFamily())) {
-                signatureDer = ECDSA.transcodeSignatureToDER(signatureDer);
-            }
-
-            Signature verifier = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
-            verifier.initVerify(publicKey);
-            verifier.update(signingInput.getBytes());
-            try {
-                return verifier.verify(signatureDer);
-            } catch (SignatureException e) {
-                return verifier.verify(signature);
-            }
+            return verifySignatureEcEdRSA(signingInput, encodedSignature, signatureAlgorithm, publicKey);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return false;
         }
     }
+    
+    private boolean verifySignatureEcEdRSA(String signingInput, String encodedSignature, SignatureAlgorithm signatureAlgorithm, PublicKey publicKey) throws JOSEException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
+        byte[] signature = Base64Util.base64urldecode(encodedSignature);
+        byte[] signatureDer = signature;
+        if (AlgorithmFamily.EC.equals(signatureAlgorithm.getFamily())) {
+            signatureDer = ECDSA.transcodeSignatureToDER(signatureDer);
+        }
+        Signature verifier = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
+        verifier.initVerify(publicKey);
+        verifier.update(signingInput.getBytes());
+        try {
+            return verifier.verify(signatureDer);
+        } catch (SignatureException e) {
+            return verifier.verify(signature);
+        }        
+    }
+    
 }

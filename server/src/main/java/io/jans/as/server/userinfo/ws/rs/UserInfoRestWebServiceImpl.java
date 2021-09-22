@@ -304,7 +304,7 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
             break;
         }
         default: {
-            throw new InvalidJweException("wrong AlgorithmFamily value.");            
+            throw new InvalidJweException("wrong AlgorithmFamily value.");
         }
         }
         return jwe.toString();
@@ -321,16 +321,16 @@ public class UserInfoRestWebServiceImpl implements UserInfoRestWebService {
         JsonWebResponse jsonWebResponse = new JsonWebResponse();
 
         // Claims
-        List<Scope> dynamicScopes = new ArrayList<Scope>();        
-        getJSonResponseClaimScopes(jsonWebResponse, user, scopes, dynamicScopes);        
+        List<Scope> dynamicScopes = new ArrayList<>();
+        getJSonResponseClaimScopes(jsonWebResponse, user, scopes, dynamicScopes);
 
         if (authorizationGrant.getClaims() != null) {
-            getJSonResponseClaimUserInfo(jsonWebResponse, user, authorizationGrant);            
+            getJSonResponseClaimUserInfo(jsonWebResponse, user, authorizationGrant);
         }
 
         if (authorizationGrant.getJwtAuthorizationRequest() != null
                 && authorizationGrant.getJwtAuthorizationRequest().getUserInfoMember() != null) {
-            getJSonResponseClaimGluuAttr(jsonWebResponse, user, authorizationGrant, scopes);            
+            getJSonResponseClaimGluuAttr(jsonWebResponse, user, authorizationGrant, scopes);
         }
 
         jsonWebResponse.getClaims().setSubjectIdentifier(authorizationGrant.getSub());

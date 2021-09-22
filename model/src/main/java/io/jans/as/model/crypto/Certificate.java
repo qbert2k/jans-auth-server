@@ -6,7 +6,6 @@
 
 package io.jans.as.model.crypto;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -145,8 +144,6 @@ public class Certificate {
             } finally {
                 pemWriter.close();
             }
-        } catch (IOException e) {
-            return StringUtils.EMPTY_STRING;
         } catch (Exception e) {
             return StringUtils.EMPTY_STRING;
         }
