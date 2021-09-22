@@ -10,14 +10,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author Yuriy Zabrovarnyy
  */
 public class QueryBuilder {
-
-    private static final Logger LOG = Logger.getLogger(QueryBuilder.class);
 
     private final StringBuilder builder;
 

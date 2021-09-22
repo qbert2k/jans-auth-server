@@ -65,27 +65,27 @@ public class JwtUtil {
     public static void printAlgorithmsAndProviders() {
         Set<String> algorithms = Security.getAlgorithms("Signature");
         for (String algorithm : algorithms) {
-            log.trace("Algorithm (Signature): " + algorithm);
+            log.trace("Algorithm (Signature): {}", algorithm);
         }
         algorithms = Security.getAlgorithms("MessageDigest");
         for (String algorithm : algorithms) {
-            log.trace("Algorithm (MessageDigest): " + algorithm);
+            log.trace("Algorithm (MessageDigest): {}", algorithm);
         }
         algorithms = Security.getAlgorithms("Cipher");
         for (String algorithm : algorithms) {
-            log.trace("Algorithm (Cipher): " + algorithm);
+            log.trace("Algorithm (Cipher): {}", algorithm);
         }
         algorithms = Security.getAlgorithms("Mac");
         for (String algorithm : algorithms) {
-            log.trace("Algorithm (Mac): " + algorithm);
+            log.trace("Algorithm (Mac): {}", algorithm);
         }
         algorithms = Security.getAlgorithms("KeyStore");
         for (String algorithm : algorithms) {
-            log.trace("Algorithm (KeyStore): " + algorithm);
+            log.trace("Algorithm (KeyStore): {}", algorithm);
         }
         Provider[] providers = Security.getProviders();
         for (Provider provider : providers) {
-            log.trace("Provider: " + provider.getName());
+            log.trace("Provider: {}", provider.getName());
         }
     }
 
@@ -135,7 +135,7 @@ public class JwtUtil {
             if (signatureAlgorithm == null) {
                 signatureAlgorithm = SignatureAlgorithm.fromString(jsonKeyValue.getString(ALGORITHM));
                 if (signatureAlgorithm == null) {
-                    log.error(String.format("Failed to determine key '%s' signature algorithm", resultKeyId));
+                    log.error("Failed to determine key '{}' signature algorithm", resultKeyId);
                     return null;
                 }
             }
@@ -150,8 +150,6 @@ public class JwtUtil {
             AlgorithmFamily algorithmFamily = signatureAlgorithm.getFamily();  
             
             if(algorithmFamily == AlgorithmFamily.RSA) {
-                //String alg = jsonKeyValue.getString(ALGORITHM);
-                //String use = jsonKeyValue.getString(KEY_USE);
                 String exp = jsonPublicKey.getString(EXPONENT);
                 String mod = jsonPublicKey.getString(MODULUS);
 
@@ -160,9 +158,6 @@ public class JwtUtil {
 
                 publicKey = new RSAPublicKey(modulus, publicExponent);
             } else if(algorithmFamily == AlgorithmFamily.EC) {
-                //String alg = jsonKeyValue.getString(ALGORITHM);
-                //String use = jsonKeyValue.getString(KEY_USE);
-                //String crv = jsonKeyValue.getString(CURVE);
                 String xx = jsonPublicKey.getString(X);
                 String yy = jsonPublicKey.getString(Y);
 
@@ -217,7 +212,7 @@ public class JwtUtil {
 
                 if (status == 200) {
                     jwks = clientResponse.getEntity(String.class);
-                    log.debug(String.format("JWK: %s", jwks));
+                    log.debug("JWK: {}", jwks);                    
                 }
             }
             if (StringHelper.isNotEmpty(jwks)) {
@@ -249,7 +244,7 @@ public class JwtUtil {
     }
 
     public static JSONObject getJSONWebKeys(String jwksUri, ClientExecutor executor) {
-        log.debug("Retrieving jwks " + jwksUri + "...");
+        log.debug("Retrieving jwks {} ...", jwksUri);
 
         JSONObject jwks = null;
         try {
@@ -259,11 +254,11 @@ public class JwtUtil {
                 ClientResponse<String> clientResponse = clientRequest.get(String.class);
 
                 int status = clientResponse.getStatus();
-                log.debug(String.format("Status: %n%d", status));
+                log.debug(String.format("Status: %n%d", status));                
 
                 if (status == 200) {
                     jwks = fromJson(clientResponse.getEntity(String.class));
-                    log.debug(String.format("JWK: %s", jwks));
+                    log.debug("JWK: {}", jwks);
                 }
             }
         } catch (Exception ex) {

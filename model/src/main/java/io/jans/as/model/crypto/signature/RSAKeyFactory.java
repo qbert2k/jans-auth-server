@@ -90,17 +90,17 @@ public class RSAKeyFactory extends KeyFactory<RSAPrivateKey, RSAPublicKey> {
     }
 
     @Deprecated
-    public RSAKeyFactory(JSONWebKey p_key) {
-        if (p_key == null) {
+    public RSAKeyFactory(JSONWebKey key) {
+        if (key == null) {
             throw new IllegalArgumentException("Key value must not be null.");
         }
-        rsaPrivateKey = new RSAPrivateKey(null, p_key.getN(), p_key.getE());
-        rsaPublicKey = new RSAPublicKey(p_key.getN(), p_key.getE());
+        rsaPrivateKey = new RSAPrivateKey(null, key.getN(), key.getE());
+        rsaPublicKey = new RSAPublicKey(key.getN(), key.getE());
         certificate = null;
     }
 
-    public static RSAKeyFactory valueOf(JSONWebKey p_key) {
-        return new RSAKeyFactory(p_key);
+    public static RSAKeyFactory valueOf(JSONWebKey key) {
+        return new RSAKeyFactory(key);
     }
 
     @Override

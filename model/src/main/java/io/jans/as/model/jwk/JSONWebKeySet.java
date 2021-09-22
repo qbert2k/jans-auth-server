@@ -75,15 +75,15 @@ public class JSONWebKeySet {
 
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jsonObj = new JSONObject();
-        JSONArray keys = new JSONArray();
+        JSONArray jKeys = new JSONArray();
 
         for (JSONWebKey key : getKeys()) {
             JSONObject jsonKeyValue = key.toJSONObject();
 
-            keys.put(jsonKeyValue);
+            jKeys.put(jsonKeyValue);
         }
 
-        jsonObj.put(JWKParameter.JSON_WEB_KEY_SET, keys);
+        jsonObj.put(JWKParameter.JSON_WEB_KEY_SET, jKeys);
         return jsonObj;
     }
 

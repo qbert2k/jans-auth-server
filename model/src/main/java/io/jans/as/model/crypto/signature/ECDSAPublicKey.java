@@ -44,10 +44,12 @@ public class ECDSAPublicKey extends PublicKey {
                 new BigInteger(1, Base64Util.base64urldecode(y)));
     }
 
+    @Override
     public SignatureAlgorithm getSignatureAlgorithm() {
         return signatureAlgorithm;
     }
 
+    @Override
     public void setSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
     }

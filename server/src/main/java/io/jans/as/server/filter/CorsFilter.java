@@ -72,11 +72,11 @@ public class CorsFilter extends AbstractCorsFilter {
                 DEFAULT_SUPPORTS_CREDENTIALS, DEFAULT_PREFLIGHT_MAXAGE,
                 DEFAULT_DECORATE_REQUEST);
 
-        AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
+        AppConfiguration appConfig = configurationFactory.getAppConfiguration();
 
         if (filterConfig != null) {
             String filterName = filterConfig.getFilterName();
-            CorsFilterConfig corsFilterConfig = new CorsFilterConfig(filterName, appConfiguration);
+            CorsFilterConfig corsFilterConfig = new CorsFilterConfig(filterName, appConfig);
 
             String configEnabled = corsFilterConfig
                     .getInitParameter(PARAM_CORS_ENABLED);

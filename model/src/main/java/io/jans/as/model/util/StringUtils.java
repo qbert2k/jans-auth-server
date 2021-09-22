@@ -27,6 +27,9 @@ public class StringUtils {
     public static final String EMPTY_STRING = "";
     public static final String SPACE = " ";
     public static final String EASY_TO_READ_CHARACTERS = "BCDFGHJKLMNPQRSTVWXZ";
+    
+    private StringUtils() {
+    }
 
     public static String nullToEmpty(String str) {
         if (str == null) {

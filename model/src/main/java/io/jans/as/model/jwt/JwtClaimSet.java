@@ -20,6 +20,8 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -32,19 +34,21 @@ import io.jans.as.model.util.Base64Util;
  * @version January 3, 2018
  */
 public abstract class JwtClaimSet {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(JwtClaimSet.class);    
 
     private Map<String, Object> claims;
 
-    public JwtClaimSet() {
+    protected JwtClaimSet() {
         claims = new LinkedHashMap<String, Object>();
     }
 
-    public JwtClaimSet(JSONObject jsonObject) {
+    protected JwtClaimSet(JSONObject jsonObject) {
         this();
         load(jsonObject);
     }
 
-    public JwtClaimSet(String base64JsonObject) throws InvalidJwtException {
+    protected JwtClaimSet(String base64JsonObject) throws InvalidJwtException {
         this();
         load(base64JsonObject);
     }
@@ -81,7 +85,7 @@ public abstract class JwtClaimSet {
                 return json;
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);            
         }
 
         return null;
@@ -89,11 +93,11 @@ public abstract class JwtClaimSet {
 
     public List<String> getClaimAsStringList(String key) {
         List<String> list = new ArrayList<String>();
-        Object claims = getClaim(key);
+        Object keyClaims = getClaim(key);
 
         try {
-            if (claims != null && claims instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) claims;
+            if (keyClaims != null && keyClaims instanceof JSONArray) {
+                JSONArray jsonArray = (JSONArray) keyClaims;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     list.add(jsonArray.getString(i));
                 }
@@ -104,6 +108,7 @@ public abstract class JwtClaimSet {
                 }
             }
         } catch (JSONException e) {
+            LOG.error(e.getMessage(), e);              
         }
 
         return list;

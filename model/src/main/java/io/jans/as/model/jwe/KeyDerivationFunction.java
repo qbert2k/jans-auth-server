@@ -24,6 +24,9 @@ import io.jans.as.model.util.Base64Util;
  * @version July 31, 2016
  */
 public class KeyDerivationFunction {
+    
+    private KeyDerivationFunction() {
+    }
 
     public static byte[] generateCek(byte[] cmk, BlockEncryptionAlgorithm blockEncryptionAlgorithm)
             throws UnsupportedEncodingException, NoSuchProviderException, NoSuchAlgorithmException, InvalidParameterException {
