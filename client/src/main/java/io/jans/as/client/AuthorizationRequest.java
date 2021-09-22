@@ -35,7 +35,7 @@ public class AuthorizationRequest extends BaseRequest {
 
     private static final Logger LOG = Logger.getLogger(AuthorizationRequest.class);
 
-    public static final String NoRedirectHeader = "X-Gluu-NoRedirect";
+    public static final String DEF_NO_REDIRECT_HEADER = "X-Gluu-NoRedirect";
 
     private List<ResponseType> responseTypes;
     private String clientId;

@@ -200,7 +200,7 @@ public class AuthorizeClient extends BaseClient<AuthorizationRequest, Authorizat
         clientRequest.setHttpMethod(getHttpMethod());
 
         if (getRequest().isUseNoRedirectHeader()) {
-            clientRequest.header(AuthorizationRequest.NoRedirectHeader, "true");
+            clientRequest.header(AuthorizationRequest.DEF_NO_REDIRECT_HEADER, "true");
         }
 
         final String responseTypesAsString = getRequest().getResponseTypesAsString();

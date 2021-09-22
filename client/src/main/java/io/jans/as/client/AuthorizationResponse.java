@@ -323,10 +323,10 @@ public class AuthorizationResponse extends BaseResponse {
     /**
      * Sets session id.
      *
-     * @param p_sessionId session id.
+     * @param sessionId session id.
      */
-    public void setSessionId(String p_sessionId) {
-        sessionId = p_sessionId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public Map<String, String> getCustomParams() {
