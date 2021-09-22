@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -641,7 +640,7 @@ public class AuthorizationRequest extends BaseRequest {
                 queryStringBuilder.append(key).append("=").append(getCustomParameters().get(key));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return queryStringBuilder.toString();
@@ -750,7 +749,7 @@ public class AuthorizationRequest extends BaseRequest {
                 parameters.put(key, getCustomParameters().get(key));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return parameters;

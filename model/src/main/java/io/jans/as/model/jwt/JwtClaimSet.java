@@ -6,7 +6,6 @@
 
 package io.jans.as.model.jwt;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import com.google.common.collect.Lists;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.json.JsonApplier;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -125,7 +123,7 @@ public abstract class JwtClaimSet {
                 return new Date((Long) claim * 1000);
             } else if (claim instanceof Double) {
                 final double c = (Double) claim;
-                final BigDecimal bigDecimal = new BigDecimal(c);
+                final BigDecimal bigDecimal = BigDecimal.valueOf(c);
 
                 long claimLong = bigDecimal.longValue();
                 claimLong = claimLong * 1000;

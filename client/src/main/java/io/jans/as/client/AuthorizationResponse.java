@@ -10,11 +10,12 @@ import io.jans.as.model.authorize.AuthorizeErrorResponseType;
 import io.jans.as.model.common.ResponseMode;
 import io.jans.as.model.common.TokenType;
 import io.jans.as.model.crypto.AuthCryptoProvider;
-import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.util.JwtUtil;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,8 @@ import static io.jans.as.model.authorize.AuthorizeResponseParam.*;
  * @version July 28, 2021
  */
 public class AuthorizationResponse extends BaseResponse {
+
+    private static final Logger LOG = Logger.getLogger(AuthorizationResponse.class);
 
     private String code;
     private String accessToken;
@@ -90,7 +93,7 @@ public class AuthorizationResponse extends BaseResponse {
                     location = jsonObj.getString("redirect");
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
         }
         processLocation();
@@ -179,12 +182,8 @@ public class AuthorizationResponse extends BaseResponse {
                     loadparams(params);
                 }
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidJwtException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
