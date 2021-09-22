@@ -7,7 +7,6 @@
 package io.jans.as.server.filter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -127,44 +126,52 @@ public class CorsFilter extends AbstractCorsFilter {
         Collection<String> globalAllowedOrigins = getAllowedOrigins();
 
         if (StringHelper.isNotEmpty(servletRequest.getParameter("client_id"))) {
-            String clientId = servletRequest.getParameter("client_id");
-            Client client = clientService.getClient(clientId);
-            if (client != null) {
-                String[] authorizedOriginsArray = client.getAuthorizedOrigins();
-                if (authorizedOriginsArray != null && authorizedOriginsArray.length > 0) {
-                    List<String> clientAuthorizedOrigins = Arrays.asList(authorizedOriginsArray);
-                    setAllowedOrigins(clientAuthorizedOrigins);
-                }
-            }
+            doFilterImplClientId(servletRequest);
         } else {
-            final HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-            String header = httpRequest.getHeader("Authorization");
-            if (httpRequest.getRequestURI().endsWith("/token")) {
-                if (header != null && header.startsWith("Basic ")) {
-                    String base64Token = header.substring(6);
-                    String token = new String(Base64.decodeBase64(base64Token), StandardCharsets.UTF_8);
+            doFilterImplNClientId(servletRequest);
+        }
 
-                    String username = "";
-                    int delim = token.indexOf(":");
+        return globalAllowedOrigins;
+    }
+    
+    private void doFilterImplClientId(final ServletRequest servletRequest) {
+        String clientId = servletRequest.getParameter("client_id");
+        Client client = clientService.getClient(clientId);
+        if (client != null) {
+            String[] authorizedOriginsArray = client.getAuthorizedOrigins();
+            if (authorizedOriginsArray != null && authorizedOriginsArray.length > 0) {
+                List<String> clientAuthorizedOrigins = Arrays.asList(authorizedOriginsArray);
+                setAllowedOrigins(clientAuthorizedOrigins);
+            }
+        }
+    }
+    
+    private void doFilterImplNClientId(final ServletRequest servletRequest) {
+        final HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+        String header = httpRequest.getHeader("Authorization");
+        if (httpRequest.getRequestURI().endsWith("/token")) {
+            if (header != null && header.startsWith("Basic ")) {
+                String base64Token = header.substring(6);
+                String token = new String(Base64.decodeBase64(base64Token), StandardCharsets.UTF_8);
 
-                    if (delim != -1) {
-                        username = URLDecoder.decode(token.substring(0, delim), StandardCharsets.UTF_8);
-                    }
+                String username = "";
+                int delim = token.indexOf(":");
 
-                    Client client = clientService.getClient(username);
+                if (delim != -1) {
+                    username = URLDecoder.decode(token.substring(0, delim), StandardCharsets.UTF_8);
+                }
 
-                    if (client != null) {
-                        String[] authorizedOriginsArray = client.getAuthorizedOrigins();
-                        if (authorizedOriginsArray != null && authorizedOriginsArray.length > 0) {
-                            List<String> clientAuthorizedOrigins = Arrays.asList(authorizedOriginsArray);
-                            setAllowedOrigins(clientAuthorizedOrigins);
-                        }
+                Client client = clientService.getClient(username);
+
+                if (client != null) {
+                    String[] authorizedOriginsArray = client.getAuthorizedOrigins();
+                    if (authorizedOriginsArray != null && authorizedOriginsArray.length > 0) {
+                        List<String> clientAuthorizedOrigins = Arrays.asList(authorizedOriginsArray);
+                        setAllowedOrigins(clientAuthorizedOrigins);
                     }
                 }
             }
         }
-
-        return globalAllowedOrigins;
     }
 }
 

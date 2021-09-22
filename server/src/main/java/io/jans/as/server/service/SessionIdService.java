@@ -90,6 +90,9 @@ public class SessionIdService {
 
     public static final String OP_BROWSER_STATE = "opbs";
     public static final String SESSION_CUSTOM_STATE = "session_custom_state";
+    public static final String AUTH_STEP = "auth_step";
+    public static final String PROMPT = "prompt";
+
     private static final int MAX_MERGE_ATTEMPTS = 3;
     private static final int DEFAULT_LOCAL_CACHE_EXPIRATION = 2;
 
@@ -288,8 +291,8 @@ public class SessionIdService {
         final Map<String, String> sessionAttributes = session.getSessionAttributes();
 
         int currentStep = 1;
-        if (sessionAttributes.containsKey("auth_step")) {
-            currentStep = StringHelper.toInteger(sessionAttributes.get("auth_step"), currentStep);
+        if (sessionAttributes.containsKey(AUTH_STEP)) {
+            currentStep = StringHelper.toInteger(sessionAttributes.get(AUTH_STEP), currentStep);
         }
 
         for (int i = resetToStep; i <= currentStep; i++) {
@@ -297,7 +300,7 @@ public class SessionIdService {
             sessionAttributes.remove(key);
         }
 
-        sessionAttributes.put("auth_step", String.valueOf(resetToStep));
+        sessionAttributes.put(AUTH_STEP, String.valueOf(resetToStep));
 
         boolean updateResult = updateSessionId(session, true, true, true);
         if (!updateResult) {
@@ -320,7 +323,7 @@ public class SessionIdService {
         Map<String, String> newRequestParameterMap = requestParameterService.getAllowedParameters(parameterMap);
         for (Entry<String, String> newRequestParameterMapEntry : newRequestParameterMap.entrySet()) {
             String name = newRequestParameterMapEntry.getKey();
-            if (!StringHelper.equalsIgnoreCase(name, "auth_step")) {
+            if (!StringHelper.equalsIgnoreCase(name, AUTH_STEP)) {
                 currentSessionAttributes.put(name, newRequestParameterMapEntry.getValue());
             }
         }
@@ -356,14 +359,14 @@ public class SessionIdService {
 
     public SessionId generateAuthenticatedSessionId(HttpServletRequest httpRequest, String userDn) throws InvalidSessionStateException {
         Map<String, String> sessionIdAttributes = new HashMap<>();
-        sessionIdAttributes.put("prompt", "");
+        sessionIdAttributes.put(PROMPT, "");
 
         return generateAuthenticatedSessionId(httpRequest, userDn, sessionIdAttributes);
     }
 
     public SessionId generateAuthenticatedSessionId(HttpServletRequest httpRequest, String userDn, String prompt) throws InvalidSessionStateException {
         Map<String, String> sessionIdAttributes = new HashMap<>();
-        sessionIdAttributes.put("prompt", prompt);
+        sessionIdAttributes.put(PROMPT, prompt);
 
         return generateAuthenticatedSessionId(httpRequest, userDn, sessionIdAttributes);
     }
@@ -896,7 +899,7 @@ public class SessionIdService {
     }
 
     private List<Prompt> getPromptsFromSessionId(final SessionId sessionId) {
-        String promptParam = sessionId.getSessionAttributes().get("prompt");
+        String promptParam = sessionId.getSessionAttributes().get(PROMPT);
         return Prompt.fromString(promptParam, " ");
     }
 
