@@ -6,6 +6,10 @@
 
 package io.jans.as.server.comp;
 
+import static org.testng.Assert.assertTrue;
+
+import org.testng.annotations.Test;
+
 import io.jans.as.server.BaseTest;
 
 /**
@@ -13,6 +17,11 @@ import io.jans.as.server.BaseTest;
  * @version August 17, 2016
  */
 public class EncryptionTest extends BaseTest {
+    
+    @Test
+    public void emptyTest() {
+        assertTrue(true);          
+    }
 
 	/*
 	@Test
