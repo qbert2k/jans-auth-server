@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -102,19 +103,19 @@ public class JwtUtil {
     public static byte[] getMessageDigestSHA256(String data)
             throws NoSuchProviderException, NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest mda = MessageDigest.getInstance("SHA-256", "BC");
-        return mda.digest(data.getBytes(Util.UTF8_STRING_ENCODING));
+        return mda.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     public static byte[] getMessageDigestSHA384(String data)
             throws NoSuchProviderException, NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest mda = MessageDigest.getInstance("SHA-384", "BC");
-        return mda.digest(data.getBytes(Util.UTF8_STRING_ENCODING));
+        return mda.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     public static byte[] getMessageDigestSHA512(String data)
             throws NoSuchProviderException, NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest mda = MessageDigest.getInstance("SHA-512", "BC");
-        return mda.digest(data.getBytes(Util.UTF8_STRING_ENCODING));
+        return mda.digest(data.getBytes(StandardCharsets.UTF_8));
     }
 
     public static io.jans.as.model.crypto.PublicKey getPublicKey(

@@ -12,6 +12,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -158,9 +159,9 @@ public class ClientSecretBasicTest extends BaseTest {
         tokenRequest.setAuthenticationMethod(AuthenticationMethod.CLIENT_SECRET_BASIC);
 
         String expectedEncodedCredentials = Base64.encodeBase64String(Util.getBytes(
-                URLEncoder.encode(clientId, Util.UTF8_STRING_ENCODING)
+                URLEncoder.encode(clientId, StandardCharsets.UTF_8)
                         + ":"
-                        + URLEncoder.encode(clientSecret, Util.UTF8_STRING_ENCODING)));
+                        + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8)));
         assertEquals(tokenRequest.getEncodedCredentials(), expectedEncodedCredentials);
 
         TokenClient tokenClient1 = new TokenClient(tokenEndpoint);

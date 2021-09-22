@@ -6,8 +6,8 @@
 
 package io.jans.as.model.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,15 +48,11 @@ public class QueryBuilder {
     }
 
     public void append(String key, String value) {
-        try {
-            if (StringUtils.isNotBlank(value)) {
-                if (builder.length() > 0) {
-                    appendAmpersand();
-                }
-                builder.append(key).append("=").append(URLEncoder.encode(value, Util.UTF8_STRING_ENCODING));
+        if (StringUtils.isNotBlank(value)) {
+            if (builder.length() > 0) {
+                appendAmpersand();
             }
-        } catch (UnsupportedEncodingException e) {
-            LOG.trace(e.getMessage(), e);
+            builder.append(key).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8));
         }
     }
 

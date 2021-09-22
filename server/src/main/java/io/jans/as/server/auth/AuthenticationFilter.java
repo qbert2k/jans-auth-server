@@ -15,7 +15,6 @@ import io.jans.as.model.error.ErrorResponseFactory;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.token.ClientAssertionType;
 import io.jans.as.model.token.TokenErrorResponseType;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.model.common.AbstractToken;
 import io.jans.as.server.model.common.AuthorizationGrant;
 import io.jans.as.server.model.common.AuthorizationGrantList;
@@ -314,8 +313,8 @@ public class AuthenticationFilter implements Filter {
 
                 if (delim != -1) {
                     // Jans Auth #677 URL decode the username and password
-                    username = URLDecoder.decode(token.substring(0, delim), Util.UTF8_STRING_ENCODING);
-                    password = URLDecoder.decode(token.substring(delim + 1), Util.UTF8_STRING_ENCODING);
+                    username = URLDecoder.decode(token.substring(0, delim), StandardCharsets.UTF_8);
+                    password = URLDecoder.decode(token.substring(delim + 1), StandardCharsets.UTF_8);
                 }
 
                 requireAuth = !StringHelper.equals(username, identity.getCredentials().getUsername())

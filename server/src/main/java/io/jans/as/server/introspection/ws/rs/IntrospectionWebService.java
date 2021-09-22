@@ -16,7 +16,6 @@ import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.error.ErrorResponseFactory;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.uma.UmaScopeType;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.model.common.AbstractToken;
 import io.jans.as.server.model.common.AccessToken;
 import io.jans.as.server.model.common.AuthorizationGrant;
@@ -51,6 +50,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
@@ -264,13 +264,13 @@ public class IntrospectionWebService {
             
             String encodedCredentials = tokenService.getBasicToken(authorization);
 
-            String token = new String(Base64.decodeBase64(encodedCredentials), Util.UTF8_STRING_ENCODING);
+            String token = new String(Base64.decodeBase64(encodedCredentials), StandardCharsets.UTF_8);
 
             int delim = token.indexOf(":");
 
             if (delim != -1) {
-                String clientId = URLDecoder.decode(token.substring(0, delim), Util.UTF8_STRING_ENCODING);
-                String password = URLDecoder.decode(token.substring(delim + 1), Util.UTF8_STRING_ENCODING);
+                String clientId = URLDecoder.decode(token.substring(0, delim), StandardCharsets.UTF_8);
+                String password = URLDecoder.decode(token.substring(delim + 1), StandardCharsets.UTF_8);
                 if (clientService.authenticate(clientId, password)) {
                     grant = authorizationGrantList.getAuthorizationGrantByAccessToken(accessToken);
                     if (grant != null && !grant.getClientId().equals(clientId)) {

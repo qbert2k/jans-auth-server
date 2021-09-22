@@ -6,9 +6,7 @@
 
 package io.jans.as.model.jws;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
 
 import javax.crypto.Mac;
@@ -18,7 +16,6 @@ import javax.crypto.spec.SecretKeySpec;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.util.Base64Util;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -61,17 +58,11 @@ public class HMACSigner extends AbstractJwsSigner {
         }
 
         try {
-            SecretKey secretKey = new SecretKeySpec(sharedSecret.getBytes(Util.UTF8_STRING_ENCODING), algorithm);
+            SecretKey secretKey = new SecretKeySpec(sharedSecret.getBytes(StandardCharsets.UTF_8), algorithm);
             Mac mac = Mac.getInstance(algorithm);
             mac.init(secretKey);
-            byte[] sig = mac.doFinal(signingInput.getBytes(Util.UTF8_STRING_ENCODING));
+            byte[] sig = mac.doFinal(signingInput.getBytes(StandardCharsets.UTF_8));
             return Base64Util.base64urlencode(sig);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignatureException(e);
-        } catch (InvalidKeyException e) {
-            throw new SignatureException(e);
-        } catch (UnsupportedEncodingException e) {
-            throw new SignatureException(e);
         } catch (Exception e) {
             throw new SignatureException(e);
         }

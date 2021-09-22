@@ -11,7 +11,6 @@ import static io.jans.as.model.discovery.WebFingerParam.REL_VALUE;
 import static io.jans.as.model.discovery.WebFingerParam.RESOURCE;
 import static io.jans.as.model.util.StringUtils.addQueryStringParam;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -121,12 +120,8 @@ public class OpenIdConnectDiscoveryRequest extends BaseRequest {
     public String getQueryString() {
         StringBuilder queryStringBuilder = new StringBuilder();
 
-        try {
-            addQueryStringParam(queryStringBuilder, RESOURCE, resource);
-            addQueryStringParam(queryStringBuilder, REL, REL_VALUE);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        addQueryStringParam(queryStringBuilder, RESOURCE, resource);
+        addQueryStringParam(queryStringBuilder, REL, REL_VALUE);
 
         return queryStringBuilder.toString();
     }

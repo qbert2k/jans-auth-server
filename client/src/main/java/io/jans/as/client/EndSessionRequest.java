@@ -6,13 +6,12 @@
 
 package io.jans.as.client;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
 
 import io.jans.as.model.session.EndSessionRequestParam;
-import io.jans.as.model.util.Util;
 
 /**
  * Represents an end session request to send to the authorization server.
@@ -126,33 +125,29 @@ public class EndSessionRequest extends BaseRequest {
     public String getQueryString() {
         StringBuilder queryStringBuilder = new StringBuilder();
 
-        try {
-            if (StringUtils.isNotBlank(idTokenHint)) {
-                queryStringBuilder.append(EndSessionRequestParam.ID_TOKEN_HINT)
-                        .append("=")
-                        .append(idTokenHint);
-            }
-            if (StringUtils.isNotBlank(postLogoutRedirectUri)) {
-                queryStringBuilder.append("&")
-                        .append(EndSessionRequestParam.POST_LOGOUT_REDIRECT_URI)
-                        .append("=")
-                        .append(URLEncoder.encode(postLogoutRedirectUri, Util.UTF8_STRING_ENCODING));
-            }
-            if (StringUtils.isNotBlank(state)) {
-                queryStringBuilder.append("&")
-                        .append(EndSessionRequestParam.STATE)
-                        .append("=")
-                        .append(URLEncoder.encode(state, Util.UTF8_STRING_ENCODING));
-            }
+        if (StringUtils.isNotBlank(idTokenHint)) {
+            queryStringBuilder.append(EndSessionRequestParam.ID_TOKEN_HINT)
+                    .append("=")
+                    .append(idTokenHint);
+        }
+        if (StringUtils.isNotBlank(postLogoutRedirectUri)) {
+            queryStringBuilder.append("&")
+                    .append(EndSessionRequestParam.POST_LOGOUT_REDIRECT_URI)
+                    .append("=")
+                    .append(URLEncoder.encode(postLogoutRedirectUri, StandardCharsets.UTF_8));
+        }
+        if (StringUtils.isNotBlank(state)) {
+            queryStringBuilder.append("&")
+                    .append(EndSessionRequestParam.STATE)
+                    .append("=")
+                    .append(URLEncoder.encode(state, StandardCharsets.UTF_8));
+        }
 
-            if (StringUtils.isNotBlank(sid)) {
-                queryStringBuilder.append("&")
-                        .append(EndSessionRequestParam.SID)
-                        .append("=")
-                        .append(URLEncoder.encode(sid, Util.UTF8_STRING_ENCODING));
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (StringUtils.isNotBlank(sid)) {
+            queryStringBuilder.append("&")
+                    .append(EndSessionRequestParam.SID)
+                    .append("=")
+                    .append(URLEncoder.encode(sid, StandardCharsets.UTF_8));
         }
 
         return queryStringBuilder.toString();

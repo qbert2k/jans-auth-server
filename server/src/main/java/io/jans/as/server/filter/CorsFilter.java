@@ -9,6 +9,7 @@ package io.jans.as.server.filter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,6 @@ import org.slf4j.Logger;
 
 import io.jans.as.common.model.registration.Client;
 import io.jans.as.model.configuration.AppConfiguration;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.model.config.ConfigurationFactory;
 import io.jans.as.server.service.ClientService;
 import io.jans.server.filters.AbstractCorsFilter;
@@ -143,13 +143,13 @@ public class CorsFilter extends AbstractCorsFilter {
             if (httpRequest.getRequestURI().endsWith("/token")) {
                 if (header != null && header.startsWith("Basic ")) {
                     String base64Token = header.substring(6);
-                    String token = new String(Base64.decodeBase64(base64Token), Util.UTF8_STRING_ENCODING);
+                    String token = new String(Base64.decodeBase64(base64Token), StandardCharsets.UTF_8);
 
                     String username = "";
                     int delim = token.indexOf(":");
 
                     if (delim != -1) {
-                        username = URLDecoder.decode(token.substring(0, delim), Util.UTF8_STRING_ENCODING);
+                        username = URLDecoder.decode(token.substring(0, delim), StandardCharsets.UTF_8);
                     }
 
                     Client client = clientService.getClient(username);

@@ -6,6 +6,8 @@
 
 package io.jans.as.client.model;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -15,7 +17,6 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -24,7 +25,7 @@ import io.jans.as.model.util.Util;
 public class SoftwareStatement {
 
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(JwtState.class);
+    private static final Logger LOG = Logger.getLogger(SoftwareStatement.class);
 
     // Header
     private SignatureAlgorithm signatureAlgorithm;
@@ -89,7 +90,7 @@ public class SoftwareStatement {
         this.claims = claims;
     }
 
-    public String getEncodedJwt(JSONObject jwks) throws Exception {
+    public String getEncodedJwt() throws Exception {
         String encodedJwt = null;
 
         if (cryptoProvider == null) {
@@ -100,18 +101,14 @@ public class SoftwareStatement {
         JSONObject payloadJsonObject = getClaims();
         String headerString = ClientUtil.toPrettyJson(headerJsonObject);
         String payloadString = ClientUtil.toPrettyJson(payloadJsonObject);
-        String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(Util.UTF8_STRING_ENCODING));
-        String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(Util.UTF8_STRING_ENCODING));
+        String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(StandardCharsets.UTF_8));
+        String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(StandardCharsets.UTF_8));
         String signingInput = encodedHeader + "." + encodedPayload;
         String encodedSignature = cryptoProvider.sign(signingInput, keyId, sharedKey, signatureAlgorithm);
 
         encodedJwt = encodedHeader + "." + encodedPayload + "." + encodedSignature;
 
         return encodedJwt;
-    }
-
-    public String getEncodedJwt() throws Exception {
-        return getEncodedJwt(null);
     }
 
     protected JSONObject headerToJSONObject() throws InvalidJwtException {

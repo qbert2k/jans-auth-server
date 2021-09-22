@@ -9,7 +9,6 @@ package io.jans.as.server.service;
 import com.google.common.collect.Lists;
 import io.jans.as.model.authorize.AuthorizeRequestParam;
 import io.jans.as.model.configuration.AppConfiguration;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.model.authorize.JwtAuthorizationRequest;
 import io.jans.model.security.Identity;
 import io.jans.util.Pair;
@@ -24,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,7 +134,7 @@ public class RequestParameterService {
         for (Map.Entry<String, String> entry : set) {
             final String value = (String) entry.getValue();
             if (StringUtils.isNotBlank(value)) {
-                sb.append(entry.getKey()).append("=").append(URLEncoder.encode(value, Util.UTF8_STRING_ENCODING)).append("&");
+                sb.append(entry.getKey()).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8)).append("&");
             }
         }
 

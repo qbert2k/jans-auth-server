@@ -6,6 +6,7 @@
 
 package io.jans.as.model.jws;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -18,7 +19,6 @@ import io.jans.as.model.crypto.signature.RSAPrivateKey;
 import io.jans.as.model.crypto.signature.RSAPublicKey;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -66,7 +66,7 @@ public class RSASigner extends AbstractJwsSigner {
 
             Signature signature = Signature.getInstance(getSignatureAlgorithm().getAlgorithm(), "BC");
             signature.initSign(privateKey);
-            signature.update(signingInput.getBytes(Util.UTF8_STRING_ENCODING));
+            signature.update(signingInput.getBytes(StandardCharsets.UTF_8));
 
             return Base64Util.base64urlencode(signature.sign());
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class RSASigner extends AbstractJwsSigner {
 
         try {
             byte[] sigBytes = Base64Util.base64urldecode(signature);
-            byte[] sigInBytes = signingInput.getBytes(Util.UTF8_STRING_ENCODING);
+            byte[] sigInBytes = signingInput.getBytes(StandardCharsets.UTF_8);
 
             RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(
                     rsaPublicKey.getModulus(),

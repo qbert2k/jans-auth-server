@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -65,7 +66,7 @@ public class CertUtils {
             log.trace("Failed to parse pem. " + e.getMessage() + ", trying to url decode it.");
         }
         try {
-            return x509CertificateFromPemInternal(URLDecoder.decode(pem, Util.UTF8_STRING_ENCODING));
+            return x509CertificateFromPemInternal(URLDecoder.decode(pem, StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("Failed to parse pem", e);
             return null;
@@ -86,7 +87,7 @@ public class CertUtils {
             return confirmationMethodHashS256Internal(certificateAsPem);
         } catch (Exception e) {
             try {
-                return confirmationMethodHashS256Internal(URLDecoder.decode(certificateAsPem, Util.UTF8_STRING_ENCODING));
+                return confirmationMethodHashS256Internal(URLDecoder.decode(certificateAsPem, StandardCharsets.UTF_8));
             } catch (Exception ex) {
                 log.error("Failed to hash certificate: " + certificateAsPem, ex);
                 return "";

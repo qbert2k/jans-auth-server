@@ -14,7 +14,6 @@ import io.jans.as.model.exception.InvalidJwtException;
 import io.jans.as.model.jwe.Jwe;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.util.JwtUtil;
-import io.jans.as.model.util.Util;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONException;
@@ -22,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -150,7 +150,7 @@ public class AuthorizationResponse extends BaseResponse {
                         String[] jwtParts = response.split("\\.");
 
                         if (jwtParts.length == 5) {
-                            byte[] sharedSymmetricKey = sharedKey != null ? sharedKey.getBytes(Util.UTF8_STRING_ENCODING) : null;
+                            byte[] sharedSymmetricKey = sharedKey != null ? sharedKey.getBytes(StandardCharsets.UTF_8) : null;
                             Jwe jwe = Jwe.parse(response, privateKey, sharedSymmetricKey);
 
                             for (Map.Entry<String, List<String>> entry : jwe.getClaims().toMap().entrySet()) {
@@ -214,7 +214,7 @@ public class AuthorizationResponse extends BaseResponse {
             params.remove(EXPIRES_IN);
         }
         if (params.containsKey(SCOPE)) {
-            scope = URLDecoder.decode(params.get(SCOPE), Util.UTF8_STRING_ENCODING);
+            scope = URLDecoder.decode(params.get(SCOPE), StandardCharsets.UTF_8);
             params.remove(SCOPE);
         }
         if (params.containsKey(ID_TOKEN)) {
@@ -245,11 +245,11 @@ public class AuthorizationResponse extends BaseResponse {
             params.remove("error");
         }
         if (params.containsKey("error_description")) {
-            errorDescription = URLDecoder.decode(params.get("error_description"), Util.UTF8_STRING_ENCODING);
+            errorDescription = URLDecoder.decode(params.get("error_description"), StandardCharsets.UTF_8);
             params.remove("error_description");
         }
         if (params.containsKey("error_uri")) {
-            errorUri = URLDecoder.decode(params.get("error_uri"), Util.UTF8_STRING_ENCODING);
+            errorUri = URLDecoder.decode(params.get("error_uri"), StandardCharsets.UTF_8);
             params.remove("error_uri");
         }
 

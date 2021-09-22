@@ -10,8 +10,8 @@ import io.jans.as.model.common.HasParamName;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -160,23 +160,23 @@ public class StringUtils {
         }
     }
 
-    public static void addQueryStringParam(StringBuilder p_queryStringBuilder, String key, Object value) throws UnsupportedEncodingException {
+    public static void addQueryStringParam(StringBuilder p_queryStringBuilder, String key, Object value) {
         if (p_queryStringBuilder != null && isNotBlank(key) && value != null) {
             if (p_queryStringBuilder.length() > 0) {
                 p_queryStringBuilder.append("&");
             }
             p_queryStringBuilder.append(key).append("=")
-                    .append(URLEncoder.encode(value.toString(), Util.UTF8_STRING_ENCODING));
+                    .append(URLEncoder.encode(value.toString(), StandardCharsets.UTF_8));
         }
     }
 
-    public static void addQueryStringParam(StringBuilder p_queryStringBuilder, String key, Collection value) throws UnsupportedEncodingException {
+    public static void addQueryStringParam(StringBuilder p_queryStringBuilder, String key, Collection value) {
         if (p_queryStringBuilder != null && isNotBlank(key) && value != null && !value.isEmpty()) {
             if (p_queryStringBuilder.length() > 0) {
                 p_queryStringBuilder.append("&");
             }
             p_queryStringBuilder.append(key).append("=")
-                    .append(URLEncoder.encode(value.toString(), Util.UTF8_STRING_ENCODING));
+                    .append(URLEncoder.encode(value.toString(), StandardCharsets.UTF_8));
         }
     }
 

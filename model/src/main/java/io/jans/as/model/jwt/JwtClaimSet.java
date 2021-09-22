@@ -8,6 +8,7 @@ package io.jans.as.model.jwt;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -310,13 +311,9 @@ public abstract class JwtClaimSet {
     }
 
     public String toBase64JsonObject() throws InvalidJwtException {
-        try {
-            String jsonObjectString = toJsonString();
-            byte[] jsonObjectBytes = jsonObjectString.getBytes(Util.UTF8_STRING_ENCODING);
-            return Base64Util.base64urlencode(jsonObjectBytes);
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        String jsonObjectString = toJsonString();
+        byte[] jsonObjectBytes = jsonObjectString.getBytes(StandardCharsets.UTF_8);
+        return Base64Util.base64urlencode(jsonObjectBytes);
     }
 
     public String toJsonString() throws InvalidJwtException {
@@ -367,12 +364,8 @@ public abstract class JwtClaimSet {
 
     public void load(String base64JsonObject) throws InvalidJwtException {
         try {
-            String jsonObjectString = new String(Base64Util.base64urldecode(base64JsonObject), Util.UTF8_STRING_ENCODING);
+            String jsonObjectString = new String(Base64Util.base64urldecode(base64JsonObject), StandardCharsets.UTF_8);
             load(new JSONObject(jsonObjectString));
-        } catch (UnsupportedEncodingException e) {
-            throw new InvalidJwtException(e);
-        } catch (JSONException e) {
-            throw new InvalidJwtException(e);
         } catch (Exception e) {
             throw new InvalidJwtException(e);
         }

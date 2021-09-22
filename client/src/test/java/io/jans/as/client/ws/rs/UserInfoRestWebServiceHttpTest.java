@@ -34,13 +34,13 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 import org.json.JSONObject;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -749,7 +749,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -805,7 +805,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -861,7 +861,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -1619,7 +1619,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
 
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         userInfoClient.setRequest(userInfoRequest);
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 
@@ -1677,7 +1677,7 @@ public class UserInfoRestWebServiceHttpTest extends BaseTest {
         UserInfoRequest userInfoRequest = new UserInfoRequest(accessToken);
 
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         userInfoClient.setRequest(userInfoRequest);
         UserInfoResponse userInfoResponse = userInfoClient.exec();
 

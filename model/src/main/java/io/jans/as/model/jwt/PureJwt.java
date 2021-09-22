@@ -6,12 +6,11 @@
 
 package io.jans.as.model.jwt;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
 
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Yuriy Zabrovarnyy
@@ -36,16 +35,8 @@ public class PureJwt {
         m_encodedSignature = p_encodedSignature;
         m_signingInput = m_encodedHeader + "." + m_encodedPayload;
 
-        String decodedPayloadTemp = null;
-        String decodedHeaderTemp = null;
-        try {
-            decodedHeaderTemp = new String(Base64Util.base64urldecode(p_encodedHeader), Util.UTF8_STRING_ENCODING);
-            decodedPayloadTemp = new String(Base64Util.base64urldecode(p_encodedPayload), Util.UTF8_STRING_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        m_decodedHeader = decodedHeaderTemp;
-        m_decodedPayload = decodedPayloadTemp;
+        m_decodedHeader = new String(Base64Util.base64urldecode(p_encodedHeader), StandardCharsets.UTF_8);
+        m_decodedPayload = new String(Base64Util.base64urldecode(p_encodedPayload), StandardCharsets.UTF_8);
     }
 
     public static PureJwt parse(String p_encodedString) {

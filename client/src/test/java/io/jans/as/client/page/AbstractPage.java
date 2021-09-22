@@ -6,10 +6,8 @@
 
 package io.jans.as.client.page;
 
-import static org.testng.Assert.fail;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import org.openqa.selenium.By;
@@ -21,7 +19,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Preconditions;
 
 import io.jans.as.model.common.Holder;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Yuriy Zabrovarnyy
@@ -36,14 +33,10 @@ public class AbstractPage implements Page {
     }
 
     public void navigate(String url) {
-        try {
-            final WebDriver driver = config.getDriver();
-            output("Navigate URL: " + url);
-            //printCookies();
-            driver.navigate().to(URLDecoder.decode(url, Util.UTF8_STRING_ENCODING));
-        } catch (UnsupportedEncodingException ex) {
-            fail("Failed to decode the URL.");
-        }
+        final WebDriver driver = config.getDriver();
+        output("Navigate URL: " + url);
+        //printCookies();
+        driver.navigate().to(URLDecoder.decode(url, StandardCharsets.UTF_8));
     }
 
     public void printCookies() {

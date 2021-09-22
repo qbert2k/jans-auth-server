@@ -73,8 +73,8 @@ public class EncryptionTest extends BaseTest {
 		String additionalAuthenticatedData = encodedHeader + "." + encodedEncryptedKey + "." + encodedInitVector;
 
 		Pair<String, String> ciphertextAndIntegrityValue = encrypter.generateCipherTextAndIntegrityValue(cmk,
-				initVector, additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING),
-				plainText.getBytes(Util.UTF8_STRING_ENCODING));
+				initVector, additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8),
+				plainText.getBytes(StandardCharsets.UTF_8));
 		String encodedCipherText = ciphertextAndIntegrityValue.getFirst();
 		String encodedAuthenticationTag = ciphertextAndIntegrityValue.getSecond();
 
@@ -91,7 +91,7 @@ public class EncryptionTest extends BaseTest {
 
 		String decodedPlainText = decrypter.decryptCipherText(encodedCipherText, encryptionKey, initVector,
 				Base64Util.base64urldecode(encodedAuthenticationTag),
-				additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING));
+				additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8));
 		assertEquals(decodedPlainText, plainText);
 	}
 
@@ -149,8 +149,8 @@ public class EncryptionTest extends BaseTest {
 		String additionalAuthenticatedData = encodedHeader + "." + encodedJweEncryptedKey + "." + encodedInitVector;
 
 		Pair<String, String> cipherTextAndIntegrityValue = encrypter.generateCipherTextAndIntegrityValue(cmk,
-				initVector, additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING),
-				plainText.getBytes(Util.UTF8_STRING_ENCODING));
+				initVector, additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8),
+				plainText.getBytes(StandardCharsets.UTF_8));
 		String encodedCipherText = cipherTextAndIntegrityValue.getFirst();
 		String encodedAuthenticationTag = cipherTextAndIntegrityValue.getSecond();
 
@@ -167,7 +167,7 @@ public class EncryptionTest extends BaseTest {
 
 		String decodedPlainText = decrypter.decryptCipherText(encodedCipherText, encryptionKey, initVector,
 				Base64Util.base64urldecode(encodedAuthenticationTag),
-				additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING));
+				additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8));
 		assertEquals(decodedPlainText, plainText);
 	}
 
@@ -226,8 +226,8 @@ public class EncryptionTest extends BaseTest {
 		String additionalAuthenticatedData = encodedHeader + "." + encodedJweEncryptedKey + "." + encodedInitVector;
 
 		Pair<String, String> cipherTextAndIntegrityValue = encrypter.generateCipherTextAndIntegrityValue(cmk,
-				initVector, additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING),
-				plainText.getBytes(Util.UTF8_STRING_ENCODING));
+				initVector, additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8),
+				plainText.getBytes(StandardCharsets.UTF_8));
 		String encodedCipherText = cipherTextAndIntegrityValue.getFirst();
 		String encodedAuthenticationTag = cipherTextAndIntegrityValue.getSecond();
 
@@ -244,7 +244,7 @@ public class EncryptionTest extends BaseTest {
 
 		String decodedPlainText = decrypter.decryptCipherText(encodedCipherText, encryptionKey, initVector,
 				Base64Util.base64urldecode(encodedAuthenticationTag),
-				additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING));
+				additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8));
 		assertEquals(decodedPlainText, plainText);
 	}
 
@@ -275,8 +275,8 @@ public class EncryptionTest extends BaseTest {
 		String additionalAuthenticatedData = encodedHeader + "." + encodedEncryptedKey + "." + encodedInitVector;
 
 		Pair<String, String> cipherTextAndIntegrityValue = encrypter.generateCipherTextAndIntegrityValue(cmk,
-				initVector, additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING),
-				plainText.getBytes(Util.UTF8_STRING_ENCODING));
+				initVector, additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8),
+				plainText.getBytes(StandardCharsets.UTF_8));
 		String encodedCipherText = cipherTextAndIntegrityValue.getFirst();
 		String encodedAuthenticationTag = cipherTextAndIntegrityValue.getSecond();
 
@@ -297,7 +297,7 @@ public class EncryptionTest extends BaseTest {
 
 		String decodedPlainText = decrypter.decryptCipherText(encodedCipherText, encryptionKey, initVector,
 				Base64Util.base64urldecode(encodedAuthenticationTag),
-				additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING));
+				additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8));
 		assertEquals(decodedPlainText, plainText);
 	}
 
@@ -328,8 +328,8 @@ public class EncryptionTest extends BaseTest {
 		String additionalAuthenticatedData = encodedHeader + "." + encodedEncryptedKey + "." + encodedInitVector;
 
 		Pair<String, String> cipherTextAndIntegrityValue = encrypter.generateCipherTextAndIntegrityValue(cmk,
-				initVector, additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING),
-				plainText.getBytes(Util.UTF8_STRING_ENCODING));
+				initVector, additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8),
+				plainText.getBytes(StandardCharsets.UTF_8));
 		String encodedCipherText = cipherTextAndIntegrityValue.getFirst();
 		String encodedAuthenticationTag = cipherTextAndIntegrityValue.getSecond();
 
@@ -346,7 +346,7 @@ public class EncryptionTest extends BaseTest {
 
 		String decodedPlainText = decrypter.decryptCipherText(encodedCipherText, encryptionKey, initVector,
 				Base64Util.base64urldecode(encodedAuthenticationTag),
-				additionalAuthenticatedData.getBytes(Util.UTF8_STRING_ENCODING));
+				additionalAuthenticatedData.getBytes(StandardCharsets.UTF_8));
 		assertEquals(decodedPlainText, plainText);
 	}
 	*/

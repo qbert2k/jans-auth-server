@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -488,25 +489,21 @@ public class AuthorizationRequest extends BaseRequest {
     public String getParQueryString() {
         StringBuilder builder = new StringBuilder();
 
-        try {
-            if (StringUtils.isNotBlank(state)) {
-                builder.append("&").append(AuthorizeRequestParam.STATE)
-                        .append("=").append(URLEncoder.encode(state, Util.UTF8_STRING_ENCODING));
-            }
-            if (StringUtils.isNotBlank(nonce)) {
-                builder.append("&").append(AuthorizeRequestParam.NONCE)
-                        .append("=").append(URLEncoder.encode(nonce, Util.UTF8_STRING_ENCODING));
-            }
-            if (StringUtils.isNotBlank(requestUri)) {
-                builder.append("&").append(AuthorizeRequestParam.REQUEST_URI)
-                        .append("=").append(URLEncoder.encode(requestUri, Util.UTF8_STRING_ENCODING));
-            }
-            if (StringUtils.isNotBlank(clientId)) {
-                builder.append("&").append(AuthorizeRequestParam.CLIENT_ID)
-                        .append("=").append(URLEncoder.encode(clientId, Util.UTF8_STRING_ENCODING));
-            }
-        } catch (UnsupportedEncodingException e) {
-            LOG.error(e.getMessage(), e);
+        if (StringUtils.isNotBlank(state)) {
+            builder.append("&").append(AuthorizeRequestParam.STATE)
+                    .append("=").append(URLEncoder.encode(state, StandardCharsets.UTF_8));
+        }
+        if (StringUtils.isNotBlank(nonce)) {
+            builder.append("&").append(AuthorizeRequestParam.NONCE)
+                    .append("=").append(URLEncoder.encode(nonce, StandardCharsets.UTF_8));
+        }
+        if (StringUtils.isNotBlank(requestUri)) {
+            builder.append("&").append(AuthorizeRequestParam.REQUEST_URI)
+                    .append("=").append(URLEncoder.encode(requestUri, StandardCharsets.UTF_8));
+        }
+        if (StringUtils.isNotBlank(clientId)) {
+            builder.append("&").append(AuthorizeRequestParam.CLIENT_ID)
+                    .append("=").append(URLEncoder.encode(clientId, StandardCharsets.UTF_8));
         }
         return builder.toString();
     }
@@ -534,23 +531,23 @@ public class AuthorizationRequest extends BaseRequest {
 
             if (StringUtils.isNotBlank(responseTypesAsString)) {
                 queryStringBuilder.append(AuthorizeRequestParam.RESPONSE_TYPE)
-                        .append("=").append(URLEncoder.encode(responseTypesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(responseTypesAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(clientId)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CLIENT_ID)
-                        .append("=").append(URLEncoder.encode(clientId, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(clientId, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(scopesAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.SCOPE)
-                        .append("=").append(URLEncoder.encode(scopesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(scopesAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(redirectUri)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.REDIRECT_URI)
-                        .append("=").append(URLEncoder.encode(redirectUri, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(redirectUri, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(state)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.STATE)
-                        .append("=").append(URLEncoder.encode(state, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(state, StandardCharsets.UTF_8));
             }
 
             // OpenID Connect request parameters
@@ -561,19 +558,19 @@ public class AuthorizationRequest extends BaseRequest {
 
             if (responseMode != null) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.RESPONSE_MODE)
-                        .append("=").append(URLEncoder.encode(responseMode.toString(), Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(responseMode.toString(), StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(nonce)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.NONCE)
-                        .append("=").append(URLEncoder.encode(nonce, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(nonce, StandardCharsets.UTF_8));
             }
             if (display != null) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.DISPLAY)
-                        .append("=").append(URLEncoder.encode(display.toString(), Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(display.toString(), StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(promptsAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.PROMPT)
-                        .append("=").append(URLEncoder.encode(promptsAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(promptsAsString, StandardCharsets.UTF_8));
             }
             if (maxAge != null) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.MAX_AGE)
@@ -581,11 +578,11 @@ public class AuthorizationRequest extends BaseRequest {
             }
             if (StringUtils.isNotBlank(uiLocalesAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.UI_LOCALES)
-                        .append("=").append(URLEncoder.encode(uiLocalesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(uiLocalesAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(claimLocalesAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CLAIMS_LOCALES)
-                        .append("=").append(URLEncoder.encode(claimLocalesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(claimLocalesAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(idTokenHint)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.ID_TOKEN_HINT)
@@ -597,11 +594,11 @@ public class AuthorizationRequest extends BaseRequest {
             }
             if (StringUtils.isNotBlank(acrValuesAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.ACR_VALUES)
-                        .append("=").append(URLEncoder.encode(acrValuesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(acrValuesAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(claimsAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CLAIMS)
-                        .append("=").append(URLEncoder.encode(claimsAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(claimsAsString, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(registration)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.REGISTRATION)
@@ -609,23 +606,23 @@ public class AuthorizationRequest extends BaseRequest {
             }
             if (StringUtils.isNotBlank(request)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.REQUEST)
-                        .append("=").append(URLEncoder.encode(request, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(request, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(requestUri)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.REQUEST_URI)
-                        .append("=").append(URLEncoder.encode(requestUri, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(requestUri, StandardCharsets.UTF_8));
             }
             if (requestSessionId) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.REQUEST_SESSION_ID)
-                        .append("=").append(URLEncoder.encode(Boolean.toString(requestSessionId), Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(Boolean.toString(requestSessionId), StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(sessionId)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.SESSION_ID)
-                        .append("=").append(URLEncoder.encode(sessionId, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(sessionId, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(accessToken)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.ACCESS_TOKEN)
-                        .append("=").append(URLEncoder.encode(accessToken, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(codeChallenge)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CODE_CHALLENGE)
@@ -637,14 +634,12 @@ public class AuthorizationRequest extends BaseRequest {
             }
             if (StringUtils.isNotBlank(customResponseHeadersAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CUSTOM_RESPONSE_HEADERS)
-                        .append("=").append(URLEncoder.encode(customResponseHeadersAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(customResponseHeadersAsString, StandardCharsets.UTF_8));
             }
             for (String key : getCustomParameters().keySet()) {
                 queryStringBuilder.append("&");
                 queryStringBuilder.append(key).append("=").append(getCustomParameters().get(key));
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }

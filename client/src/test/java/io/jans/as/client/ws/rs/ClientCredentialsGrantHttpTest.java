@@ -10,6 +10,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +36,6 @@ import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.token.TokenErrorResponseType;
 import io.jans.as.model.userinfo.UserInfoErrorResponseType;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -214,7 +214,7 @@ public class ClientCredentialsGrantHttpTest extends BaseTest {
 
         // 4. Request user info should fail
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);

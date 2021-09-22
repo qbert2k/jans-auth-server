@@ -11,6 +11,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,6 @@ import io.jans.as.model.jwt.JwtVerifier;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.JwtUtil;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -439,7 +439,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -574,7 +574,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -709,7 +709,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -2066,7 +2066,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 3. Validate id_token
-        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -2088,7 +2088,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -2203,7 +2203,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 3. Validate id_token
-        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -2225,7 +2225,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -2340,7 +2340,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 3. Validate id_token
-        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -2362,7 +2362,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -2477,7 +2477,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
         String accessToken = authorizationResponse.getAccessToken();
 
         // 3. Validate id_token
-        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));
@@ -2499,7 +2499,7 @@ public class IndividualClaimsRequestsTest extends BaseTest {
 
         // 4. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);

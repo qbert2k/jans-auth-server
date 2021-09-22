@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.util.*;
 
@@ -219,14 +220,10 @@ public class RedirectUri {
                     String paramName = stParamValue.nextElement().toString();
                     responseParameters.put(paramName, null);
                 } else if (stParamValue.countTokens() == 2) {
-                    try {
-                        String paramName = stParamValue.nextElement().toString();
-                        String paramValue = URLDecoder.decode(stParamValue.nextElement().toString(),
-                                Util.UTF8_STRING_ENCODING);
-                        responseParameters.put(paramName, paramValue);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    String paramName = stParamValue.nextElement().toString();
+                    String paramValue = URLDecoder.decode(stParamValue.nextElement().toString(),
+                            StandardCharsets.UTF_8);
+                    responseParameters.put(paramName, paramValue);
                 }
             }
         }
@@ -239,8 +236,8 @@ public class RedirectUri {
             if (responseMode == ResponseMode.JWT || responseMode == ResponseMode.QUERY_JWT
                     || responseMode == ResponseMode.FRAGMENT_JWT) {
                 final String responseJwt = getJarmResponse();
-                sb.append(URLEncoder.encode(RESPONSE, Util.UTF8_STRING_ENCODING));
-                sb.append('=').append(URLEncoder.encode(responseJwt, Util.UTF8_STRING_ENCODING));
+                sb.append(URLEncoder.encode(RESPONSE, StandardCharsets.UTF_8));
+                sb.append('=').append(URLEncoder.encode(responseJwt, StandardCharsets.UTF_8));
             } else if (responseMode == ResponseMode.FORM_POST_JWT) {
                 final String responseJwt = getJarmResponse();
                 sb.append(responseJwt);
@@ -251,8 +248,8 @@ public class RedirectUri {
                         if (sb.length() > 0) {
                             sb.append('&');
                         }
-                        sb.append(URLEncoder.encode(entry.getKey(), Util.UTF8_STRING_ENCODING));
-                        sb.append('=').append(URLEncoder.encode(entry.getValue(), Util.UTF8_STRING_ENCODING));
+                        sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
+                        sb.append('=').append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
                     }
                 }
             }

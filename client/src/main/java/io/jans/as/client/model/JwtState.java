@@ -21,6 +21,7 @@ import static io.jans.as.model.jwt.JwtStateClaimName.TARGET_LINK_URI;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +41,6 @@ import io.jans.as.model.jwt.JwtClaims;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -415,14 +415,14 @@ public class JwtState {
                 PublicKey publicKey = cryptoProvider.getPublicKey(keyId, jwks, null);
                 jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, publicKey);
             } else {
-                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey.getBytes(Util.UTF8_STRING_ENCODING));
+                jweEncrypter = new JweEncrypterImpl(keyEncryptionAlgorithm, blockEncryptionAlgorithm, sharedKey.getBytes(StandardCharsets.UTF_8));
             }
 
             String header = ClientUtil.toPrettyJson(headerToJSONObject());
-            String encodedHeader = Base64Util.base64urlencode(header.getBytes(Util.UTF8_STRING_ENCODING));
+            String encodedHeader = Base64Util.base64urlencode(header.getBytes(StandardCharsets.UTF_8));
 
             String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
-            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
+            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(StandardCharsets.UTF_8));
 
             Jwe jwe = new Jwe();
             jwe.setHeader(new JwtHeader(encodedHeader));
@@ -439,8 +439,8 @@ public class JwtState {
             JSONObject payloadJsonObject = payloadToJSONObject();
             String headerString = ClientUtil.toPrettyJson(headerJsonObject);
             String payloadString = ClientUtil.toPrettyJson(payloadJsonObject);
-            String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(Util.UTF8_STRING_ENCODING));
-            String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(Util.UTF8_STRING_ENCODING));
+            String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(StandardCharsets.UTF_8));
+            String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(StandardCharsets.UTF_8));
             String signingInput = encodedHeader + "." + encodedPayload;
             String encodedSignature = cryptoProvider.sign(signingInput, keyId, sharedKey, signatureAlgorithm);
 

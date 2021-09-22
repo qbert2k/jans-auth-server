@@ -11,6 +11,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -28,7 +29,6 @@ import io.jans.as.model.crypto.AbstractCryptoProvider;
 import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.jwk.Algorithm;
 import io.jans.as.model.jwk.JWKParameter;
-import io.jans.as.model.util.Util;
 import io.jans.as.server.ConfigurableTest;
 import io.jans.as.server.model.config.ConfigurationFactory;
 
@@ -296,12 +296,12 @@ public class CryptoProviderTest extends ConfigurableTest {
             
             Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");            
             signer.initSign(privateKey);
-            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            signer.update(SIGNING_INPUT.getBytes(StandardCharsets.UTF_8));
 
             byte[] signature = signer.sign();
 
             signer.initVerify(publicKey);
-            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            signer.update(SIGNING_INPUT.getBytes(StandardCharsets.UTF_8));
             boolean result = signer.verify(signature);
             
             assertTrue(result);            
@@ -352,12 +352,12 @@ public class CryptoProviderTest extends ConfigurableTest {
             
             Signature signer = Signature.getInstance(signatureAlgorithm.getAlgorithm(), "BC");
             signer.initSign(privateKey);
-            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            signer.update(SIGNING_INPUT.getBytes(StandardCharsets.UTF_8));
 
             byte[] signature = signer.sign();
 
             signer.initVerify(publicKey);
-            signer.update(SIGNING_INPUT.getBytes(Util.UTF8_STRING_ENCODING));
+            signer.update(SIGNING_INPUT.getBytes(StandardCharsets.UTF_8));
             boolean result = signer.verify(signature);
             
             assertTrue(result);

@@ -9,6 +9,7 @@ package io.jans.as.client.interop;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,6 @@ import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.jwt.JwtHeaderName;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 /**
  * OC5:FeatureTest-Can Request and Use Encrypted ID Token Response
@@ -96,7 +96,7 @@ public class CanRequestAndUseEncryptedIdTokenResponse extends BaseTest {
         String idToken = authorizationResponse.getIdToken();
 
         // 3. Read Encrypted ID Token
-        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        Jwe jwe = Jwe.parse(idToken, null, clientSecret.getBytes(StandardCharsets.UTF_8));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.TYPE));
         assertNotNull(jwe.getHeader().getClaimAsString(JwtHeaderName.ALGORITHM));
         assertNotNull(jwe.getClaims().getClaimAsString(JwtClaimName.ISSUER));

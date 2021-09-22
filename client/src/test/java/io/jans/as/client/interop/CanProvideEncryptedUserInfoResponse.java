@@ -10,6 +10,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,6 @@ import io.jans.as.model.crypto.encryption.KeyEncryptionAlgorithm;
 import io.jans.as.model.jwt.JwtClaimName;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.StringUtils;
-import io.jans.as.model.util.Util;
 
 /**
  * OC5:FeatureTest-Can Provide Encrypted UserInfo Response
@@ -100,7 +100,7 @@ public class CanProvideEncryptedUserInfoResponse extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);
@@ -177,7 +177,7 @@ public class CanProvideEncryptedUserInfoResponse extends BaseTest {
 
         // 3. Request user info
         UserInfoClient userInfoClient = new UserInfoClient(userInfoEndpoint);
-        userInfoClient.setSharedKey(clientSecret.getBytes(Util.UTF8_STRING_ENCODING));
+        userInfoClient.setSharedKey(clientSecret.getBytes(StandardCharsets.UTF_8));
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 
         showClient(userInfoClient);

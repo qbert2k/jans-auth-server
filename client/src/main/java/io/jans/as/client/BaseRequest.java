@@ -8,6 +8,7 @@ package io.jans.as.client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,9 +109,9 @@ public abstract class BaseRequest {
      * @return The client credentials.
      */
     public String getCredentials() throws UnsupportedEncodingException {
-        return URLEncoder.encode(authUsername, Util.UTF8_STRING_ENCODING)
+        return URLEncoder.encode(authUsername, StandardCharsets.UTF_8)
                 + ":"
-                + URLEncoder.encode(authPassword, Util.UTF8_STRING_ENCODING);
+                + URLEncoder.encode(authPassword, StandardCharsets.UTF_8);
     }
 
     /**
@@ -131,7 +132,7 @@ public abstract class BaseRequest {
     }
 
     public static String getEncodedCredentials(String clientId, String clientSecret) throws UnsupportedEncodingException {
-        return Base64.encodeBase64String(Util.getBytes(URLEncoder.encode(clientId, Util.UTF8_STRING_ENCODING) + ":" + URLEncoder.encode(clientSecret, Util.UTF8_STRING_ENCODING)));
+        return Base64.encodeBase64String(Util.getBytes(URLEncoder.encode(clientId, StandardCharsets.UTF_8) + ":" + URLEncoder.encode(clientSecret, StandardCharsets.UTF_8)));
     }
 
     public Map<String, String> getParameters() {

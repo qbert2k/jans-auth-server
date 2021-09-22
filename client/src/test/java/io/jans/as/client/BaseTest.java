@@ -23,7 +23,6 @@ import io.jans.as.model.crypto.signature.SignatureAlgorithm;
 import io.jans.as.model.error.IErrorType;
 import io.jans.as.model.register.ApplicationType;
 import io.jans.as.model.util.SecurityProviderUtility;
-import io.jans.as.model.util.Util;
 import io.jans.util.StringHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.CookieStore;
@@ -65,6 +64,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -1015,11 +1015,7 @@ public abstract class BaseTest {
     }
 
     protected void navigateToAuhorizationUrl(WebDriver driver, String authorizationRequestUrl) {
-        try {
-            driver.navigate().to(URLDecoder.decode(authorizationRequestUrl, Util.UTF8_STRING_ENCODING));
-        } catch (UnsupportedEncodingException ex) {
-            fail("Failed to decode the authorization URL.");
-        }
+        driver.navigate().to(URLDecoder.decode(authorizationRequestUrl, StandardCharsets.UTF_8));
     }
 
     private ClientExecutor getClientExecutor() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {

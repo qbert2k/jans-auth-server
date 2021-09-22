@@ -44,7 +44,6 @@ import io.jans.as.model.jwt.JwtClaims;
 import io.jans.as.model.jwt.JwtHeader;
 import io.jans.as.model.jwt.JwtType;
 import io.jans.as.model.util.Base64Util;
-import io.jans.as.model.util.Util;
 
 /**
  * @author Javier Rojas Blum
@@ -649,14 +648,14 @@ public class JwtAuthorizationRequest {
         }
 
         String header = ClientUtil.toPrettyJson(headerToJSONObject());
-        String encodedHeader = Base64Util.base64urlencode(header.getBytes(Util.UTF8_STRING_ENCODING));
+        String encodedHeader = Base64Util.base64urlencode(header.getBytes(StandardCharsets.UTF_8));
 
         Jwe jwe = new Jwe();
         jwe.setHeader(new JwtHeader(encodedHeader));
 
         if (nestedPayload == null) {
             String claims = ClientUtil.toPrettyJson(payloadToJSONObject());
-            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(Util.UTF8_STRING_ENCODING));
+            String encodedClaims = Base64Util.base64urlencode(claims.getBytes(StandardCharsets.UTF_8));
             jwe.setClaims(new JwtClaims(encodedClaims));
         } else {
             jwe.setSignedJWTPayload(nestedPayload);
@@ -677,8 +676,8 @@ public class JwtAuthorizationRequest {
         JSONObject payloadJsonObject = payloadToJSONObject();
         String headerString = ClientUtil.toPrettyJson(headerJsonObject);
         String payloadString = ClientUtil.toPrettyJson(payloadJsonObject);
-        String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(Util.UTF8_STRING_ENCODING));
-        String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(Util.UTF8_STRING_ENCODING));
+        String encodedHeader = Base64Util.base64urlencode(headerString.getBytes(StandardCharsets.UTF_8));
+        String encodedPayload = Base64Util.base64urlencode(payloadString.getBytes(StandardCharsets.UTF_8));
         String signingInput = encodedHeader + "." + encodedPayload;
         String encodedSignature = cryptoProvider.sign(signingInput, keyId, sharedKey, signatureAlgorithm);
 

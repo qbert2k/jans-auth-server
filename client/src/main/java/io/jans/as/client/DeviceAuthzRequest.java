@@ -6,8 +6,8 @@
 
 package io.jans.as.client;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,18 +97,18 @@ public class DeviceAuthzRequest extends ClientAuthnRequest {
 
             if (StringUtils.isNotBlank(clientId)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.CLIENT_ID)
-                        .append("=").append(URLEncoder.encode(clientId, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(clientId, StandardCharsets.UTF_8));
             }
             if (StringUtils.isNotBlank(scopesAsString)) {
                 queryStringBuilder.append("&").append(AuthorizeRequestParam.SCOPE)
-                        .append("=").append(URLEncoder.encode(scopesAsString, Util.UTF8_STRING_ENCODING));
+                        .append("=").append(URLEncoder.encode(scopesAsString, StandardCharsets.UTF_8));
             }
 
             for (String key : getCustomParameters().keySet()) {
                 queryStringBuilder.append("&");
                 queryStringBuilder.append(key).append("=").append(getCustomParameters().get(key));
             }
-        } catch (UnsupportedEncodingException | JSONException e) {
+        } catch (JSONException e) {
             LOG.error(e.getMessage(), e);
         }
 
