@@ -137,54 +137,50 @@ public class AuthorizeService {
 
     public void permissionGranted(HttpServletRequest httpRequest, final SessionId session) {
         log.trace("permissionGranted");
-        try {
-            final User user = sessionIdService.getUser(session);
-            if (user == null) {
-                log.debug("Permission denied. Failed to find session user: userDn = " + session.getUserDn() + ".");
-                permissionDenied(session);
-                return;
-            }
-
-            String clientId = session.getSessionAttributes().get(AuthorizeRequestParam.CLIENT_ID);
-            final Client client = clientService.getClient(clientId);
-
-            String scope = session.getSessionAttributes().get(AuthorizeRequestParam.SCOPE);
-            String responseType = session.getSessionAttributes().get(AuthorizeRequestParam.RESPONSE_TYPE);
-
-            boolean persistDuringImplicitFlow = !io.jans.as.model.common.ResponseType.isImplicitFlow(responseType);
-            if (!client.getTrustedClient() && persistDuringImplicitFlow && client.getPersistClientAuthorizations()) {
-                final Set<String> scopes = Sets.newHashSet(io.jans.as.model.util.StringUtils.spaceSeparatedToList(scope));
-                clientAuthorizationsService.add(user.getAttribute("inum"), client.getClientId(), scopes);
-            }
-            session.addPermission(clientId, true);
-            sessionIdService.updateSessionId(session);
-            identity.setSessionId(session);
-
-            // OXAUTH-297 - set session_id cookie
-            if (!appConfiguration.getInvalidateSessionCookiesAfterAuthorizationFlow()) {
-                cookieService.createSessionIdCookie(session, false);
-            }
-            Map<String, String> sessionAttribute = requestParameterService.getAllowedParameters(session.getSessionAttributes());
-
-            if (sessionAttribute.containsKey(AuthorizeRequestParam.PROMPT)) {
-                List<Prompt> prompts = Prompt.fromString(sessionAttribute.get(AuthorizeRequestParam.PROMPT), " ");
-                prompts.remove(Prompt.CONSENT);
-                sessionAttribute.put(AuthorizeRequestParam.PROMPT, io.jans.as.model.util.StringUtils.implodeEnum(prompts, " "));
-            }
-
-            final String parametersAsString = requestParameterService.parametersAsString(sessionAttribute);
-            String uri = httpRequest.getContextPath() + "/restv1/authorize?" + parametersAsString;
-            log.trace("permissionGranted, redirectTo: {}", uri);
-
-            if (invalidateSessionCookiesIfNeeded()) {
-                if (!uri.contains(AuthorizeRequestParam.SESSION_ID) && appConfiguration.getSessionIdRequestParameterEnabled()) {
-                    uri += "&session_id=" + session.getId();
-                }
-            }
-            facesService.redirectToExternalURL(uri);
-        } catch (UnsupportedEncodingException e) {
-            log.trace(e.getMessage(), e);
+        final User user = sessionIdService.getUser(session);
+        if (user == null) {
+            log.debug("Permission denied. Failed to find session user: userDn = " + session.getUserDn() + ".");
+            permissionDenied(session);
+            return;
         }
+
+        String clientId = session.getSessionAttributes().get(AuthorizeRequestParam.CLIENT_ID);
+        final Client client = clientService.getClient(clientId);
+
+        String scope = session.getSessionAttributes().get(AuthorizeRequestParam.SCOPE);
+        String responseType = session.getSessionAttributes().get(AuthorizeRequestParam.RESPONSE_TYPE);
+
+        boolean persistDuringImplicitFlow = !io.jans.as.model.common.ResponseType.isImplicitFlow(responseType);
+        if (!client.getTrustedClient() && persistDuringImplicitFlow && client.getPersistClientAuthorizations()) {
+            final Set<String> scopes = Sets.newHashSet(io.jans.as.model.util.StringUtils.spaceSeparatedToList(scope));
+            clientAuthorizationsService.add(user.getAttribute("inum"), client.getClientId(), scopes);
+        }
+        session.addPermission(clientId, true);
+        sessionIdService.updateSessionId(session);
+        identity.setSessionId(session);
+
+        // OXAUTH-297 - set session_id cookie
+        if (!appConfiguration.getInvalidateSessionCookiesAfterAuthorizationFlow()) {
+            cookieService.createSessionIdCookie(session, false);
+        }
+        Map<String, String> sessionAttribute = requestParameterService.getAllowedParameters(session.getSessionAttributes());
+
+        if (sessionAttribute.containsKey(AuthorizeRequestParam.PROMPT)) {
+            List<Prompt> prompts = Prompt.fromString(sessionAttribute.get(AuthorizeRequestParam.PROMPT), " ");
+            prompts.remove(Prompt.CONSENT);
+            sessionAttribute.put(AuthorizeRequestParam.PROMPT, io.jans.as.model.util.StringUtils.implodeEnum(prompts, " "));
+        }
+
+        final String parametersAsString = requestParameterService.parametersAsString(sessionAttribute);
+        String uri = httpRequest.getContextPath() + "/restv1/authorize?" + parametersAsString;
+        log.trace("permissionGranted, redirectTo: {}", uri);
+
+        if (invalidateSessionCookiesIfNeeded()) {
+            if (!uri.contains(AuthorizeRequestParam.SESSION_ID) && appConfiguration.getSessionIdRequestParameterEnabled()) {
+                uri += "&session_id=" + session.getId();
+            }
+        }
+        facesService.redirectToExternalURL(uri);
     }
 
     public void permissionDenied(final SessionId session) {

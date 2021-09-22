@@ -6,7 +6,6 @@
 
 package io.jans.as.server.service;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
@@ -427,7 +426,7 @@ public class SessionIdService {
             final String sessionState = JwtUtil.bytesToHex(JwtUtil.getMessageDigestSHA256(
                     clientId + " " + clientOrigin + " " + opbs + " " + salt)) + "." + salt;
             return sessionState;
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | UnsupportedEncodingException | URISyntaxException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | URISyntaxException e) {
             log.error("Failed generating session state! " + e.getMessage(), e);
             throw new RuntimeException(e);
 		}
