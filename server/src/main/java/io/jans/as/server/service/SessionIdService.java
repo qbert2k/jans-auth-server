@@ -156,18 +156,18 @@ public class SessionIdService {
         final Set<SessionId> sessions = Sets.newHashSet();
         for (String sessionId : ids) {
             if (StringUtils.isBlank(sessionId)) {
-                log.error("Invalid sessionId in current_sessions: " + sessionId);
+                log.error("Invalid sessionId in current_sessions: {}", sessionId);
                 continue;
             }
 
             final SessionId sessionIdObj = getSessionId(sessionId);
             if (sessionIdObj == null) {
-                log.trace("Unable to find session object by id: " + sessionId + " {expired?}");
+                log.trace("Unable to find session object by id: {} {expired?}", sessionId);
                 continue;
             }
 
             if (sessionIdObj.getState() != SessionIdState.AUTHENTICATED) {
-                log.error("Session is not authenticated, id: " + sessionId);
+                log.error("Session is not authenticated, id: {}", sessionId);
                 continue;
             }
             sessions.add(sessionIdObj);
@@ -200,7 +200,7 @@ public class SessionIdService {
             String sessionAcr = getAcr(session);
 
             if (StringUtils.isBlank(sessionAcr)) {
-                log.trace("Failed to fetch acr from session, attributes: " + sessionAttributes);
+                log.trace("Failed to fetch acr from session, attributes: {}", sessionAttributes);
                 return session;
             }
 
@@ -213,8 +213,7 @@ public class SessionIdService {
                 for (String acrValue : acrValuesList) {
                     Integer currentAcrLevel = acrToLevel.get(externalAuthenticationService.scriptName(acrValue));
 
-                    log.info("Acr is changed. Session acr: " + sessionAcr + "(level: " + sessionAcrLevel + "), " +
-                            "current acr: " + acrValue + "(level: " + currentAcrLevel + ")");
+                    log.info("Acr is changed. Session acr: {} (level: {}), current acr: {} (level: {}) ", sessionAcr, sessionAcrLevel, acrValue, currentAcrLevel);
 
                     // Requested acr method not enabled
                     if (currentAcrLevel == null) {
@@ -382,7 +381,7 @@ public class SessionIdService {
         if (externalApplicationSessionService.isEnabled()) {
             String userName = sessionId.getSessionAttributes().get(Constants.AUTHENTICATED_USER);
             boolean externalResult = externalApplicationSessionService.executeExternalStartSessionMethods(httpRequest, sessionId);
-            log.info("Start session result for '{}': '{}'", userName, "start", externalResult);
+            log.info("Start session result for '{}': '{}' '{}'", userName, "start", externalResult);
 
             if (!externalResult) {
             	reinitLogin(sessionId, true);
@@ -570,7 +569,7 @@ public class SessionIdService {
         if (externalApplicationSessionService.isEnabled()) {
             String userName = sessionId.getSessionAttributes().get(Constants.AUTHENTICATED_USER);
             boolean externalResult = externalApplicationSessionService.executeExternalStartSessionMethods(httpRequest, sessionId);
-            log.info("Start session result for '{}': '{}'", userName, "start", externalResult);
+            log.info("Start session result for '{}': '{}' '{}'", userName, "start", externalResult);
 
             if (!externalResult) {
             	reinitLogin(sessionId, true);

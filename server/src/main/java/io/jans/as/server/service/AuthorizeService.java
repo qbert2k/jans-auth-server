@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -165,11 +166,11 @@ public class AuthorizeService {
         }
         Map<String, String> sessionAttribute = requestParameterService.getAllowedParameters(session.getSessionAttributes());
 
-        if (sessionAttribute.containsKey(AuthorizeRequestParam.PROMPT)) {
-            List<Prompt> prompts = Prompt.fromString(sessionAttribute.get(AuthorizeRequestParam.PROMPT), " ");
+        sessionAttribute.computeIfPresent(AuthorizeRequestParam.PROMPT, (key, val) -> {
+            List<Prompt> prompts = Prompt.fromString(sessionAttribute.get(key), " ");
             prompts.remove(Prompt.CONSENT);
-            sessionAttribute.put(AuthorizeRequestParam.PROMPT, io.jans.as.model.util.StringUtils.implodeEnum(prompts, " "));
-        }
+            return io.jans.as.model.util.StringUtils.implodeEnum(prompts, " ");
+        });
 
         final String parametersAsString = requestParameterService.parametersAsString(sessionAttribute);
         String uri = httpRequest.getContextPath() + "/restv1/authorize?" + parametersAsString;
