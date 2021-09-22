@@ -196,13 +196,14 @@ public class LogoutAction {
                     return externalLogoutResult;
                 }
 
-                // Store in session parameters needed to call end_session
-                try {
-                    storeLogoutParametersInSession(sessionId);
-                } catch (IOException ex) {
-                    log.debug("Failed to persist logout parameters in session", ex);
-
-                    return ExternalLogoutResult.FAILURE;
+                if(sessionId != null) {
+                    // Store in session parameters needed to call end_session
+                    try {
+                        storeLogoutParametersInSession(sessionId);
+                    } catch (IOException ex) {
+                        log.debug("Failed to persist logout parameters in session", ex);
+                        return ExternalLogoutResult.FAILURE;
+                    }
                 }
 
                 // Redirect to external URL
