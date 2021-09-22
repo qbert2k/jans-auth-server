@@ -131,7 +131,7 @@ public enum SignatureAlgorithm {
     }
 
     public static List<SignatureAlgorithm> fromString(String[] params) {
-        List<SignatureAlgorithm> signatureAlgorithms = new ArrayList<SignatureAlgorithm>();
+        List<SignatureAlgorithm> signatureAlgorithms = new ArrayList<>();
 
         for (String param : params) {
             SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.fromString(param);

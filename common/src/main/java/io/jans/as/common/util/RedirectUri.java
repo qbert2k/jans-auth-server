@@ -19,7 +19,6 @@ import io.jans.as.model.jwe.JweEncrypter;
 import io.jans.as.model.jwe.JweEncrypterImpl;
 import io.jans.as.model.jwt.Jwt;
 import io.jans.as.model.jwt.JwtType;
-import io.jans.as.model.util.Util;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;

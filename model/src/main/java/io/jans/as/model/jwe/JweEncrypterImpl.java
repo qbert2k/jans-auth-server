@@ -7,6 +7,7 @@
 package io.jans.as.model.jwe;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
@@ -110,7 +111,7 @@ public class JweEncrypterImpl extends AbstractJweEncrypter {
         if (jwe.getSignedJWTPayload() != null) {
             return new Payload(SignedJWT.parse(jwe.getSignedJWTPayload().toString()));
         }
-        return new Payload(Base64Util.base64urlencode(jwe.getClaims().toJsonString().getBytes("UTF-8")));
+        return new Payload(Base64Util.base64urlencode(jwe.getClaims().toJsonString().getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override

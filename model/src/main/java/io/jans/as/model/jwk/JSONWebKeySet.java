@@ -37,7 +37,7 @@ public class JSONWebKeySet {
     private List<JSONWebKey> keys;
 
     public JSONWebKeySet() {
-        keys = new ArrayList<JSONWebKey>();
+        keys = new ArrayList<>();
     }
 
     public List<JSONWebKey> getKeys() {
@@ -59,7 +59,7 @@ public class JSONWebKeySet {
 
     @Deprecated
     public List<JSONWebKey> getKeys(SignatureAlgorithm signatureAlgorithm) {
-        List<JSONWebKey> jsonWebKeys = new ArrayList<JSONWebKey>();
+        List<JSONWebKey> jsonWebKeys = new ArrayList<>();
         AlgorithmFamily algorithmFamily = signatureAlgorithm.getFamily();
         if (AlgorithmFamily.RSA.equals(algorithmFamily) || AlgorithmFamily.EC.equals(algorithmFamily)
                 || AlgorithmFamily.ED.equals(algorithmFamily)) {
@@ -92,10 +92,7 @@ public class JSONWebKeySet {
         try {
             JSONObject jwks = toJSONObject();
             return toPrettyJson(jwks).replace("\\/", "/");
-        } catch (JSONException e) {
-            LOG.error(e.getMessage(), e);
-            return "";
-        } catch (JsonProcessingException e) {
+        } catch (JSONException | JsonProcessingException e) {
             LOG.error(e.getMessage(), e);
             return "";
         }

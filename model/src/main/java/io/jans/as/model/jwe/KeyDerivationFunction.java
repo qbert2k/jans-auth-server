@@ -29,7 +29,7 @@ public class KeyDerivationFunction {
     }
 
     public static byte[] generateCek(byte[] cmk, BlockEncryptionAlgorithm blockEncryptionAlgorithm)
-            throws UnsupportedEncodingException, NoSuchProviderException, NoSuchAlgorithmException, InvalidParameterException {
+            throws NoSuchProviderException, NoSuchAlgorithmException, InvalidParameterException {
         if (cmk == null) {
             throw new InvalidParameterException("The content master key (CMK) is null");
         }
@@ -61,13 +61,11 @@ public class KeyDerivationFunction {
 
         MessageDigest mda = MessageDigest.getInstance(blockEncryptionAlgorithm.getMessageDiggestAlgorithm(), "BC");
         byte[] round1Hash = mda.digest(round1Input);
-        byte[] cek = Arrays.copyOf(round1Hash, blockEncryptionAlgorithm.getCekLength() / 8);
-
-        return cek;
+        return Arrays.copyOf(round1Hash, blockEncryptionAlgorithm.getCekLength() / 8);
     }
 
     public static byte[] generateCik(byte[] cmk, BlockEncryptionAlgorithm blockEncryptionAlgorithm)
-            throws UnsupportedEncodingException, NoSuchProviderException, NoSuchAlgorithmException, InvalidParameterException {
+            throws NoSuchProviderException, NoSuchAlgorithmException, InvalidParameterException {
         if (cmk == null) {
             throw new InvalidParameterException("The content master key (CMK) is null");
         }
@@ -98,8 +96,6 @@ public class KeyDerivationFunction {
         round1Input = ArrayUtils.addAll(round1Input, label);
 
         MessageDigest mda = MessageDigest.getInstance(blockEncryptionAlgorithm.getMessageDiggestAlgorithm(), "BC");
-        byte[] cik = mda.digest(round1Input);
-
-        return cik;
+        return mda.digest(round1Input);
     }
 }

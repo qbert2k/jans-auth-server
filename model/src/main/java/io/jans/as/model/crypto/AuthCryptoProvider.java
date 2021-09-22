@@ -132,13 +132,13 @@ public class AuthCryptoProvider extends AbstractCryptoProvider {
         }
     }
 
-    private void store() throws FileNotFoundException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    private void store() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
             keyStore.store(fos, keyStoreSecret.toCharArray());
         }
     }
 
-    public void load() throws FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException {
+    public void load() throws IOException, NoSuchAlgorithmException, CertificateException {
         try (InputStream is = new FileInputStream(keyStoreFile)) {
             keyStore.load(is, keyStoreSecret.toCharArray());
             LOG.debug("Loaded keys from JKS.");

@@ -243,7 +243,7 @@ public class IntrospectionWebService {
      * @return we return pair of authorization grant or otherwise true - if it's basic client authentication or false if it is not
      * @throws UnsupportedEncodingException when encoding is not supported
      */
-    private Pair<AuthorizationGrant, Boolean> getAuthorizationGrant(String authorization, String accessToken) throws UnsupportedEncodingException {
+    private Pair<AuthorizationGrant, Boolean> getAuthorizationGrant(String authorization, String accessToken) {
         AuthorizationGrant grant = tokenService.getBearerAuthorizationGrant(authorization);
         if (grant != null) {
             final String authorizationAccessToken = tokenService.getBearerToken(authorization);

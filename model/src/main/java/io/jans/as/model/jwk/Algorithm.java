@@ -107,7 +107,7 @@ public enum Algorithm {
     }
 
     public static List<Algorithm> fromString(String[] params, Use use) {
-        List<Algorithm> algorithms = new ArrayList<Algorithm>();
+        List<Algorithm> algorithms = new ArrayList<>();
 
         for (String param : params) {
             Algorithm algorithm = Algorithm.fromString(param);

@@ -40,7 +40,7 @@ public abstract class JwtClaimSet {
     private Map<String, Object> claims;
 
     protected JwtClaimSet() {
-        claims = new LinkedHashMap<String, Object>();
+        claims = new LinkedHashMap<>();
     }
 
     protected JwtClaimSet(JSONObject jsonObject) {
@@ -92,11 +92,11 @@ public abstract class JwtClaimSet {
     }
 
     public List<String> getClaimAsStringList(String key) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         Object keyClaims = getClaim(key);
 
         try {
-            if (keyClaims != null && keyClaims instanceof JSONArray) {
+            if (keyClaims instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) keyClaims;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     list.add(jsonArray.getString(i));
@@ -117,26 +117,22 @@ public abstract class JwtClaimSet {
     public Date getClaimAsDate(String key) {
         Object claim = getClaim(key);
 
-        if (claim != null) {
-            if (claim instanceof Date) {
-                return (Date) claim;
-            } else if (claim instanceof Integer) {
-                final long c = (Integer) claim;
-                final long date = c * 1000;
-                return new Date(date);
-            } else if (claim instanceof Long) {
-                return new Date((Long) claim * 1000);
-            } else if (claim instanceof Double) {
-                final double c = (Double) claim;
-                final BigDecimal bigDecimal = BigDecimal.valueOf(c);
+        if (claim instanceof Date) {
+            return (Date) claim;
+        } else if (claim instanceof Integer) {
+            final long c = (Integer) claim;
+            final long date = c * 1000;
+            return new Date(date);
+        } else if (claim instanceof Long) {
+            return new Date((Long) claim * 1000);
+        } else if (claim instanceof Double) {
+            final double c = (Double) claim;
+            final BigDecimal bigDecimal = BigDecimal.valueOf(c);
 
-                long claimLong = bigDecimal.longValue();
-                claimLong = claimLong * 1000;
+            long claimLong = bigDecimal.longValue();
+            claimLong = claimLong * 1000;
 
-                return new Date(claimLong);
-            } else {
-                return null;
-            }
+            return new Date(claimLong);
         } else {
             return null;
         }
@@ -145,12 +141,8 @@ public abstract class JwtClaimSet {
     public Integer getClaimAsInteger(String key) {
         Object claim = getClaim(key);
 
-        if (claim != null) {
-            if (claim instanceof Integer) {
-                return (Integer) claim;
-            } else {
-                return null;
-            }
+        if (claim instanceof Integer) {
+            return (Integer) claim;
         } else {
             return null;
         }
@@ -159,12 +151,8 @@ public abstract class JwtClaimSet {
     public Long getClaimAsLong(String key) {
         Object claim = getClaim(key);
 
-        if (claim != null) {
-            if (claim instanceof Long) {
-                return (Long) claim;
-            } else {
-                return null;
-            }
+        if (claim instanceof Long) {
+            return (Long) claim;
         } else {
             return null;
         }
@@ -173,12 +161,8 @@ public abstract class JwtClaimSet {
     public Character getClaimAsCharacter(String key) {
         Object claim = getClaim(key);
 
-        if (claim != null) {
-            if (claim instanceof Character) {
-                return (Character) claim;
-            } else {
-                return null;
-            }
+        if (claim instanceof Character) {
+            return (Character) claim;
         } else {
             return null;
         }

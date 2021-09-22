@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -128,11 +127,11 @@ public class RequestParameterService {
         return result;
     }
 
-    public String parametersAsString(final Map<String, String> parameterMap) throws UnsupportedEncodingException {
+    public String parametersAsString(final Map<String, String> parameterMap) {
         final StringBuilder sb = new StringBuilder();
         final Set<Entry<String, String>> set = parameterMap.entrySet();
         for (Map.Entry<String, String> entry : set) {
-            final String value = (String) entry.getValue();
+            final String value = entry.getValue();
             if (StringUtils.isNotBlank(value)) {
                 sb.append(entry.getKey()).append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8)).append("&");
             }

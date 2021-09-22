@@ -18,10 +18,6 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import io.jans.as.model.configuration.AppConfiguration;
 import io.jans.as.model.session.EndSessionRequestParam;
 import io.jans.as.model.util.Base64Util;
@@ -215,7 +211,7 @@ public class LogoutAction {
         }
     }
 
-    private void storeLogoutParametersInSession(SessionId sessionId) throws JsonGenerationException, JsonMappingException, IOException {
+    private void storeLogoutParametersInSession(SessionId sessionId) throws IOException {
         Map<String, String> sessionAttributes = sessionId.getSessionAttributes();
 
         LogoutParameters logoutParameters = new LogoutParameters(idTokenHint, postLogoutRedirectUri);
@@ -229,7 +225,7 @@ public class LogoutAction {
         sessionIdService.updateSessionId(sessionId);
     }
 
-    private boolean restoreLogoutParametersFromSession(SessionId sessionId) throws IllegalArgumentException, JsonParseException, JsonMappingException, IOException {
+    private boolean restoreLogoutParametersFromSession(SessionId sessionId) throws IllegalArgumentException, IOException {
         if (sessionId == null) {
             return false;
         }
