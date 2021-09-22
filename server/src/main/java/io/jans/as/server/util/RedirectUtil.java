@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import java.net.MalformedURLException;
 import java.net.URI;
 
-import static io.jans.as.client.AuthorizationRequest.NO_REDIRECT_HEADER;
+import static io.jans.as.client.AuthorizationRequest.NoRedirectHeader;
 
 /**
  * @version July 28, 2021
@@ -39,7 +39,7 @@ public class RedirectUtil {
     public static ResponseBuilder getRedirectResponseBuilder(RedirectUri redirectUriResponse, HttpServletRequest httpRequest) {
         ResponseBuilder builder;
 
-        if (httpRequest != null && httpRequest.getHeader(NO_REDIRECT_HEADER) != null) {
+        if (httpRequest != null && httpRequest.getHeader(NoRedirectHeader) != null) {
             try {
                 URI redirectURI = URI.create(redirectUriResponse.toString());
                 JSONObject jsonObject = new JSONObject();

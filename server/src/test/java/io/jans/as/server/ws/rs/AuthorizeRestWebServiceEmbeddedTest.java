@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static io.jans.as.client.AuthorizationRequest.NO_REDIRECT_HEADER;
+import static io.jans.as.client.AuthorizationRequest.NoRedirectHeader;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -161,7 +161,7 @@ public class AuthorizeRestWebServiceEmbeddedTest extends BaseTest {
                 .target(url.toString() + authorizePath + "?" + authorizationRequest.getQueryString()).request();
         request.header("Authorization", "Basic " + authorizationRequest.getEncodedCredentials());
         request.header("Accept", MediaType.TEXT_PLAIN);
-        request.header(NO_REDIRECT_HEADER, "");
+        request.header(NoRedirectHeader, "");
 
         Response response = request.get();
         String entity = response.readEntity(String.class);

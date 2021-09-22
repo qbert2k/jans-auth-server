@@ -20,7 +20,6 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
@@ -78,7 +77,7 @@ public class AuthorizationResponse extends BaseResponse {
      */
     public AuthorizationResponse(ClientResponse<String> clientResponse) {
         super(clientResponse);
-        customParams = new HashMap<String, String>();
+        customParams = new HashMap<>();
 
         if (StringUtils.isNotBlank(entity)) {
             try {
@@ -107,7 +106,7 @@ public class AuthorizationResponse extends BaseResponse {
 
     public AuthorizationResponse(String location) {
         this.location = location;
-        customParams = new HashMap<String, String>();
+        customParams = new HashMap<>();
 
         processLocation();
     }
@@ -118,7 +117,7 @@ public class AuthorizationResponse extends BaseResponse {
         this.privateKey = privateKey;
         this.jwksUri = jwksUri;
 
-        customParams = new HashMap<String, String>();
+        customParams = new HashMap<>();
 
         processLocation();
     }
@@ -193,7 +192,7 @@ public class AuthorizationResponse extends BaseResponse {
         }
     }
 
-    private void loadparams(Map<String, String> params) throws UnsupportedEncodingException {
+    private void loadparams(Map<String, String> params) {
         if (params.containsKey(CODE)) {
             code = params.get(CODE);
             params.remove(CODE);

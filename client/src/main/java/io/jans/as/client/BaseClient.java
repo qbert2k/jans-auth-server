@@ -137,7 +137,7 @@ public abstract class BaseClient<T extends BaseRequest, V extends BaseResponse> 
                     AuthorizationRequest authorizationRequest = (AuthorizationRequest) request;
                     if (authorizationRequest.isUseNoRedirectHeader()) {
                         sb.append("\n");
-                        sb.append(AuthorizationRequest.NO_REDIRECT_HEADER + ": true");
+                        sb.append(AuthorizationRequest.NoRedirectHeader + ": true");
                     }
                 }
                 if (request.getAuthorizationMethod() == null) {
@@ -177,7 +177,7 @@ public abstract class BaseClient<T extends BaseRequest, V extends BaseResponse> 
                     AuthorizationRequest authorizationRequest = (AuthorizationRequest) request;
                     if (authorizationRequest.isUseNoRedirectHeader()) {
                         sb.append("\n");
-                        sb.append(AuthorizationRequest.NO_REDIRECT_HEADER + ": true");
+                        sb.append(AuthorizationRequest.NoRedirectHeader + ": true");
                     }
                 }
                 if (request.getAuthorizationMethod() == null) {
