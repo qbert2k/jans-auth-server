@@ -81,15 +81,10 @@ public class PureJwt {
         if (o == null || getClass() != o.getClass()) return false;
 
         PureJwt pureJwt = (PureJwt) o;
-
-        if (encodedHeader != null ? !encodedHeader.equals(pureJwt.encodedHeader) : pureJwt.encodedHeader != null)
-            return false;
-        if (encodedPayload != null ? !encodedPayload.equals(pureJwt.encodedPayload) : pureJwt.encodedPayload != null)
-            return false;
-        if (encodedSignature != null ? !encodedSignature.equals(pureJwt.encodedSignature) : pureJwt.encodedSignature != null)
-            return false;
-
-        return true;
+        
+        return (encodedHeader != null ? encodedHeader.equals(pureJwt.encodedHeader) : pureJwt.encodedHeader == null
+                && encodedPayload != null ? encodedPayload.equals(pureJwt.encodedPayload) : pureJwt.encodedPayload == null
+                && encodedSignature != null ? encodedSignature.equals(pureJwt.encodedSignature) : pureJwt.encodedSignature == null);
     }
 
     @Override

@@ -288,8 +288,6 @@ public abstract class JwtClaimSet {
                     jsonObject.put(claim.getKey(), claim.getValue());
                 }
             }
-        } catch (JSONException e) {
-            throw new InvalidJwtException(e);
         } catch (Exception e) {
             throw new InvalidJwtException(e);
         }
@@ -312,14 +310,14 @@ public abstract class JwtClaimSet {
     }
 
     public Map<String, List<String>> toMap() throws InvalidJwtException {
-        Map<String, List<String>> map = new HashMap<String, java.util.List<String>>();
+        Map<String, List<String>> map = new HashMap<>();
 
         try {
             for (Map.Entry<String, Object> claim : claims.entrySet()) {
                 String key = claim.getKey();
                 Object value = claim.getValue();
 
-                List<String> values = new ArrayList<String>();
+                List<String> values = new ArrayList<>();
                 if (value instanceof JSONArray) {
                     JSONArray jsonArray = (JSONArray) value;
                     for (int i = 0; i < jsonArray.length(); i++) {

@@ -6,12 +6,10 @@
 
 package io.jans.as.server.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;

@@ -421,18 +421,15 @@ public class SessionIdService {
             return sessionId.getSessionState();
         final String salt = UUID.randomUUID().toString();
         final String opbs = sessionId.getOPBrowserState();
-        final String sessionState = computeSessionState(clientId,redirectUri, opbs, salt);
-        return sessionState;
+        return computeSessionState(clientId,redirectUri, opbs, salt);
     }
 
     private String computeSessionState(String clientId, String redirectUri, String opbs, String salt) {
         try {
             final String clientOrigin = getClientOrigin(redirectUri);
-            final String sessionState = JwtUtil.bytesToHex(JwtUtil.getMessageDigestSHA256(
+            return JwtUtil.bytesToHex(JwtUtil.getMessageDigestSHA256(
                     clientId + " " + clientOrigin + " " + opbs + " " + salt)) + "." + salt;
-            return sessionState;
         } catch (NoSuchProviderException | NoSuchAlgorithmException | URISyntaxException e) {
-            log.error("Failed generating session state! " + e.getMessage(), e);
             throw new RuntimeException(e);
 		}
     }
@@ -819,7 +816,7 @@ public class SessionIdService {
 
     public SessionId getSessionId(HttpServletRequest request) {
         final String sessionIdFromCookie = cookieService.getSessionIdFromCookie(request);
-        log.trace("SessionId from cookie: " + sessionIdFromCookie);
+        log.trace("SessionId from cookie: {}", sessionIdFromCookie);
         return getSessionId(sessionIdFromCookie);
     }
 
@@ -890,11 +887,8 @@ public class SessionIdService {
         if (timeSinceLastAccess > sessionInterval && appConfiguration.getSessionIdUnusedLifetime() != -1) {
             return false;
         }
-        if (sessionId.getState() == SessionIdState.UNAUTHENTICATED && timeSinceLastAccess > sessionUnauthenticatedInterval && appConfiguration.getSessionIdUnauthenticatedUnusedLifetime() != -1) {
-            return false;
-        }
-
-        return true;
+        
+        return (sessionId.getState() != SessionIdState.UNAUTHENTICATED || timeSinceLastAccess <= sessionUnauthenticatedInterval || appConfiguration.getSessionIdUnauthenticatedUnusedLifetime() == -1);
     }
 
     private List<Prompt> getPromptsFromSessionId(final SessionId sessionId) {
@@ -923,12 +917,12 @@ public class SessionIdService {
             acrs = Util.splittedStringAsList(acrValues, " ");
         }
 
-        HashSet<String> resultAcrs = new HashSet<String>();
+        HashSet<String> resultAcrs = new HashSet<>();
         for (String acr : acrs) {
         	resultAcrs.add(externalAuthenticationService.scriptName(acr));
         }
         
-        return new ArrayList<String>(resultAcrs);
+        return new ArrayList<>(resultAcrs);
     }
 
     private void auditLogging(SessionId sessionId) {
