@@ -61,6 +61,8 @@ import java.util.Iterator;
 public class IntrospectionWebService {
 
     private static final Pair<AuthorizationGrant, Boolean> EMPTY = new Pair<>(null, false);
+    
+    public static final String DEF_SYMBS = "[\n\r\t]";
 
     @Inject
     private Logger log;
@@ -141,7 +143,7 @@ public class IntrospectionWebService {
 
     private Response introspect(String authorization, String token, String tokenTypeHint, String responseAsJwt, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         try {
-            log.trace("Introspect token, authorization: {}, token to introspect: {}, tokenTypeHint: {}", authorization.replaceAll("[\n\r\t]", "_"), token.replaceAll("[\n\r\t]", "_"), tokenTypeHint.replaceAll("[\n\r\t]", "_"));
+            log.trace("Introspect token, authorization: {}, token to introspect: {}, tokenTypeHint: {}", authorization.replaceAll(DEF_SYMBS, "_"), token.replaceAll(DEF_SYMBS, "_"), tokenTypeHint.replaceAll(DEF_SYMBS, "_"));
 
             AuthorizationGrant authorizationGrant = validateAuthorization(authorization, token);
 
@@ -174,30 +176,12 @@ public class IntrospectionWebService {
                     response.setTokenType(accessToken.getTokenType() != null ? accessToken.getTokenType().getName() : io.jans.as.model.common.TokenType.BEARER.getName());
                 }
             } else {
-                log.debug("Failed to find grant for access_token: {}. Return 200 with active=false.", token.replaceAll("[\n\r\t]", "_"));
+                log.debug("Failed to find grant for access_token: {}. Return 200 with active=false.", token.replaceAll(DEF_SYMBS, "_"));
             }
             JSONObject responseAsJsonObject = createResponseAsJsonObject(response, tokenToIntrospect);
-
-            ExternalIntrospectionContext context = new ExternalIntrospectionContext(authorizationGrant, httpRequest, httpResponse, appConfiguration, attributeService);
-            context.setGrantOfIntrospectionToken(grantOfIntrospectionToken);
-            if (externalIntrospectionService.executeExternalModifyResponse(responseAsJsonObject, context)) {
-                log.trace("Successfully run extenal introspection scripts.");
-            } else {
-                responseAsJsonObject = createResponseAsJsonObject(response, tokenToIntrospect);
-                log.trace("Canceled changes made by external introspection script since method returned `false`.");
-            }
-
-            // Make scopes conform as required by spec, see #1499
-            if (response.getScope()!= null && !appConfiguration.getIntrospectionResponseScopesBackwardCompatibility()) {
-            	String scopes = StringUtils.join(response.getScope().toArray(), " ");
-            	responseAsJsonObject.put("scope", scopes);
-            }
-            if (Boolean.TRUE.toString().equalsIgnoreCase(responseAsJwt)) {
-                return Response.status(Response.Status.OK).entity(createResponseAsJwt(responseAsJsonObject, grantOfIntrospectionToken)).build();
-            }
-
-            return Response.status(Response.Status.OK).entity(responseAsJsonObject.toString()).type(MediaType.APPLICATION_JSON_TYPE).build();
-
+            
+            return introspectSub(responseAsJwt, httpRequest, httpResponse, authorizationGrant, grantOfIntrospectionToken, tokenToIntrospect, response, responseAsJsonObject);
+            
         } catch (WebApplicationException e) {
             log.error(e.getMessage(), e);
             throw e;
@@ -205,6 +189,30 @@ public class IntrospectionWebService {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
+    }
+    
+    private Response introspectSub(final String responseAsJwt, final HttpServletRequest httpRequest, final HttpServletResponse httpResponse, final AuthorizationGrant authorizationGrant, final AuthorizationGrant grantOfIntrospectionToken,
+            final AbstractToken tokenToIntrospect, final IntrospectionResponse response, JSONObject responseAsJsonObject) throws Exception {
+        
+        ExternalIntrospectionContext context = new ExternalIntrospectionContext(authorizationGrant, httpRequest, httpResponse, appConfiguration, attributeService);
+        context.setGrantOfIntrospectionToken(grantOfIntrospectionToken);
+        if (externalIntrospectionService.executeExternalModifyResponse(responseAsJsonObject, context)) {
+            log.trace("Successfully run extenal introspection scripts.");
+        } else {
+            responseAsJsonObject = createResponseAsJsonObject(response, tokenToIntrospect);
+            log.trace("Canceled changes made by external introspection script since method returned `false`.");
+        }
+
+        // Make scopes conform as required by spec, see #1499
+        if (response.getScope()!= null && !appConfiguration.getIntrospectionResponseScopesBackwardCompatibility()) {
+            String scopes = StringUtils.join(response.getScope().toArray(), " ");
+            responseAsJsonObject.put("scope", scopes);
+        }
+        if (Boolean.TRUE.toString().equalsIgnoreCase(responseAsJwt)) {
+            return Response.status(Response.Status.OK).entity(createResponseAsJwt(responseAsJsonObject, grantOfIntrospectionToken)).build();
+        }
+
+        return Response.status(Response.Status.OK).entity(responseAsJsonObject.toString()).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     private String createResponseAsJwt(JSONObject response, AuthorizationGrant grant) throws Exception {
