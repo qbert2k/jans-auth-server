@@ -6,18 +6,6 @@
         <listener class-name="io.jans.as.client.RetryListener" />
     </listeners>
 
-    <test name="OC5. FeatureTest-Uses Asymmetric ID Token Signatures" enabled="true">
-        <classes>
-            <class name="io.jans.as.client.interop.UsesAsymmetricIdTokenSignatures"/>
-        </classes>
-    </test>
-
-    <test name="Individual Claims Requests test" enabled="true">
-        <classes>
-            <class name="io.jans.as.client.ws.rs.IndividualClaimsRequestsTest"/>
-        </classes>
-    </test>
-
 <!--
     <test name="Multivalued claims" enabled="true">
         <classes>
