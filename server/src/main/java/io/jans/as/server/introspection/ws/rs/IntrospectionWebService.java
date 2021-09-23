@@ -143,7 +143,9 @@ public class IntrospectionWebService {
 
     private Response introspect(String authorization, String token, String tokenTypeHint, String responseAsJwt, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         try {
-            log.trace("Introspect token, authorization: {}, token to introspect: {}, tokenTypeHint: {}", authorization.replaceAll(DEF_SYMBS, "_"), token.replaceAll(DEF_SYMBS, "_"), tokenTypeHint.replaceAll(DEF_SYMBS, "_"));
+            if(log.isTraceEnabled()) {
+                log.trace("Introspect token, authorization: {}, token to introspect: {}, tokenTypeHint: {}", authorization.replaceAll(DEF_SYMBS, "_"), token.replaceAll(DEF_SYMBS, "_"), tokenTypeHint.replaceAll(DEF_SYMBS, "_"));
+            }
 
             AuthorizationGrant authorizationGrant = validateAuthorization(authorization, token);
 
@@ -176,7 +178,9 @@ public class IntrospectionWebService {
                     response.setTokenType(accessToken.getTokenType() != null ? accessToken.getTokenType().getName() : io.jans.as.model.common.TokenType.BEARER.getName());
                 }
             } else {
-                log.debug("Failed to find grant for access_token: {}. Return 200 with active=false.", token.replaceAll(DEF_SYMBS, "_"));
+                if(log.isDebugEnabled()) {
+                    log.debug("Failed to find grant for access_token: {}. Return 200 with active=false.", token.replaceAll(DEF_SYMBS, "_"));
+                }
             }
             JSONObject responseAsJsonObject = createResponseAsJsonObject(response, tokenToIntrospect);
             
