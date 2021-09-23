@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="jansAuthServer" parallel="true">
+<suite name="jansAuthServer" parallel="false">
 
 	<test name="Crypto Provider test" enabled="true">
 		<classes>
