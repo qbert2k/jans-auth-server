@@ -152,7 +152,7 @@ public abstract class AuthorizationGrant extends AbstractAuthorizationGrant {
             if (grants != null && !grants.isEmpty()) {
                 for (TokenLdap t : grants) {
                     initTokenFromGrant(t);
-                    log.debug("Saving grant: " + grantId + ", code_challenge: " + getCodeChallenge());
+                    log.debug("Saving grant: {}, , code_challenge: {}", grantId, getCodeChallenge());
                     grantService.mergeSilently(t);
                 }
             }
