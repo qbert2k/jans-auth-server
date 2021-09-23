@@ -108,7 +108,7 @@ public abstract class BaseRequest {
      *
      * @return The client credentials.
      */
-    public String getCredentials() throws UnsupportedEncodingException {
+    public String getCredentials() {
         return URLEncoder.encode(authUsername, StandardCharsets.UTF_8)
                 + ":"
                 + URLEncoder.encode(authPassword, StandardCharsets.UTF_8);
