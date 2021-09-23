@@ -476,7 +476,7 @@ public class CryptoProviderTest extends ConfigurableTest {
 		}
 	}
 
-//    @Test(dependsOnMethods = {"configuration"})
+    @Test(dependsOnMethods = {"configuration"})
     public void testGenerateKeyED25519() {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED25519, expirationTime);
@@ -486,7 +486,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testGenerateKeyED25519"})
+    @Test(dependsOnMethods = {"testGenerateKeyED25519"})
     public void testSignED25519() {
         try {
             ed25519Signature = cryptoProvider.sign(SIGNING_INPUT, ed25519Key, null, SignatureAlgorithm.ED25519);
@@ -496,7 +496,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testSignED25519"})
+    @Test(dependsOnMethods = {"testSignED25519"})
     public void testVerifyED25519() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed25519Signature, ed25519Key, null,
@@ -507,7 +507,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testSignED25519"})
+    @Test(dependsOnMethods = {"testSignED25519"})
     public void testVerifyED25519Jwks() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed25519Signature, ed25519Key, ed25519Jwks,
@@ -518,7 +518,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }    
 
-//    @Test(dependsOnMethods = {"testVerifyED25519"})
+    @Test(dependsOnMethods = {"testVerifyED25519"})
     public void testDeleteKeyED25519() {
         try {
             cryptoProvider.deleteKey(ed25519Key);
@@ -527,7 +527,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }	
     
-//    @Test(dependsOnMethods = {"configuration"})
+    @Test(dependsOnMethods = {"configuration"})
     public void testGenerateKeyED448() {
         try {
             JSONObject response = cryptoProvider.generateKey(Algorithm.ED448, expirationTime);
@@ -545,7 +545,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
- //  @Test(dependsOnMethods = {"testGenerateKeyED448"})
+    @Test(dependsOnMethods = {"testGenerateKeyED448"})
     public void testSignED448() {
         try {
             ed448Signature = cryptoProvider.sign(SIGNING_INPUT, ed448Key, null, SignatureAlgorithm.ED448);
@@ -555,7 +555,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
 
-//    @Test(dependsOnMethods = {"testSignED448"})
+    @Test(dependsOnMethods = {"testSignED448"})
     public void testVerifyED448() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed448Signature, ed448Key, null,
@@ -566,7 +566,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }
     
- //   @Test(dependsOnMethods = {"testSignED448"})
+    @Test(dependsOnMethods = {"testSignED448"})
     public void testVerifyED448Jwks() {
         try {
             boolean signatureVerified = cryptoProvider.verifySignature(SIGNING_INPUT, ed448Signature, ed448Key, ed448Jwks,
@@ -577,7 +577,7 @@ public class CryptoProviderTest extends ConfigurableTest {
         }
     }    
 
- //   @Test(dependsOnMethods = {"testVerifyED448"})
+    @Test(dependsOnMethods = {"testVerifyED448"})
     public void testDeleteKeyED448() {
         try {
             cryptoProvider.deleteKey(ed448Key);
