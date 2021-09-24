@@ -1,21 +1,19 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="jansAuthServer" parallel="false">
-
+<!--
 	<test name="Crypto Provider test" enabled="true">
 		<classes>
 			<class name="io.jans.as.server.comp.CryptoProviderTest" />
 		</classes>
 	</test>
-
+-->
 	<!-- Signature test -->
-<!--
 	<test name="Signature test (embedded)" enabled="true">
 		<classes>
 			<class name="io.jans.as.server.comp.SignatureTest" />
 		</classes>
 	</test>
--->
 
 <!--
 	<test name="Cross Encryption test" enabled="true">
@@ -26,13 +24,12 @@
 -->
 
     <!-- Enable it when client jks is regenerated -->
-<!--
     <test name="JWT cross-check test" enabled="true">
         <classes>
             <class name="io.jans.as.server.comp.JwtCrossCheckTest" />
         </classes>
     </test>
--->
+
 <!--
     <test name="JWT signer-verifyer test" enabled="true">
         <classes>
