@@ -9,34 +9,34 @@
 	</test>
 -->
 	<!-- Signature test -->
+<!--
 	<test name="Signature test (embedded)" enabled="true">
 		<classes>
 			<class name="io.jans.as.server.comp.SignatureTest" />
 		</classes>
 	</test>
+-->
 
-<!--
 	<test name="Cross Encryption test" enabled="true">
 		<classes>
 			<class name="io.jans.as.server.comp.CrossEncryptionTest" />
 		</classes>
 	</test>
--->
 
     <!-- Enable it when client jks is regenerated -->
+<!--
     <test name="JWT cross-check test" enabled="true">
         <classes>
             <class name="io.jans.as.server.comp.JwtCrossCheckTest" />
         </classes>
     </test>
+-->
 
-<!--
     <test name="JWT signer-verifyer test" enabled="true">
         <classes>
             <class name="io.jans.as.server.comp.JwtSignerVerifyerTest" />
         </classes>
     </test>
--->
 
 	<parameter name="serverUri" value="https://${test.server.name}" />
 	<parameter name="authorizePath" value="restv1/authorize" />
