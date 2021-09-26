@@ -12,6 +12,48 @@
         </classes>
     </test>
 
+    <test name="Address claims test (HTTP)" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.ws.rs.AddressClaimsTest"/>
+        </classes>
+    </test>
+
+    <test name="OC5. FeatureTest-Accept Valid Asymmetric ID Token Signature" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.interop.AcceptValidAsymmetricIdTokenSignature"/>
+        </classes>
+    </test>
+
+    <test name="CIBA Ping Mode" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPingMode"/>
+        </classes>
+    </test>
+
+    <test name="CIBA Poll Mode" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPollMode"/>
+        </classes>
+    </test>
+
+    <test name="CIBA Push Mode" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.ciba.BackchannelAuthenticationPushMode"/>
+        </classes>
+    </test>
+
+    <test name="OC5. FeatureTest-Uses Asymmetric ID Token Signatures" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.interop.UsesAsymmetricIdTokenSignatures"/>
+        </classes>
+    </test>
+
+    <test name="Individual Claims Requests test" enabled="true">
+        <classes>
+            <class name="io.jans.as.client.ws.rs.IndividualClaimsRequestsTest"/>
+        </classes>
+    </test>
+
 <!--
     <test name="Multivalued claims" enabled="true">
         <classes>
