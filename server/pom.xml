@@ -147,7 +147,7 @@
 						-Dserver.base=${project.build.directory}
 						-Dlog.base=${project.build.directory}
 						-Dgluu.disable.scheduler=true
- 
+
 					</argLine>
 				</configuration>
 			</plugin>
@@ -591,6 +591,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
+			<version>7.4.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -598,8 +599,26 @@
 			<artifactId>javax.websocket-api</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-junit5</artifactId>
+			<version>2.0.2.Final</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.12.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.8.0-M1</version>
+			<scope>test</scope>
+		</dependency>
 
-		<!-- Test: Arquillian container and extensions -->
+        <!-- Test: Arquillian container and extensions -->
 		<dependency>
 			<groupId>org.jboss.arquillian.testng</groupId>
 			<artifactId>arquillian-testng-container</artifactId>
