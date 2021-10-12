@@ -21,7 +21,7 @@ import java.util.Map;
  * Represents an OpenId Configuration received from the authorization server.
  *
  * @author Javier Rojas Blum
- * @version July 28, 2021
+ * @version September 30, 2021
  */
 public class OpenIdConfigurationResponse extends BaseResponse implements Serializable {
 
@@ -61,6 +61,7 @@ public class OpenIdConfigurationResponse extends BaseResponse implements Seriali
     private List<String> requestObjectEncryptionEncValuesSupported;
     private List<String> tokenEndpointAuthMethodsSupported;
     private List<String> tokenEndpointAuthSigningAlgValuesSupported;
+    private List<String> dpopSigningAlgValuesSupported;
     private List<String> displayValuesSupported;
     private List<String> claimTypesSupported;
     private List<String> claimsSupported;
@@ -108,23 +109,24 @@ public class OpenIdConfigurationResponse extends BaseResponse implements Seriali
         authorizationSigningAlgValuesSupported = new ArrayList<>();
         authorizationEncryptionAlgValuesSupported = new ArrayList<>();
         authorizationEncryptionEncValuesSupported = new ArrayList<>();
-        userInfoSigningAlgValuesSupported = new ArrayList<>();
-        userInfoEncryptionAlgValuesSupported = new ArrayList<>();
-        userInfoEncryptionEncValuesSupported = new ArrayList<>();
-        idTokenSigningAlgValuesSupported = new ArrayList<>();
-        idTokenEncryptionAlgValuesSupported = new ArrayList<>();
-        idTokenEncryptionEncValuesSupported = new ArrayList<>();
-        requestObjectSigningAlgValuesSupported = new ArrayList<>();
-        requestObjectEncryptionAlgValuesSupported = new ArrayList<>();
-        requestObjectEncryptionEncValuesSupported = new ArrayList<>();
-        tokenEndpointAuthMethodsSupported = new ArrayList<>();
-        tokenEndpointAuthSigningAlgValuesSupported = new ArrayList<>();
-        displayValuesSupported = new ArrayList<>();
-        claimTypesSupported = new ArrayList<>();
-        claimsSupported = new ArrayList<>();
-        idTokenTokenBindingCnfValuesSupported = new ArrayList<>();
-        claimsLocalesSupported = new ArrayList<>();
-        uiLocalesSupported = new ArrayList<>();
+        userInfoSigningAlgValuesSupported = new ArrayList<String>();
+        userInfoEncryptionAlgValuesSupported = new ArrayList<String>();
+        userInfoEncryptionEncValuesSupported = new ArrayList<String>();
+        idTokenSigningAlgValuesSupported = new ArrayList<String>();
+        idTokenEncryptionAlgValuesSupported = new ArrayList<String>();
+        idTokenEncryptionEncValuesSupported = new ArrayList<String>();
+        requestObjectSigningAlgValuesSupported = new ArrayList<String>();
+        requestObjectEncryptionAlgValuesSupported = new ArrayList<String>();
+        requestObjectEncryptionEncValuesSupported = new ArrayList<String>();
+        tokenEndpointAuthMethodsSupported = new ArrayList<String>();
+        tokenEndpointAuthSigningAlgValuesSupported = new ArrayList<String>();
+        dpopSigningAlgValuesSupported = new ArrayList<>();
+        displayValuesSupported = new ArrayList<String>();
+        claimTypesSupported = new ArrayList<String>();
+        claimsSupported = new ArrayList<String>();
+        idTokenTokenBindingCnfValuesSupported = new ArrayList<String>();
+        claimsLocalesSupported = new ArrayList<String>();
+        uiLocalesSupported = new ArrayList<String>();
         backchannelTokenDeliveryModesSupported = new ArrayList<>();
         backchannelAuthenticationRequestSigningAlgValuesSupported = new ArrayList<>();
     }
@@ -814,6 +816,24 @@ public class OpenIdConfigurationResponse extends BaseResponse implements Seriali
      */
     public void setTokenEndpointAuthSigningAlgValuesSupported(List<String> tokenEndpointAuthSigningAlgValuesSupported) {
         this.tokenEndpointAuthSigningAlgValuesSupported = tokenEndpointAuthSigningAlgValuesSupported;
+    }
+
+    /**
+     * Returns a list of JWS alg values supported by the authorization server for DPoP proof JWTs.
+     *
+     * @return A list of JWS alg values supported by the authorization server for DPoP proof JWTs.
+     */
+    public List<String> getDpopSigningAlgValuesSupported() {
+        return dpopSigningAlgValuesSupported;
+    }
+
+    /**
+     * Sets a list of JWS alg values supported by the authorization server for DPoP proof JWTs.
+     *
+     * @param dpopSigningAlgValuesSupported A list of JWS alg values supported by the authorization server for DPoP proof JWTs.
+     */
+    public void setDpopSigningAlgValuesSupported(List<String> dpopSigningAlgValuesSupported) {
+        this.dpopSigningAlgValuesSupported = dpopSigningAlgValuesSupported;
     }
 
     /**
