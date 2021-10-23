@@ -57,6 +57,7 @@ import io.jans.orm.model.base.CustomAttribute;
 import io.jans.util.StringHelper;
 import io.jans.util.security.StringEncrypter;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -421,7 +422,7 @@ public class RegisterRestWebServiceImpl implements RegisterRestWebService {
             if (isFalse(appConfiguration.getDcrSignatureValidationEnabled())) {
                 return;
             }
-            if (ServerUtil.isTrue(appConfiguration.getDcrSkipSignatureValidation())) {
+            if (isTrue(appConfiguration.getDcrSkipSignatureValidation())) {
                 return;
             }
 
@@ -1050,7 +1051,7 @@ public class RegisterRestWebServiceImpl implements RegisterRestWebService {
                     builder.entity(clientAsEntity(client));
                 } else {
                     log.trace("The Access Token is not valid for the Client ID, returns invalid_token error.");
-                    builder = Response.status(Response.Status.BAD_REQUEST.getStatusCode()).type(MediaType.APPLICATION_JSON_TYPE);
+                    builder = Response.status(Response.Status.UNAUTHORIZED.getStatusCode()).type(MediaType.APPLICATION_JSON_TYPE);
                     builder.entity(errorResponseFactory.errorAsJson(RegisterErrorResponseType.INVALID_TOKEN, "The Access Token is not valid for the Client"));
                 }
             } else {
